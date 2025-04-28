@@ -104,6 +104,127 @@ export default {
 			});
 		});
 	},
+	/* getResponse(option, data, param) {// 仅用于chat通讯
+		//console.log(option);
+		let ai_type = option.type;
+		//console.log(data['id'], data['token']);
+		this.post(option, data).then(response => {
+			console.log(response);
+			if(response.code == 200){
+				//console.log(ai_type);
+				handle.afterResponseFun({
+					key: param,
+					value: {
+						content: response.result,
+					}
+				});
+			}else if(response.code == 303){
+				uni.hideLoading();
+				uni.showModal({
+					title: '温馨提示',
+					content: response.msg,
+					showCancel: false,
+					confirmText: '晓得了',
+					success: function (res) {
+						if (res.confirm) {
+							console.log('用户点击确定');
+						} 
+					}
+				});
+				handle.afterResponseFun({
+					key: param,
+					value: {
+						content: response.result,
+					}
+				});
+			}else {
+				//console.error(response.msg);
+				uni.hideLoading();
+				uni.showToast({
+					title: response.msg,
+					icon: "none"
+				})
+			}
+		}).catch(e => {
+			console.error(e);
+			uni.hideLoading();
+			uni.showToast({
+				title: e,
+				icon: "none"
+			})
+		});
+	},
+	bothSideRequest(model, data, ai, param_prefix) {
+		//console.log(this.last_called);
+		const now = Date.now();
+		if(now - this.last_called < 10000){
+			if(!data.task || data.task == 'chat'){
+				uni.showToast({
+					title: '别心急，慢点，再慢点',
+					icon: "none"
+				})
+			}
+			uni.hideLoading();
+			return;
+		}
+		data.type = ai;
+		//console.log(data.type);
+		data.model = model;
+		switch (ai){
+			case 7:
+				//console.log(data);
+				this.getResponse('aiController/chat2', data, param_prefix);
+				break;
+			default:
+				data.key = store.state.user.user_key;
+				this.getResponse('aiController/chat', data, param_prefix);
+				break;
+		}
+		this.last_called = now;
+	}, */
+	/* getLocalResponse(option, data) {
+		console.log(option);
+		this.post(option, data).then(response => {
+			console.log(response);
+			if(response.code == 200){
+				handle.afterResponseFun({
+					key: option,
+					value: response.result
+				});
+			}else if(response.code == 303){
+				uni.hideLoading();
+				uni.showModal({
+					title: '温馨提示',
+					content: response.msg,
+					showCancel: false,
+					confirmText: '晓得了',
+					success: function (res) {
+						if (res.confirm) {
+							console.log('用户点击确定');
+						} 
+					}
+				});
+				handle.afterResponseFun({
+					key: option,
+					value: response.result
+				});
+			}else{
+				console.error(response.msg);
+				uni.hideLoading();
+				uni.showToast({
+					title: response.msg,
+					icon: "none"
+				})
+			}
+		}).catch(e => {
+			console.error(e);
+			uni.hideLoading();
+			uni.showToast({
+				title: e,
+				icon: "none"
+			})
+		});
+	}, */
 	getIp(){
 		let _self = this;
 		//console.log('getip');
