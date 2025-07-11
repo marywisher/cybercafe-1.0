@@ -361,17 +361,15 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/.hbuilderx
 /func/common/common.js
 /func/common/constants.js
 /config/config.js
 /func/common/sqlite.js
-/unpackage/cache
-/unpackage/res/icons
+/unpackage
 /manifest.json
 /config.json
-/unpackage/dist/build
-/unpackage/dist/dev/.automator/app-plus
-/unpackage/dist/dev/cache/.app-plus/tsc/app-android/.tsbuildInfo
 /pages/chat/incubator.vue
 /pages/index/dataList.vue
 /components/cybercafe-modal/cybercafe-modal - 副本.vue
+/cybercafe-git.rar
