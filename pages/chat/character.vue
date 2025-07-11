@@ -56,9 +56,9 @@
 				</view>
 			</view> -->
 		</cybercafe-view>
-		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 		<image-part ref="cImgPart" :origin_img="character_image" :dark="darkMode" :ckey="character_key"
 			:show_create="true" :show_local="true" :show_online="true" @afterClick="afterSelectImg"></image-part>
+		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
 
@@ -111,8 +111,19 @@
 				hint: "请统一使用<label class=\"required\">{{user}}</label>或<label class=\"required\">你</label>指代主控，<label class=\"required\">{{char}}</label>或<label class=\"required\">他/她</label>指代角色"
 			}
 		},
+		watch:{
+			modalShow(newValue){
+				if(newValue){
+					this.$refs.cModal.show(this.modalData);
+					this.setUserData({
+						'modalShow': false
+					})
+				}
+			}
+		},
 		computed: {
-			...mapState('user', ['darkMode', 'userKey', 'lastTimestampSubmit', 'powerLevel']),
+			...mapState('user', ['darkMode', 'lastTimestampSubmit', 'modalData', 'modalShow',
+				'powerLevel', 'userKey']),
 			dynamicImg() {
 				return this.darkMode == 'light' ?
 				`background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.1) 80%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 1)), url('${this.character_image}');` : 
@@ -177,7 +188,7 @@
 					if(character_data.length > 0){
 						this.getIncubatorData(character_data);
 					}else if(this.character_id > 0){
-						request.post("characterController/getCharacterDetail", this, {
+						request.post("characterController/getCharacterDetail", {
 							'character_id': this.character_id
 						}).then(res => {
 							if (res.code == 200) {
@@ -292,21 +303,24 @@
 						console.log(this.incubator_id);
 					});
 				}else{
-					this.$refs.cModal.show({
-						title: '提交提醒',
-						content: '确认消耗本次提交机会，并确认提交的图文均为原创？',
-						confirmText: '确认提交',
-						cancelText: '再想想',
-						success: function (res) {
-							if (res.confirm) {
-								let tmp = _self.lastTimestampSubmit;
-								tmp[_self.incubator_id] = now;
-								_self.setUserData({key: 'lastTimestampSubmit', data: tmp});
-								_self.updateProgress();
-							} else{
-								relationHandle.saveIncubator(_self, '你', 'incubator', 'save');
+					this.setUserData({
+						'modalData': {
+							title: '提交提醒',
+							content: '确认消耗本次提交机会，并确认提交的图文均为原创？',
+							confirmText: '确认提交',
+							cancelText: '再想想',
+							success: function (res) {
+								if (res.confirm) {
+									let tmp = _self.lastTimestampSubmit;
+									tmp[_self.incubator_id] = now;
+									_self.setUserData({lastTimestampSubmit: tmp});
+									_self.updateProgress();
+								} else{
+									relationHandle.saveIncubator(_self, '你', 'incubator', 'save');
+								}
 							}
-						}
+						},
+						'modalShow': true,
 					});
 				} */
 			},
@@ -346,30 +360,33 @@
 			},
 			del(){
 				let _self = this;
-				this.$refs.cModal.show({
-					content: '删除后将无法创建本地同名角色',
-					cancelText: '取消',
-					confirmText: '删除',
-					success: function(res) {
-						if (res.confirm) {
-							baseQuery.updateDataByKey('cybercafe_incubator',{
-								character_status: 0
-							},{
-								incubator_id: _self.incubator_id
-							});
-							
-							uni.showToast({
-								title: '删除成功',
-								icon: 'success'
-							});
-							
-							setTimeout(() =>{
-								uni.switchTab({
-									url: '/pages/index/account'
-								})
-							}, 500);
-						}
+				this.setUserData({
+					'modalData': {
+						content: '删除后将无法创建本地同名角色',
+						cancelText: '取消',
+						confirmText: '删除',
+						success: function(res) {
+							if (res.confirm) {
+								baseQuery.updateDataByKey('cybercafe_incubator',{
+									character_status: 0
+								},{
+									incubator_id: _self.incubator_id
+								});
+								
+								uni.showToast({
+									title: '删除成功',
+									icon: 'success'
+								});
+								
+								setTimeout(() =>{
+									uni.switchTab({
+										url: '/pages/index/account'
+									})
+								}, 500);
+							}
+						},
 					},
+					'modalShow': true,
 				});
 			},
 			afterSelectImg(e){
@@ -389,7 +406,7 @@
 				];
 				return new Promise((resolve, reject) => {
 					try{
-						request.post('aiController/tool', _self, {
+						request.post('aiController/tool', {
 							'type': ai_type,
 							'key': this.userKey,
 							'task': task,
@@ -416,16 +433,19 @@
 									
 									_self.upload_process[0].desc = '得分：' + return_json.score + '，' + return_json.description;
 									if(return_json.score > 1){
-										_self.$refs.cModal.show({
-											title: '语义检测结果',
-											content: return_json.description,
-											cancelText: '明白了',
-											success: function (res) {
-												if (res.cancel) {
-													//console.log('用户点击确定');
-													reject('语义检测问题，请修改后再试：' + return_json.score);
-												} 
-											}
+										_self.setUserData({
+											'modalData': {
+												title: '语义检测结果',
+												content: return_json.description,
+												cancelText: '明白了',
+												success: function (res) {
+													if (res.cancel) {
+														//console.log('用户点击确定');
+														reject('语义检测问题，请修改后再试：' + return_json.score);
+													} 
+												}
+											},
+											'modalShow': true,
 										});
 									}
 									_self.active += 1;
@@ -462,7 +482,7 @@
 				};
 				
 				return new Promise((resolve, reject) => {
-					request.post('characterController/submitCharacter', _self, data).then(res => {
+					request.post('characterController/submitCharacter', data).then(res => {
 						//console.log(res.result);
 						if(res.code == 200){
 							baseQuery.updateDataByKey('cybercafe_incubator',{
@@ -521,7 +541,7 @@
 				let _self = this;
 				try{
 					//console.log(typeof this.character_image);
-					request.post('characterController/submitImage', this, {
+					request.post('characterController/submitImage', {
 						file: this.character_image,
 						key: this.character_key
 					}).then(res => {

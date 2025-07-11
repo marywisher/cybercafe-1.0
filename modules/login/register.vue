@@ -1,39 +1,37 @@
 <template>
 	<view>
-		<cybercafe-view ref="registerView" :isAbsolute="true" :closeAble="false" viewTitle="注册"
-			popViewStyle="width: 80vw;margin:20vh auto;">
+		<cybercafe-view ref="registerView" :isAbsolute="true" :closeAble="false" viewTitle="注册/验证码登录"
+			popViewStyle="margin:20vh auto;padding: 5vw;">
 			<view class="content">
 				<label class="hint required">* 为必填项</label><br>
 				<view class="display-flex sp-between register-line">
-					<label>昵称<span class="required">*</span></label>
-					<input focus v-model="nickname" maxlength="10" />
+					<label>邮箱<span class="required">*</span></label>
+					<input v-model="username"  focus placeholder="请输入注册邮箱" @input="checkEmail" />
 				</view>
 				<view class="display-flex sp-between register-line">
-					<label>QQ号<span class="required">*</span></label>
-					<input v-model="username" maxlength="12" />
+					<label>验证码<span class="required">*</span></label>
+					<view class="display-flex">
+						<input v-model="verify_code" maxlength="6" style="width: 158px;" @input="setVerifyCode" />
+						<cybercafe-button btnClass="btn-default" @btnClick="sendVerify"
+							btnName="发送"></cybercafe-button>
+					</view>					
 				</view>
 				<view class="display-flex sp-between">
-					<label>设置密码<span class="required">*</span></label>
-					<input type="password" v-model="pwd" placeholder="请输入密码" />
+					<label>邀请码</label>
+					<input v-model="invite_code" maxlength="8" placeholder="请填写邀请码" @input="setInviteCode" />
 				</view>
-				<view class="display-flex register-line">
-					<label class="hint">（至少8个字符，包含至少1个大写字母、1个小写字母和1个数字）</label>
-				</view>
-				<view class="display-flex sp-between register-line">
-					<label>重复密码<span class="required">*</span></label>
-					<input type="password" v-model="repeatpwd" placeholder="与密码一致" />
-				</view>
-				<view class="display-flex sp-between register-line">
-					<label>邀请码<span class="required">*</span></label>
-					<input v-model="inviteCode" />
+				<view class="display-flex register-line" style="justify-content: flex-end;">
+					<view class="hint">（注册成功送1w米粒，填写邀请码再送1w米粒）</view>
 				</view>
 				
 				<view class="display-flex sp-between">
 					<view>
-						<button @tap="login" size="mini">已有账号</button>
+						<cybercafe-button btnClass="btn-default" @btnClick="login"
+							btnName="密码登录"></cybercafe-button>
 					</view>
 					<view>
-						<button type="primary" @tap="submitRegister" size="mini">注册</button>
+						<cybercafe-button btnClass="btn-primary" @btnClick="submitRegister"
+							btnName="注册/登录"></cybercafe-button>
 					</view>
 				</view>
 			</view>
@@ -53,15 +51,15 @@
 		data() {
 			return {
 				// 表单数据
-				nickname: '',
 				username: '',
-				pwd: '',
-				repeatpwd: '',
-				inviteCode: '',
+				invite_code: '',
+				verify_code: '',
+				
+				email_check: false,
 			}
 		},
 		computed: {
-			...mapState('user', ['isLogin']),
+			...mapState('user', ['darkMode', 'isLogin']),
 		},
 		methods: {
 			...mapMutations('user', ['setUserData', 'getUserData']),
@@ -75,57 +73,37 @@
 				this.hide();
 				uni.$emit('chagePop', 'cpLogin');
 			},
-			submitRegister() {
-				if(this.pwd.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/) == null) {
+			checkEmail(e){
+				this.username = e.detail.value;
+				if(this.username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) == this.username){
+					this.email_check = true;
+				}else{
+					this.email_check = false;
+				}
+			},
+			setVerifyCode(e){
+				this.verify_code = e.detail.value;
+			},
+			setInviteCode(e){
+				this.invite_code = e.detail.value;
+			},
+			sendVerify(e){
+				if(this.username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) != this.username){
 					uni.showToast({
-						title: '密码至少8个字符，包含至少1个大写字母、1个小写字母和1个数字',
+						title: '请正确填写邮箱',
 						icon: 'none'
 					})
 					return;
 				}
-				if(this.pwd != this.repeatpwd) {
-					uni.showToast({
-						title: '重复密码错误',
-						icon: 'none'
-					})
-					return;
-				}
-				if(this.username.match(/^[1-9][0-9]{6,11}$/) != this.username){
-					uni.showToast({
-						title: '请正确填写QQ号',
-						icon: 'none'
-					})
-					return;
-				}
-				if(this.inviteCode.match(/^(?=.*[A-Z])(?=.*\d)[A-Z\d]{8}$/) == null) {
-					uni.showToast({
-						title: '邀请码为8个大写字母或数字',
-						icon: 'none'
-					})
-					return;
-				}
-				
 				
 				uni.showLoading();
-				request.post("userController/autoRegister", {
-					nickname: this.nickname,
-					qq: this.username,
-					pwd: this.pwd,
-					code: this.inviteCode,
+				request.post("userController/sendVerifyCode", {
+					name: this.username,
 				}).then(res => {
-					uni.hideLoading();
 					if (res.code == 200) {
-						console.log(res.result);
-						uni.showModal({
-							title: '温馨提示',
-							content: res.result.msg,
-							showCancel: false,
-							confirmText: '明白了',
-							success: function (res) {
-								if (res.confirm) {
-									//console.log('用户点击确定');
-								} 
-							}
+						uni.showToast({
+							title: res.msg,
+							icon: "success"
 						});
 					} else {
 						uni.showToast({
@@ -133,6 +111,90 @@
 							icon: "none"
 						});
 					}
+				}).catch(e => {
+					uni.showToast({
+						title: e.msg,
+						icon: "none"
+					});
+				}).finally(() => {
+					uni.hideLoading();
+				});
+			},
+			submitRegister() {
+				let _self = this;
+				console.log(this.invite_code.match(/^\d{6}$/))
+				/* if(this.invite_code.match(/^\d{6}$/) != this.invite_code){
+					uni.showToast({
+						title: '请正确填写验证码',
+						icon: 'none'
+					})
+					return;
+				} */
+				if(this.username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) != this.username){
+					uni.showToast({
+						title: '请正确填写邮箱',
+						icon: 'none'
+					})
+					return;
+				}
+				if(this.invite_code){
+					if(this.invite_code.match(/^(?=.*[A-Z])(?=.*\d)[A-Z\d]{8}$/) == null) {
+						uni.showToast({
+							title: '邀请码为8个大写字母或数字',
+							icon: 'none'
+						})
+						return;
+					}
+				}
+				
+				uni.showLoading();
+				request.post("userController/newRegister", {
+					name: this.username,
+					verify: this.verify_code,
+					code: this.invite_code,
+				}).then(res => {
+					if (res.code == 200) {
+						//console.log(res.result);
+						//登录跳转
+						_self.hide();
+						let data = {
+							userId: res.result.id,
+							userName: res.result.name,//Base64.decode(res.result.name),
+							userKey: res.result.key,
+							token: res.result.token,
+							userGroup: res.result.group,
+							groupExpiration: res.result.expiration,
+							latestVersion: res.result.latest_version,
+							powerLevel: res.result.power_level,
+							isLogin: true
+						};
+						_self.setUserData(data);
+						_self.setUserData({
+							'modalData': {
+								content: '欢迎，' + res.result.name,
+								success: (res) => {}
+							},
+							'modalShow': true,
+						});
+						/* uni.switchTab({
+							url: '/pages/index/index'
+						}) */
+						uni.navigateTo({
+							url: '/pages/index/index'
+						});
+					} else {
+						uni.showToast({
+							title: res.msg,
+							icon: "none"
+						});
+					}
+				}).catch(e => {
+					uni.showToast({
+						title: e.msg,
+						icon: "none"
+					});
+				}).finally(() => {
+					uni.hideLoading();
 				});
 			},
 		},
@@ -141,6 +203,6 @@
 
 <style lang="scss">
 	.register-line{
-		margin-bottom: $uni-spacing-base;
+		margin-bottom: $uni-spacing-lg;
 	}
 </style>

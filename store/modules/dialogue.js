@@ -2,15 +2,12 @@ export default {
 	namespaced: true,
 	state: {
 		me: '你',
-		entityId: 1,
 		crtCharacterId: 0,//仅用于交互，不用来显示
 		introduction: '',
 		title: '',
 		ai: 0,//模型的后台序号
-		entityMode: 'novel',//novel chat
 		
 		chatlist: [], //用于API传输的数据，只在character-part处更新， 删除时也要删
-		chat65tlist: [],//群聊专用数据
 		characterlist: {}, //角色
 		historylist: [], //对话
 		options: [], //备选项
@@ -22,39 +19,32 @@ export default {
 		editMode: false, //弹出编辑模块后，是否显示编辑框，只在3处更改状态
 		openEdit: false, //是否弹出编辑模块
 		blankMode: false, //是否纯手写模式
-		editContent: {}, //编辑的内容,{entityId: txt,}
 		resetFlag: false, //是否编辑框初始化
 		refreshList: false, //刷新chat列表
 		breakpointMessageId: 0, //用于记录下拉加载的断点
 		
 		entityImage: '',
-		bubbleOpacity: 1,//气泡透明度
-		bgOpacity: false, //false 适用于滚动截屏
 		cDisplayId: 0,//crtCharaterId 仅用户list展示时
-		fontSize: 14,
-		fontColor: ['rgb(52,52,52)', 'rgb(52,52,52)'],
-		bubbleColor: ['rgba(204,204,204, {{bubbleOpacity}})', 'rgba(204,204,204,{{bubbleOpacity}})'],
-		bubbleAlign: true,
-		imgWidth: 40,
-		imgRadius: 20,
-		chatPattern: 1,
-		chatHtml: '<div class="chat-bubble {{side}}">{{text}}</div>',
-		chatCss: '<style>.chat-line .chat-bubble{background-color: {{bg-color1}};	padding: 10px 15px;	line-height: 1.5;	border-radius: 5px;}</style>',
-		chatFgCss: '',
+		aiSelect: '',
+		aiRange:{},//包括线上的名字和本地的名字
+		entityMode: 'chat',//novel chat
+		aiGroup:{},
 	},
 	getters: {},
 	mutations: {
-		setDiaData: function(state, {key, data}){
+		setDiaData: function(state, obj){
 			//console.log(JSON.stringify(data));
-			state[key] = data;
+			Object.keys(obj).forEach(key => {
+			    state[key] = obj[key]
+			})
 			uni.setStorageSync('chatData', state);
 		},
 		getDiaData: function(state){
 			//console.log(uni.getStorageSync('chatData'));
 			let data = uni.getStorageSync('chatData');
-			for(let key in state){
-				if(data[key] != undefined) state[key] = data[key];
-			}
+			Object.keys(data).forEach(key => {
+			    state[key] = data[key]
+			})
 		},
 	},
 	actions: {}

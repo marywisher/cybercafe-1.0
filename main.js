@@ -1,16 +1,19 @@
 import store from '@/store'
-import App from './App'
-import '@/static/iconfont/iconfont.css';
+import App from '@/App'
 
 // #ifndef VUE3
 import Vue from 'vue'
-import './uni.promisify.adaptor'
+import '@/uni.promisify.adaptor'
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
 Vue.config.productionTip = false
 Vue.prototype.$store = store
+
 App.mpType = 'app'
 const app = new Vue({
-	store,
-	...App
+  store,
+  ...App
 })
 app.$mount()
 // #endif

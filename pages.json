@@ -7,9 +7,64 @@
 			}
 		},
 		{
+			"path": "pages/chat/index",
+			"style": {
+				"navigationStyle": "custom"
+				//"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/chat/character",
+			"style": {
+				"navigationBarTitleText": "角色切片"
+			}
+		},
+		{
+			"path": "pages/chat/entityList",
+			"style": {
+				"navigationBarTitleText": "羁绊列表"
+			}
+		},
+		/* {
+			"path": "pages/chat/incubator",
+			"style": {
+				"navigationBarTitleText": "本地角色"
+			}
+		}, */
+		{
 			"path": "pages/login/login",
 			"style": {
 				"navigationBarTitleText": "登录"
+			}
+		},
+		 {
+			"path": "pages/setting/globalSetting",
+			"style": {
+				"navigationBarTitleText": "通用设置"
+			}
+		},
+		{
+			"path": "pages/setting/aiSetting",
+			"style": {
+				"navigationBarTitleText": "大模型设置"
+			}
+		},
+		{
+			"path": "pages/setting/decrateSetting",
+			"style": {
+				"navigationBarTitleText": "样式设置"
+			}
+		},
+		{
+			"path": "pages/setting/bubbleMarket",
+			"style": {
+				"navigationBarTitleText": "气泡市场"
+			}
+		},
+		{
+			"path": "pages/index/dataList",
+			"style": {
+				"navigationBarTitleText": "数据"
 			}
 		}
 	],
@@ -23,5 +78,13 @@
 		"navigationBarTitleText": "cybercafe",
 		"onReachBottomDistance": 500
 	},
-	"uniIdRouter": {}
+	"uniIdRouter": {},
+	"tabBar": {
+		"color": "@tabFontColor",
+		"selectedColor": "@tabSelectedColor",
+		"backgroundColor": "@tabBgColor",
+		"borderStyle": "@tabBorderStyle",
+		"iconfontSrc":"static/iconfont/iconfont.ttf", // app tabbar 字体.ttf文件路径 app 3.4.4+
+		"list": []
+	}
 }

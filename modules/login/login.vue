@@ -1,13 +1,13 @@
 <template>
-	<view @tap="loginShow">
+	<view>
 		<view class="iconfont icon-geren" v-show="showIcon"/>
 		
 		<cybercafe-view ref="loginView" :is-absolute="true" :closeAble="false" :viewTitle="form_flag == 'login' ? '登录' : '修改密码'"
-			popViewStyle="width: 80vw;margin:20vh auto;">
+			popViewStyle="margin:20vh auto;padding: 5vw;">
 			<view class="content">
 				<view class="display-flex sp-between login-line">
 					<label>账号<span class="required">*</span></label>
-					<input v-model="account" focus placeholder="请输入账号(qq号@qq.com)" />
+					<input v-model="account" focus placeholder="请输入注册邮箱" />
 				</view>
 				<view class="display-flex sp-between login-line" v-if="form_flag == 'login'">
 					<label>密码<span class="required">*</span></label>
@@ -29,18 +29,22 @@
 				<view v-if="form_flag == 'login'" class="display-flex sp-between">
 					<view class="hint" @tap="openReset">忘记密码？</view>
 					<view>
-						<button @tap="register" size="mini">注册</button>
+						<cybercafe-button btnClass="btn-default" :btnDisable="true"
+							btnName="注册稍后开放"></cybercafe-button><!--/验证码登录-->
 					</view>
 					<view>
-						<button type="primary" @tap="submit('loginForm')" size="mini">登录</button>
+						<cybercafe-button btnClass="btn-primary" @btnClick="submit('loginForm')"
+							btnName="登录"></cybercafe-button>
 					</view>
 				</view>
 				<view v-else class="display-flex sp-between">
 					<view>
-						<button type="primary" @tap="submit('resetForm')" size="mini">修改</button>
+						<cybercafe-button btnClass="btn-primary" @btnClick="submit('resetForm')"
+							btnName="修改"></cybercafe-button>
 					</view>
 					<view>
-						<button @tap="closeReset" size="mini">取消</button>
+						<cybercafe-button btnClass="btn-default" @btnClick="closeReset"
+							btnName="取消"></cybercafe-button>
 					</view>
 				</view>
 			</view>
@@ -77,7 +81,7 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['isLogin']),
+			...mapState('user', ['darkMode', 'isLogin', 'modalData', 'modalShow']),
 		},
 		methods: {
 			...mapMutations('user', ['setUserData', 'getUserData']),
@@ -89,8 +93,19 @@
 				this.form_flag = 'login';
 				this.$forceUpdate()
 			},
-			show(){
+			show(msg = ''){
 				this.$refs.loginView.openView();
+				
+				if(msg){
+					this.setUserData({
+						'modalData': {
+							content: msg,
+							cancelText: '晓得了',
+							success: (res) => {},
+						},
+						'modalShow': true,
+					});
+				}
 			},
 			hide(){
 				this.$refs.loginView.closeView();
@@ -107,7 +122,6 @@
 						account: this.account,//Base64.encode(this.account),
 						pwd: this.pwd
 					}).then(res => {
-						uni.hideLoading();
 						if (res.code == 200) {
 							console.log(res.result);
 							_self.hide();
@@ -120,36 +134,39 @@
 								groupExpiration: res.result.expiration,
 								latestVersion: res.result.latest_version,
 								powerLevel: res.result.power_level,
-								isLogin: true
+								isLogin: true,
 							};
+							_self.setUserData(data);
 							
-							for(let key in data){
-								_self.setUserData({'key': key, 'data': data[key]});
-							}
-							
-							uni.showModal({
-								title: '登录',
-								content: '欢迎，' + res.result.name,
-								showCancel: false,
-								confirmText: 'ok',
-								success: function (res) {
-									if (res.confirm) {
-										console.log('用户点击确定');
-									} 
-								}
-							});
+							setTimeout(() => {
+								_self.setUserData({
+									modalData: {
+										title: '登录',
+										content: '欢迎，' + res.result.name,
+										cancelText: 'OK'
+									},
+									modalShow: true,
+								});
+							}, 2000);
+							uni.navigateTo({
+								url: '/pages/index/index?msg=login'
+							})
 							/* uni.switchTab({
 								url: '/pages/index/index'
 							}) */
-							uni.navigateTo({
-								url: '/pages/index/index'
-							})
 						} else {
 							uni.showToast({
 								title: res.msg,
 								icon: "none"
 							});
 						}
+					}).catch(e => {
+						uni.showToast({
+							title: e.msg,
+							icon: "none"
+						});
+					}).finally(() => {
+						uni.hideLoading();
 					});
 				}else{//reset pwd
 					if(this.pwd.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/) == null) {
@@ -172,46 +189,41 @@
 						qq: this.account,
 						pwd: this.pwd
 					}).then(res => {
-						uni.hideLoading();
 						if (res.code == 200) {
 							console.log(res.result);
-							uni.showModal({
-								title: '温馨提示',
-								content: res.result.msg,
-								showCancel: false,
-								confirmText: '明白了',
-								success: function (res1) {
-									if (res1.confirm) {
-										//console.log('用户点击确定');
-										if(res.result.msg == '密码已更新，请重新登录'){
+							_self.setUserData({
+								'modalData': {
+									content: res.result.msg,
+									cancelText: '明白了',
+									success: (res) => {
+										if (res.cancel && res.result.msg == '密码已更新，请重新登录'){
 											_self.form_flag = 'login';
 											_self.$forceUpdate()
 										}
-									} 
-								}
-							});
-						} else {
-							uni.showToast({
-								title: res.msg,
-								icon: "none"
+									},
+								},
+								'modalShow': true,
 							});
 						}
+					}).catch(e => {
+						console.log(e);
+					}).finally(() => {
+						uni.hideLoading();
 					});
 				}
 			},
 			logoutConfirm() {
 				console.log('logout');
 				this.resetUserData();
-				uni.showModal({
-					title: '登出',
-					content: '安全退出',
-					showCancel: false,
-					confirmText: 'ok',
-					success: function (res) {
-						if (res.confirm) {
-							console.log('用户点击确定');
-						} 
-					}
+				let _self = this;
+				this.setUserData({
+					'modalData': {
+						title: '登出',
+						content: '安全退出',
+						cancelText: 'OK',
+						success: (res) => {},
+					},
+					'modalShow': true,
 				});
 				this.$emit('afterLogout');
 			},
@@ -221,6 +233,6 @@
 
 <style lang="scss">
 	.login-line{
-		margin-bottom: $uni-spacing-base;
+		margin-bottom: $uni-spacing-lg;
 	}
 </style>

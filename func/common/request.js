@@ -10,7 +10,7 @@ export default {
 	      last_called: 0, // 存储上一次调用的时间戳
 	    };
 	},
-	async post(option, vm, options = {}) {
+	async post(option, options = {}) {
 		//console.log(configData.domain);
 		let res;
 		let url = configData.domain;
@@ -43,29 +43,30 @@ export default {
 					console.log(url, 'response data:', res.data);
 					if(res.data.code == 301){
 						uni.hideLoading();
-						vm.$refs.cModal.show({
-							content: res.data.msg,
-							cancelText: '晓得了',
-							success: function (res) {}
-						});
-						store.commit('user/setUserData', {
-							key: 'refreshFlag',
-							data: 'fail'
-						});
+						store.commit('user/setUserData', 
+							{
+								'refreshFlag': 'fail',
+								'modalData':
+									{
+										content: res.data.msg,
+										cancelText: '晓得了',
+										success: function (res) {}
+									},
+								'modalShow': true
+							});
 						return;
 					}else if(res.data.code == 302){
 						uni.hideLoading();
 						//store.commit('user/resetUserData');
+						console.log(res.data.msg);
 						uni.navigateTo({
 							url: '../login/login?msg=' + res.data.msg
 						})
 					}else if(res.data.code == 300){
 						uni.hideLoading();
-						store.commit('user/setUserData', {
-							key: 'isLogin',
-							data: false
-						});
+						store.commit('user/setUserData', {'isLogin': false});
 						console.log('重新登录，来自：' + option);
+						console.log(res.msg);
 						uni.reLaunch({
 							url: '../login/login?msg=' + res.msg
 						});
@@ -84,7 +85,7 @@ export default {
 			});
 		});
 	},
-	/* getResponse(option, data, param, vm) {// 仅用于chat通讯
+	/* getResponse(option, data, param) {// 仅用于chat通讯
 		//console.log(option);
 		let ai_type = option.type;
 		//console.log(data['id'], data['token']);
@@ -100,11 +101,16 @@ export default {
 				});
 			}else if(response.code == 303){
 				uni.hideLoading();
-				vm.$refs.cModal.show({
-					content: response.msg,
-					cancelText: '晓得了',
-					success: function (res) {}
-				});
+				store.commit('user/setUserData',
+					{
+						'modalData':
+							{
+								content: response.msg,
+								cancelText: '晓得了',
+								success: function (res) {}
+							}
+						'modalShow': true
+					});
 				handle.afterResponseFun({
 					key: param,
 					value: {
@@ -128,7 +134,7 @@ export default {
 			})
 		});
 	},
-	bothSideRequest(model, data, ai, param_prefix, vm) {
+	bothSideRequest(model, data, ai, param_prefix) {
 		//console.log(this.last_called);
 		const now = Date.now();
 		if(now - this.last_called < 10000){
@@ -147,16 +153,16 @@ export default {
 		switch (ai){
 			case 7:
 				//console.log(data);
-				this.getResponse('aiController/chat2', data, param_prefix, vm);
+				this.getResponse('aiController/chat2', data, param_prefix);
 				break;
 			default:
 				data.key = store.state.user.user_key;
-				this.getResponse('aiController/chat', data, param_prefix, vm);
+				this.getResponse('aiController/chat', data, param_prefix);
 				break;
 		}
 		this.last_called = now;
 	}, */
-	/* getLocalResponse(option, data, vm) {
+	/* getLocalResponse(option, data) {
 		console.log(option);
 		this.post(option, data).then(response => {
 			console.log(response);
@@ -167,11 +173,16 @@ export default {
 				});
 			}else if(response.code == 303){
 				uni.hideLoading();
-				vm.$refs.cModal.show({
-					content: response.msg,
-					cancelText: '晓得了',
-					success: function (res) {}
-				});
+				store.commit('user/setUserData',
+					{
+						'modalData':
+							{
+								content: response.msg,
+								cancelText: '晓得了',
+								success: function (res) {}
+							}
+						'modalShow': true
+					});
 				handle.afterResponseFun({
 					key: option,
 					value: response.result
@@ -200,19 +211,13 @@ export default {
 			url: "https://api.ip.sb/jsonip", 
 			success: res => {
 				if(res.data.ip != store.state.user.ip || store.state.user.ippos == ''){
-					store.commit('user/setUserData', {
-						key: 'ip',
-						data: res.data.ip
-					});
+					store.commit('user/setUserData', {'ip': res.data.ip});
 					_self.post('userController/getIpPos', {
 						'ip': store.state.user.ip,
 					}).then(response => {
 						//console.log(response);
 						if(response.code == 200){
-							store.commit('user/setUserData', {
-								key: 'ippos',
-								data: response.result.regionName
-							});
+							store.commit('user/setUserData', {'ippos': response.result.regionName});
 						}
 					});
 				}

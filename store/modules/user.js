@@ -10,35 +10,38 @@ export default {
 		aimId: 0,
 		userGroup: 1,
 		groupExpiration: '',
+		powerLevel: 0,//用于限制提交本地崽的等级，非后台用户等级
 		
 		latestVersion: '',
-		screen: '',//设备尺寸，用于背景图计算裁切长宽比
 		darkMode: 'light',
-		powerLevel: 0,//用于限制提交本地崽的等级，非后台用户等级
 		totalReward: 0,
 		hasNewMsg: false,
+		settingOpen: {global: true, bubble: true},
 		
 		lastTimestampAd: 0,
 		lastTimestampAccount: 0, 
 		lastTimestampSubmit: {},
 		
-		settingOpen: {global: true, bubble: true},
-		
 		ip: '',
 		ippos: '',
+		
+		modalShow: false,
+		modalData: {}
 	},
 	getters: {},
 	mutations: {
-		setUserData: function(state, {key, data}){
-			state[key] = data;
+		setUserData: function(state, obj){
+			Object.keys(obj).forEach(key => {
+			    state[key] = obj[key]
+			})
 			uni.setStorageSync('userInfo', state);
 		},
 		getUserData: function(state){
 			//console.log(uni.getStorageSync('userInfo'));
 			let data = uni.getStorageSync('userInfo');
-			for(let key in state){
-				if(data[key] != undefined) state[key] = data[key];
-			}
+			Object.keys(data).forEach(key => {
+			    state[key] = data[key]
+			})
 		}
 	},
 	actions: {}

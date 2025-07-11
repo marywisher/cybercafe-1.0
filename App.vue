@@ -25,17 +25,35 @@
 </script>
 
 <style lang="scss">
+	@import '@/static/iconfont/iconfont.css';
 /*每个页面公共css */
+	body{
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+		    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+		    sans-serif;
+	}
+	button {
+		color: $uni-color-main;
+	}
+	button[disabled] {
+		color: $uni-text-color-disable;
+	}
+	button[type="primary"] {
+		background-color: $uni-color-main;
+	}
+	button[type="primary"][disabled] {
+		background-color: $uni-text-color-disable;
+	}
 	.content {
-		padding: $uni-spacing-base;
+		padding: $uni-width-none $uni-spacing-base;
 		margin: $uni-width-none auto;
 	}
 	.hint{
 		font-size: $uni-font-size-sm;
-		color: gray;
+		color: $uni-text-color-placeholder;
 	}
 	.required{
-		color: red;
+		color: $uni-color-main;//$uni-color-error;
 	}
 	.text-center{
 		text-align: center;
@@ -43,8 +61,14 @@
 	.display-flex{
 		display: flex;
 	}
+	.display-line{//配合display-flex一起用，保证一行对齐
+		align-items: center;
+	}
 	.sp-between{
 		justify-content: space-between;
+	}
+	.sp-around{
+		justify-content: space-around;
 	}
 	.list-item, .group-item{
 		border-radius: $uni-border-radius-lg;
@@ -65,14 +89,32 @@
 		padding: $uni-spacing-sm $uni-spacing-base;
 		margin-right: $uni-spacing-base;
 	}
-	input{
-		padding: $uni-spacing-sm $uni-spacing-base;
-		border: $uni-border-base solid $uni-text-color-grey;
+	input, textarea{
+		padding: $uni-spacing-base $uni-spacing-lg;
+		border: $uni-border-base solid $uni-border-color;
+		border-radius: $uni-border-radius-base;
+		color: $uni-text-color !important;
 	}
+	.display-hide{
+		display: none;
+	}
+	
 	@media (prefers-color-scheme: dark) {
+		button {
+			color: $uni-color-dark-main;
+		}
+		button[type="primary"] {
+			background-color: $uni-color-dark-main;
+		}
+		.required{
+			color: $uni-color-dark-main;
+		}
 		.list-item, .group-item{
 			box-shadow: $uni-width-none $uni-width-none $uni-spacing-base $uni-spacing-mini $uni-color-subtitle;
 			background-color: $uni-bg-dark-color-gray;
+		}
+		input, textarea{
+			color: $uni-text-color-disable !important;
 		}
 	}
 </style>

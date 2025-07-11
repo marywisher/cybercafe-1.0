@@ -13,17 +13,19 @@
  */
 
 /* 颜色变量 */
-$uni-color-main: #6BB1E1;
-$uni-color-secondary: #FFD166;
+$uni-color-main: #E94E46; //#6BB1E1;
+$uni-color-secondary: #F5B400; //#FFD166;
+$uni-color-dark-main: #C43830;
+$uni-color-dark-secondary: #FFF3E0;
 
 /* 行为相关颜色 */
-$uni-color-primary: #007aff;
+$uni-color-primary: #E94E46; //#6BB1E1;//#007aff;
 $uni-color-success: #4cd964;
 $uni-color-warning: #f0ad4e;
 $uni-color-error: #dd524d;
 
 /* 文字基本颜色 */
-$uni-text-color:#333;//基本色
+$uni-text-color:#333; //基本色
 $uni-text-color-inverse:#fff;//反色
 $uni-text-color-grey:#999;//辅助灰色，如加载更多的提示信息
 $uni-text-color-placeholder: #808080;
@@ -38,49 +40,50 @@ $uni-bg-dark-color:#000;
 $uni-bg-dark-color-gray:#1f1f1f;
 
 /* 边框颜色 */
-$uni-border-color:#c8c7cc;
+$uni-border-color:#ccc;
 $uni-box-shadow-color: #e5e5e5;
 
 /* 尺寸变量 */
 
 /* 宽度 */
 $uni-width-none: 0;
-$uni-border-base: 1px;
+$uni-border-base: 2rpx;
 
 /* 文字尺寸 */
-$uni-font-size-mini:10px;
-$uni-font-size-sm:12px;
-$uni-font-size-base:14px;
-$uni-font-size-lg:16px;
-$uni-font-size-huge:32px;
+$uni-font-size-mini:20rpx;
+$uni-font-size-sm:24rpx;
+$uni-font-size-base:28rpx;
+$uni-font-size-lg:32rpx;
+$uni-font-size-huge:40rpx;
 
 /* 图片尺寸 */
-$uni-img-size-sm:20px;
-$uni-img-size-base:26px;
-$uni-img-size-lg:40px;
+$uni-img-size-sm:40rpx;
+$uni-img-size-base:52rpx;
+$uni-img-size-lg:80rpx;
+$uni-img-size-huge: 120rpx;
 
 /* Border Radius */
-$uni-border-radius-sm: 2px;
-$uni-border-radius-base: 3px;
-$uni-border-radius-lg: 5px;
-$uni-border-radius-huge: 10px;
+$uni-border-radius-sm: 4rpx;
+$uni-border-radius-base: 8rpx;
+$uni-border-radius-lg: 12rpx;
+$uni-border-radius-huge: 20rpx;
 $uni-border-radius-circle: 50%;
 
 /* 水平间距 */
-$uni-spacing-row-sm: 5px;
-$uni-spacing-row-base: 10px;
-$uni-spacing-row-lg: 15px;
+$uni-spacing-row-sm: 10rpx;
+$uni-spacing-row-base: 20rpx;
+$uni-spacing-row-lg: 30rpx;
 
 /* 垂直间距 */
-$uni-spacing-col-sm: 4px;
-$uni-spacing-col-base: 8px;
-$uni-spacing-col-lg: 12px;
+$uni-spacing-col-sm: 8rpx;
+$uni-spacing-col-base: 16rpx;
+$uni-spacing-col-lg: 24rpx;
 
 /* margin padding */
-$uni-spacing-mini: 1px;
-$uni-spacing-sm: 3px;
-$uni-spacing-base: 5px;
-$uni-spacing-lg: 10px;
+$uni-spacing-mini: 2rpx;
+$uni-spacing-sm: 6rpx;
+$uni-spacing-base: 10rpx;
+$uni-spacing-lg: 20rpx;
 
 /* 透明度 */
 $uni-opacity-disabled: 0.3; // 组件禁用态的透明度

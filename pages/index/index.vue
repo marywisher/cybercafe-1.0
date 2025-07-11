@@ -2,29 +2,66 @@
 	<view class="content text-center">
 		<image class="logo" src="/static/logo.png"></image>
 		<view >
-			<text class="title">{{slogan}}</text>
-			<text class="title2">{{slogan2}}</text>
+			<text class="gradient-text">{{slogan}}</text>
 		</view>
+		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
 
 <script>
 	import sqlite from '@/func/common/sqlite';
 	import handleFun from '@/func/common/handleFun';
+	import {
+		mapMutations,
+		mapState,
+		mapActions
+	} from 'vuex';
 	export default {
 		data() {
 			return {
-				slogan: 'Cyber',
-				slogan2: 'Cafe'
+				slogan: 'CyberCafe'
 			}
+		},
+		watch:{
+			modalShow(newValue){
+				if(newValue){
+					this.$refs.cModal.show(this.modalData);
+					this.setUserData({
+						'modalShow': false
+					})
+				}
+			}
+		},
+		computed:{
+			...mapState('user', ['isLogin', 'modalData', 'modalShow']),
+		},
+		methods:{
+			...mapMutations('user', ['getUserData', 'setUserData']),
 		},
 		created() {
 			sqlite.initTable();
-				
-			handleFun.beforeInit();
+			setTimeout(() =>{
+				handleFun.beforeInit();
+			}, 500);
 		},
-		onLoad() {
-			
+		onLoad(options) {
+			//每日随机一个tip options.msg
+			/* if(true){
+				this.setUserData({
+					'modalData': {
+						title: '登录',
+						content: 'hello',
+						cancelText: 'OK'
+					},
+					'modalShow': false
+				})
+			} */
+			console.log(options)
+			setTimeout(() => {
+				uni.reLaunch({
+					url: '/pages/chat/index'
+				})
+			}, 500)
 		},
 		methods: {
 			
@@ -38,10 +75,14 @@
 		width: 108px;
 		height: 108px;
 	}
-	.title{
-		color: $uni-color-main;
+	.gradient-text {
+	    display: inline-block; /* 或者其他使文字成为块级元素的方式 */
+	    background-image: linear-gradient(to right, $uni-color-main, $uni-color-secondary); /* 渐变方向和颜色 */
+	    -webkit-background-clip: text; /* 只显示背景的文本部分 */
+	    color: transparent; /* 文字颜色设为透明，使背景色显示 */
 	}
-	.title2{
-		color: $uni-color-secondary;
+	.modal-view{
+		z-index: 999;
+		top: 20vh;
 	}
 </style>
