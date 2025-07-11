@@ -1,6 +1,8 @@
-import config from '@/config/config';
 import handle from '@/func/common/handleFun';
 import store from '@/store';
+import config from '@/config.json';
+
+const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 
 export default {
 	data() {
@@ -8,8 +10,7 @@ export default {
 	      last_called: 0, // 存储上一次调用的时间戳
 	    };
 	},
-	async post(option, options = {}) {
-		let configData = config.config;
+	async post(option, vm, options = {}) {
 		//console.log(configData.domain);
 		let res;
 		let url = configData.domain;
@@ -42,16 +43,10 @@ export default {
 					console.log(url, 'response data:', res.data);
 					if(res.data.code == 301){
 						uni.hideLoading();
-						uni.showModal({
-							title: '温馨提示',
+						vm.$refs.cModal.show({
 							content: res.data.msg,
-							showCancel: false,
-							confirmText: '晓得了',
-							success: function (res) {
-								if (res.confirm) {
-									console.log('用户点击确定');
-								} 
-							}
+							cancelText: '晓得了',
+							success: function (res) {}
 						});
 						store.commit('user/setUserData', {
 							key: 'refreshFlag',
@@ -60,34 +55,19 @@ export default {
 						return;
 					}else if(res.data.code == 302){
 						uni.hideLoading();
-						uni.showModal({
-							title: '温馨提示',
-							content: res.data.msg,
-							showCancel: false,
-							confirmText: '晓得了',
-							success: function (res) {
-								if (res.confirm) {
-									console.log('用户点击确定');
-								} 
-							}
-						});
 						//store.commit('user/resetUserData');
-						uni.reLaunch({
-							url: '/pages/login/login'
+						uni.navigateTo({
+							url: '../login/login?msg=' + res.data.msg
 						})
 					}else if(res.data.code == 300){
 						uni.hideLoading();
-						uni.showToast({
-							title: res.msg,
-							icon: 'none'
-						});
 						store.commit('user/setUserData', {
 							key: 'isLogin',
 							data: false
 						});
 						console.log('重新登录，来自：' + option);
 						uni.reLaunch({
-							url: '../login/login'
+							url: '../login/login?msg=' + res.msg
 						});
 					}else{
 						resolve(res.data);
@@ -104,7 +84,7 @@ export default {
 			});
 		});
 	},
-	/* getResponse(option, data, param) {// 仅用于chat通讯
+	/* getResponse(option, data, param, vm) {// 仅用于chat通讯
 		//console.log(option);
 		let ai_type = option.type;
 		//console.log(data['id'], data['token']);
@@ -120,16 +100,10 @@ export default {
 				});
 			}else if(response.code == 303){
 				uni.hideLoading();
-				uni.showModal({
-					title: '温馨提示',
+				vm.$refs.cModal.show({
 					content: response.msg,
-					showCancel: false,
-					confirmText: '晓得了',
-					success: function (res) {
-						if (res.confirm) {
-							console.log('用户点击确定');
-						} 
-					}
+					cancelText: '晓得了',
+					success: function (res) {}
 				});
 				handle.afterResponseFun({
 					key: param,
@@ -154,7 +128,7 @@ export default {
 			})
 		});
 	},
-	bothSideRequest(model, data, ai, param_prefix) {
+	bothSideRequest(model, data, ai, param_prefix, vm) {
 		//console.log(this.last_called);
 		const now = Date.now();
 		if(now - this.last_called < 10000){
@@ -173,16 +147,16 @@ export default {
 		switch (ai){
 			case 7:
 				//console.log(data);
-				this.getResponse('aiController/chat2', data, param_prefix);
+				this.getResponse('aiController/chat2', data, param_prefix, vm);
 				break;
 			default:
 				data.key = store.state.user.user_key;
-				this.getResponse('aiController/chat', data, param_prefix);
+				this.getResponse('aiController/chat', data, param_prefix, vm);
 				break;
 		}
 		this.last_called = now;
 	}, */
-	/* getLocalResponse(option, data) {
+	/* getLocalResponse(option, data, vm) {
 		console.log(option);
 		this.post(option, data).then(response => {
 			console.log(response);
@@ -193,16 +167,10 @@ export default {
 				});
 			}else if(response.code == 303){
 				uni.hideLoading();
-				uni.showModal({
-					title: '温馨提示',
+				vm.$refs.cModal.show({
 					content: response.msg,
-					showCancel: false,
-					confirmText: '晓得了',
-					success: function (res) {
-						if (res.confirm) {
-							console.log('用户点击确定');
-						} 
-					}
+					cancelText: '晓得了',
+					success: function (res) {}
 				});
 				handle.afterResponseFun({
 					key: option,
