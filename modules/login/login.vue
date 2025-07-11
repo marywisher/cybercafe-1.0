@@ -149,7 +149,7 @@
 								});
 							}, 2000);
 							uni.navigateTo({
-								url: '/pages/index/index?msg=login'
+								url: '/pages/index/index'
 							})
 							/* uni.switchTab({
 								url: '/pages/index/index'

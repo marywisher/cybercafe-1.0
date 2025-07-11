@@ -4,7 +4,7 @@
 		<view >
 			<text class="gradient-text">{{slogan}}</text>
 		</view>
-		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
+		<!-- <cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal> -->
 	</view>
 </template>
 
@@ -22,7 +22,7 @@
 				slogan: 'CyberCafe'
 			}
 		},
-		watch:{
+		/* watch:{
 			modalShow(newValue){
 				if(newValue){
 					this.$refs.cModal.show(this.modalData);
@@ -31,7 +31,7 @@
 					})
 				}
 			}
-		},
+		}, */
 		computed:{
 			...mapState('user', ['isLogin', 'modalData', 'modalShow']),
 		},
@@ -46,16 +46,6 @@
 		},
 		onLoad(options) {
 			//每日随机一个tip options.msg
-			/* if(true){
-				this.setUserData({
-					'modalData': {
-						title: '登录',
-						content: 'hello',
-						cancelText: 'OK'
-					},
-					'modalShow': false
-				})
-			} */
 			console.log(options)
 			setTimeout(() => {
 				uni.reLaunch({

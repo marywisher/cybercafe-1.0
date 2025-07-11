@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<cybercafe-card cardTitle="自设模型">
+		<cybercafe-card cardTitle="自设模型" :class="{'custom-card': ai == -1}">
 			<view v-if="model == ''" class="display-flex sp-between display-line">
 				<view class="ai-setting-label">api 参数</view>
 				<view class="ai-setting-right">
@@ -35,11 +35,17 @@
 					</view>
 				</view>
 			</view>
-			<view v-if="!connected" class="display-flex ai-setting-btn">
-				<cybercafe-button btnClass="btn-primary" :btnDisable="uncheckable" 
-					btnName="测试通讯"  @btnClick="checkConnect"></cybercafe-button>
+			<view class="display-flex sp-between btn-line">
+				<view class="display-flex ai-setting-btn">
+					<cybercafe-button btnClass="btn-primary" :btnDisable="connected || uncheckable" 
+						btnName="测试通讯"  @btnClick="checkConnect"></cybercafe-button>
+				</view>
+				<view v-if="connected" class="hint required text-center">{{connect_text}}</view>
+				<view class="display-flex ai-setting-btn">
+					<cybercafe-button btnClass="btn-default" :btnDisable="!connected || ai == -1" 
+						btnName="设为默认模型"  @btnClick="setAI"></cybercafe-button>
+				</view>
 			</view>
-			<view v-else class="hint required text-center">{{connect_text}}</view>
 		</cybercafe-card>
 		
 		<cybercafe-view class="model-list" ref="modelList" isAbsolute isScrollable closeAble
@@ -84,7 +90,7 @@
 			}
 		},
 		computed:{
-			...mapState('dialogue', ['aiGroup', 'aiRange']),
+			...mapState('dialogue', ['ai', 'aiGroup', 'aiRange', 'aiShowInMenu']),
 			...mapState('setting', ['customApiKey', 'customDomain',	'customModel', 'customParsedUrl',
 				'maxToken', 'temperature', 'tokenSetting', 'topP']),
 		},
@@ -96,6 +102,7 @@
 				this.parsed_url = this.customParsedUrl;
 				this.model = this.customModel;
 				this.api_key = this.customApiKey;
+				if(this.api_key) this.connected = true;
 				
 				//console.log(this.aiGroup);
 				const sortedKeys = Object.keys(this.aiGroup).sort((a, b) => {
@@ -141,12 +148,12 @@
 				this.domain = item.domain;
 				this.parsed_url = item.parsedUrl;
 				this.model = item.model;
-				this.setSettingData({
-					/* 'temperature': item.temperature,
-					'topP': item.topP, */
+				/* this.setSettingData({
+					'temperature': item.temperature,
+					'topP': item.topP, 
 					'maxToken': item.maxTokens,
 					'tokenSetting': this.tokenSetting > item.maxTokens ? item.maxTokens : this.tokenSetting
-				})
+				}) */
 				this.$refs.modelList.closeView();
 				if(this.api_key.trim() && this.domain.trim() && this.model.trim()) this.uncheckable = false;
 			},
@@ -204,12 +211,53 @@
 				}).finally(() => {
 					uni.hideLoading();
 				});
+			},
+			setAI(){
+				if(this.select_id != -1){
+					this.setSettingData({
+						'maxToken': this.aiRange[this.select_id].maxTokens,
+						'tokenSetting': this.tokenSetting > this.aiRange[this.select_id].maxTokens
+							? this.aiRange[this.select_id].maxTokens : this.tokenSetting
+					});
+				}else if(this.model){//通过model名获取
+					for(let i in this.aiRange){
+						if(this.model == this.aiRange[i].model){
+							this.setSettingData({
+								'maxToken': this.aiRange[i].maxTokens,
+								'tokenSetting': this.tokenSetting > this.aiRange[i].maxTokens
+									? this.aiRange[i].maxTokens : this.tokenSetting
+							});
+							break;
+						}
+					}
+					let self_range = this.aiRange;
+					self_range[-1] = {
+						'name': this.customModel,
+						'model': this.customModel,
+						'domain': this.customDomain,
+						'parsedUrl': this.customParsedUrl,
+						'maxTokens': this.maxToken
+					};
+					let ai_show_in_menu = this.aiShowInMenu;
+					if(ai_show_in_menu[-1] == undefined) ai_show_in_menu[-1] = true;
+					this.setSettingData({
+						'aiRange': self_range,
+						'aiShowInMenu': ai_show_in_menu
+					});
+				}
+				this.setDiaData({
+					'ai': -1
+				})
 			}
 		}
 	}
 </script>
 
 <style lang="scss">
+	.custom-card{
+		box-shadow: $uni-width-none $uni-width-none $uni-spacing-base $uni-color-main;
+		border: $uni-border-base solid $uni-color-main;
+	}
 	.custom-select {
 		border-radius: $uni-width-none;
 		border: $uni-width-none;
@@ -222,10 +270,17 @@
 		word-break: break-all;
 		margin-bottom: $uni-spacing-lg;
 	}
+	.btn-line{
+		flex-direction: row-reverse;
+	}
 	.model-list{
 		z-index: 3;
 	}
 	@media (prefers-color-scheme: dark) {
+		.custom-card{
+			box-shadow: $uni-width-none $uni-width-none $uni-spacing-base $uni-color-dark-main;
+			border: $uni-border-base solid $uni-color-dark-main;
+		}
 		.custom-select {
 			border-bottom-color: $uni-color-dark-main;
 			color: $uni-color-dark-main;

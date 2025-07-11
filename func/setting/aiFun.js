@@ -131,6 +131,31 @@ export default {
 							}
 						} 
 					}
+					//自设
+					if(store.state.setting.customApiKey){
+						let tmp_max_token = 0;
+						for(let i in rangeValue){
+							if(store.state.setting.customModel == rangeValue[i].model){
+								tmp_max_token = rangeValue[i].maxTokens;
+								break;
+							}
+						}
+						rangeValue[-1] = {
+							'id': -1,
+							'name': store.state.setting.customModel,
+							'model': store.state.setting.customModel,
+							'nickName': '自设模型',
+							'price': '自行支付',
+							'description': '',
+							'domain': store.state.setting.customDomain,
+							'parsedUrl': store.state.setting.customParsedUrl,
+							'maxTokens': tmp_max_token,
+							'level': 1,
+							'enabled': true
+						}
+						ai_show_in_menu[-1] = true;
+					}					
+					
 					//console.log(rangeValue);
 					store.commit('dialogue/setDiaData', {
 						'aiRange': rangeValue,
