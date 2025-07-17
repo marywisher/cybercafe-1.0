@@ -1,32 +1,48 @@
 <template>
 	<view>
 		<cybercafe-view>
-			<view class="display-flex sp-between">
-				<view class="global-setting-label">夜间模式</view>
-				<view class="display-flex">
-					<switch :checked="darkMode == 'light'" color="#E94E46" style="transform:scale(0.6)"
-						@change="turnLight"></switch>
-					<label>{{light_label}}</label>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line">
+					<view class="global-setting-label">夜间模式</view>
+					<view class="display-flex display-line">
+						<switch :checked="darkMode == 'light'" color="#E94E46" style="transform:scale(0.6)"
+							@change="turnLight"></switch>
+						<label>{{light_label}}</label>
+					</view>
+				</view>			
+			</cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="gotoBubble">
+					<view class="global-setting-label">外观设置</view>
+					<span class="iconfont icon-xiayibu"></span>
 				</view>
-			</view>			
-		</cybercafe-view>		
-		<cybercafe-view>
-			<view class="display-flex sp-between" @tap="uploadData">
-				<view class="global-setting-label">上传数据</view>
-				<span class="iconfont icon-xiayibu"></span>
-			</view>			
+			</cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="gotoAi">
+					<view class="global-setting-label">大模型设置</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
 		</cybercafe-view>
 		<cybercafe-view>
-			<view class="display-flex sp-between" @tap="downloadData">
-				<view class="global-setting-label">下载数据</view>
-				<span class="iconfont icon-xiayibu"></span>
-			</view>
-		</cybercafe-view>
-		<cybercafe-view v-if="userId == 1">
-			<view class="display-flex sp-between" @tap="gotoData">
-				<view class="global-setting-label">查看数据</view>
-				<span class="iconfont icon-xiayibu"></span>
-			</view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="uploadData">
+					<view class="global-setting-label">上传数据</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>			
+			</cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="downloadData">
+					<view class="global-setting-label">下载数据</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
+			<cybercafe-view v-if="userId == 1">
+				<view class="display-flex sp-between display-line" @tap="gotoData">
+					<view class="global-setting-label">查看数据</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
 		</cybercafe-view>
 		<cybercafe-view>
 			<view>最新版本：{{latestVersion}}<br>当前版本：{{my_version}}</view>
@@ -122,6 +138,16 @@
 							})
 						}
 					}
+				})
+			},
+			gotoBubble(){
+				uni.navigateTo({
+					url: './decorateSetting'
+				})
+			},
+			gotoAi(){
+				uni.navigateTo({
+					url: './aiSetting'
 				})
 			}
 		},

@@ -26,11 +26,11 @@
 			</view>
 			<view class="display-flex pop-menu-line" @tap="changeEntity">
 				<view class="iconfont icon-zuoyoujiantou-2 menu-icon-left"></view>
-				<span>切换羁绊</span>
+				<span>切换容器</span>
 			</view>
 			<view class="display-flex pop-menu-line required" @tap="delEntity">
 				<view class="required iconfont icon-shanchu menu-icon-left"></view>
-				<span>解散本羁绊</span>
+				<span>解散本容器</span>
 			</view>
 			<!-- 正则 破甲 -->
 		</cybercafe-menu>

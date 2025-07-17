@@ -111,16 +111,36 @@
   content: "\e688";
 }
 
+.icon-jiahao:before {
+  content: "\eaf3";
+}
+
+.icon-jianhao:before {
+  content: "\eaf5";
+}
+
 .icon-chatou:before {
   content: "\ec77";
+}
+
+.icon-feiquanping:before {
+  content: "\e610";
 }
 
 .icon-ziyuan:before {
   content: "\e622";
 }
 
+.icon-quanping:before {
+  content: "\e658";
+}
+
 .icon-pintu:before {
   content: "\e6c1";
+}
+
+.icon-banping:before {
+  content: "\e81a";
 }
 
 .icon-dengpao:before {

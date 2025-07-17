@@ -11,7 +11,8 @@
 			:style="popViewStyle">
 			<view class="view-top">
 				<view class="title text-center" :class="{'title-red': titleRed}">{{viewTitle}}</view>
-				<view v-if="isAbsolute && closeAble" class="iconfont icon-guanbi" @tap="closeView" />
+				<view v-if="isAbsolute && closeAble && closeType > 0" class="iconfont icon-guanbi" @tap="closeView"
+					:class="{'close-center-btm': closeType == 2, 'close-right-top': closeType == 1}"/>
 			</view>
 			<scroll-view v-if="isScrollable" class="cybercafe-scroll-part" scroll-y="true" refresher-default-style="black">
 				<slot/>
@@ -62,6 +63,10 @@
 			titleRed:{
 				type: Boolean,
 				default: false,
+			},
+			closeType:{//关闭按钮样式，closeAble为true时生效 0无 1右上 2下居中
+				type: Number,
+				default: 1
 			}
 		},
 		data(){
@@ -79,6 +84,7 @@
 				this.visible = true;
 			},
 			closeView(){
+				//console.log('close');
 				this.visible = false;
 				if(this.closeAble){
 					this.$emit('close');
@@ -117,7 +123,7 @@
 	.title-red{
 		color: $uni-color-main;
 	}
-	.icon-guanbi{
+	.icon-guanbi.close-right-top{
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -140,6 +146,11 @@
 	}
 	.disabled-view{
 		color: $uni-text-color-disable;
+	}
+	.close-center-btm{
+		position: absolute;
+		bottom: -85vh;
+		right: calc(50vw - $uni-spacing-lg);
 	}
 	@media (prefers-color-scheme: dark) {
 		.cybercafe-main-view{

@@ -1,36 +1,36 @@
 <template>
-	<view class="img-box" v-show="show_box">
-		<view class="img-mask"></view>
+	<cybercafe-view class="img-box" ref="imgBox" isAbsolute closeAble :closeType="2"
+		popViewStyle="position: fixed; top: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none; color: #c0c0c0;">
 		
-		<!-- <uni-swiper-dot class="img-swiper" :current="swiper_current" mode="round"  :dots-styles="swiper_dot_styles"
-			:info="" @clickItem="clickItem"> -->
-			<swiper class="swiper-box" @change="swiperChange" :current="swiper_current">
-				<swiper-item>
-					<image class="ipimg" mode="aspectFit" :src="originImg" @tap="closeBox"></image>
-				</swiper-item>
-				<swiper-item v-if="images.length > 0" v-for="(item, index) in images" :key="index">
-					<view class="upload-btn" v-if="item.image_status == 4">
-						<uni-icons type="upload" style="color: white;" @tap="uploadimg(item)"></uni-icons>
-					</view>
-					<image class="ipimg" mode="aspectFit" :src="item" @tap="selectImg"></image>
-				</swiper-item>
-				<swiper-item v-if="showCreate">
-					<image class="ipimg" mode="aspectFit" :src="default_image" @tap="openCrop"></image>
-				</swiper-item>
-			</swiper>
-		<!-- </uni-swiper-dot> -->
+		<swiper class="swiper-box" @change="swiperChange" :current="swiper_current">
+			<swiper-item>
+				<image class="ipimg" mode="aspectFit" :src="originImg" @tap="closeBox"></image>
+			</swiper-item>
+			<swiper-item v-if="images.length > 0" v-for="(item, index) in images" :key="index">
+				<view class="upload-btn" v-if="item.image_status == 4">
+					<uni-icons type="upload" style="color: white;" @tap="uploadimg(item)"></uni-icons>
+				</view>
+				<image class="ipimg" mode="aspectFit" :src="item" @tap="selectImg"></image>
+			</swiper-item>
+			<swiper-item v-if="showCreate">
+				<image class="ipimg" mode="aspectFit" :src="default_image" @tap="openCrop"></image>
+			</swiper-item>
+		</swiper>
 		
-		<view class="swiper-dot display-flex sp-between">
-			<view v-for="(item, index) in (showCreate ? images.concat(['1', '2']) : images.concat(['1']))" :key="index" class="swiper-dot-item" 
-				:class="{'swiper-dot-active': index == swiper_current}" @tap="clickItem"></view>
+		<view class="swiper-dot">
+			<view class="display-flex" :style="dynamicViewWidth">
+				<view v-for="(item, index) in (showCreate ? images.concat(['1', '2']) : images.concat(['1']))"
+					:key="index" class="swiper-dot-item" :id="index"
+					:class="{'swiper-dot-active': index == swiper_current}" @tap="clickItem"></view>
+			</view>
 		</view>
 		
-		<cybercafe-view class="more-box" type="bottom" ref="popup" @maskClick="closeCrop">
+		<cybercafe-view ref="popup" @maskClick="closeCrop" isAbsolute closeAble :closeType="0"
+			popViewStyle="position: fixed; bottom: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none;">
 			<okingtz-cropper :beEmpty="beEmpty" :fixedNumber="fixedNumber" :dark="dark"
 				:maxCropper="true" @uploadSuccess="saveImage"></okingtz-cropper>
 		</cybercafe-view>
-		<view class="close-btn"><uni-icons type="closeempty" style="color: white;" @tap="closeBox"></uni-icons></view>
-	</view>
+	</cybercafe-view>
 </template>
 
 <script>
@@ -89,33 +89,37 @@
 					selectedBackgroundColor: 'rgba(255, 255, 255, .9)',
 					selectedBorder: '1px rgba(255, 255, 255, .9) solid'
 				},
-				show_box: false,
 			}
 		},
 		watch: {
 			id(newValue){
-				console.log(newValue);
-				
+				//console.log(newValue);
 			}
 		},
 		computed: {
 			...mapState('user', ['screen']),
 			beEmpty(){
 				return this.id == 'entity' && this.originImg != this.default_image ? true : false;
+			},
+			dynamicViewWidth(){
+				return 'width:' + (( 2 * (this.showCreate ? this.images.length + 2 : this.images.length + 1) + 1 ) * 20) + 'rpx';//（2倍数量+1）*10
 			}
 		},
 		methods:{
 			...mapMutations('user', ['getUserData']),
 			openBox(id){
 				//console.log(this.id);
+				this.$refs.imgBox.openView();
 				this.id = id;
 				this.swiper_current = 0;
-				this.show_box = true;
 				this.images = [];
+				this.$nextTick(() =>{
+					this.$refs.popup.closeView();
+				})				
 				this.init();
 			},
 			init(){
-				console.log(this.id)
+				//console.log(this.id)
 				if(this.originImg == this.default_image){
 					this.openCrop();
 					return;
@@ -149,7 +153,7 @@
 					let sqlStr = "select * from cybercafe_images where image_type = '" + this.id 
 						+ "' and (image_status = 1 or image_status = 4) and image_src <> '" + this.originImg 
 						+ "' order by image_selected_count DESC, image_created_at DESC";
-					//console.log(sqlStr);
+					console.log(sqlStr);
 					sqlite.selectSQL(sqlStr).then(data => {
 						if(data.length > 0){
 							for(let i = 0; i < data.length; i ++){
@@ -229,15 +233,15 @@
 					this.fixedNumber = [1, 1];
 				}
 				//console.log(this.fixedNumber);
-				this.$refs.popup.open();
+				this.$refs.popup.openView();
 			},
 			closeCrop(){
-				this.$refs.popup.close();
+				this.$refs.popup.closeView();
 			},
 			saveImage(tempFilePath) {
 				let _self = this;
 				_self.operateImg(tempFilePath);
-				_self.$refs.popup.close();
+				_self.$refs.popup.closeView();
 			},
 			operateImg(imgFile){
 				if(imgFile == ''){
@@ -250,13 +254,13 @@
 						'image_selected_count': 1,
 						'image_status': 4
 					};
-					baseQuery.insertDataByKey('cybercafe_images', insertArr);	
+					baseQuery.insertDataByKey('cybercafe_images', insertArr, true);	
 				}
 				this.closeBox();
 				this.$emit('afterClick', imgFile);
 			},
 			closeBox(){
-				this.show_box = false;
+				this.$refs.imgBox.closeView();
 				//console.log('close');
 			},
 			uploadimg(item){
@@ -266,7 +270,9 @@
 				})
 			},
 			clickItem(e){//swiper点
-				this.swiper_current = e;
+				//console.log(e);
+				if(e.currentTarget.id == this.swiper_current) return;
+				this.swiper_current = e.currentTarget.id;
 			},
 		}
 	}
@@ -282,31 +288,12 @@
 		text-align: center;
 		z-index: 2;
 	}
-	.img-mask{
-		width: 100vw;
-		height: 100vh;
-		position: absolute;
-		top: 0;
-		left: 0;
-		background-color: $uni-bg-color-mask;
-		z-index: 2;
-	}
 	.swiper-box{
 		height: 80vh;
 	}
 	.ipimg{
 		width: 100vw;
 		min-height: 100vw;
-	}
-	.img-swiper{
-		padding-top: 20vh;
-		z-index: 3;
-	}
-	.close-btn{
-		position: absolute;
-		top: 13vh;
-		right: 3vh;
-		z-index: 5000;
 	}
 	.upload-btn{
 		position: absolute;
@@ -316,16 +303,19 @@
 	}
 	
 	.swiper-dot{
-		width: 40vw;
-		margin: 0 auto;
+		width: 100vw;
 		position: fixed;
 		bottom: 20vh;
 	}
+	.swiper-dot > view{
+		margin: 0 auto;
+	}	
 	.swiper-dot-item{
 		width: $uni-spacing-lg;
 		height: $uni-spacing-lg;
-		border-radius: $uni-border-radius-circle;
-		background-color: $uni-text-color;
+		border-radius: $uni-border-radius-huge;
+		background-color: $uni-color-secondary;
+		margin-right: $uni-spacing-lg;
 	}
 	.swiper-dot-active{
 		width: calc(3 * $uni-spacing-lg);

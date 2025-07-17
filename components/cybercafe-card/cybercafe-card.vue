@@ -31,7 +31,7 @@
 		},
 		watch:{
 			showDetail(newValue){
-				console.log('34:', newValue)
+				//console.log('34:', newValue)
 				this.show_detail = newValue;
 			}
 		},

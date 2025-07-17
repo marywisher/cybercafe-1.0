@@ -159,7 +159,8 @@ export default {
 					//console.log(rangeValue);
 					store.commit('dialogue/setDiaData', {
 						'aiRange': rangeValue,
-						'aiGroup': res.result.group
+						'aiGroup': res.result.group,
+						'aiSelect': rangeValue[store.state.dialogue.ai].nickName,
 					});
 					store.commit('setting/setSettingData', {
 						'aiShowInMenu': ai_show_in_menu

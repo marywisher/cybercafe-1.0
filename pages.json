@@ -22,7 +22,7 @@
 		{
 			"path": "pages/chat/entityList",
 			"style": {
-				"navigationBarTitleText": "羁绊列表"
+				"navigationBarTitleText": "容器列表"
 			}
 		},
 		/* {
@@ -50,7 +50,7 @@
 			}
 		},
 		{
-			"path": "pages/setting/decrateSetting",
+			"path": "pages/setting/decorateSetting",
 			"style": {
 				"navigationBarTitleText": "样式设置"
 			}

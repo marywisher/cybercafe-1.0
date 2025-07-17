@@ -33,7 +33,7 @@
 		data(){
 			return{
 				range: {},
-				select_id: '',
+				select_id: -1,
 			}
 		},
 		watch:{

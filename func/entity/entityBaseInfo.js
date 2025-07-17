@@ -20,8 +20,12 @@ export default{
 					}
 					store.commit('dialogue/setDiaData', {
 						'ai': res.result.api_id,
-						'aiSelect': store.state.dialogue.aiRange[res.result.api_id].nickName,//res.result.ai_select
 					});
+					if(!store.state.dialogue.aiSelect){
+						store.commit('dialogue/setDiaData', {
+							'aiSelect': res.result.ai_select
+						});
+					}
 					resolve(res.result.entity_id);
 				}else {
 					uni.showToast({
@@ -41,7 +45,6 @@ export default{
 			'historylist': [],
 			'characterlist': {}
 		});
-		//console.log(store.state.setting.entityId);
 		let entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
 			'entity_id': store.state.setting.entityId});
 		if(entity_data.length == 0){
@@ -57,7 +60,6 @@ export default{
 			'me': entity_data[0].subject_name,
 			'entityImage': entity_data[0].entity_img
 		});
-		
 		store.state.dialogue.characterlist[0] = {
 			'character_description': entity_data[0].subject_description ? entity_data[0].subject_description : '',
 			'group_description': entity_data[0].extra_description ? entity_data[0].extra_description : '',

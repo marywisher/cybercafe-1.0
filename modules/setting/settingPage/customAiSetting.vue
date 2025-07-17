@@ -35,15 +35,15 @@
 					</view>
 				</view>
 			</view>
-			<view class="display-flex sp-between btn-line">
-				<view class="display-flex ai-setting-btn">
-					<cybercafe-button btnClass="btn-primary" :btnDisable="connected || uncheckable" 
-						btnName="测试通讯"  @btnClick="checkConnect"></cybercafe-button>
-				</view>
-				<view v-if="connected" class="hint required text-center">{{connect_text}}</view>
+			<view class="display-flex sp-between display-line">
 				<view class="display-flex ai-setting-btn">
 					<cybercafe-button btnClass="btn-default" :btnDisable="!connected || ai == -1" 
 						btnName="设为默认模型"  @btnClick="setAI"></cybercafe-button>
+				</view>
+				<view v-if="connected" class="hint required text-center">{{connect_text}}</view>
+				<view class="display-flex ai-setting-btn">
+					<cybercafe-button btnClass="btn-primary" :btnDisable="connected || uncheckable" 
+						btnName="测试通讯"  @btnClick="checkConnect"></cybercafe-button>
 				</view>
 			</view>
 		</cybercafe-card>
@@ -86,7 +86,7 @@
 				group: {},
 				select_id: -1,
 				connected: false,
-				connect_text: ''
+				connect_text: '通讯失败，请检查重试'
 			}
 		},
 		computed:{
@@ -270,8 +270,9 @@
 		word-break: break-all;
 		margin-bottom: $uni-spacing-lg;
 	}
-	.btn-line{
-		flex-direction: row-reverse;
+	.display-line .text-center{
+		line-height: calc(1.5 * $uni-font-size-huge);
+		align-self: flex-end;
 	}
 	.model-list{
 		z-index: 3;

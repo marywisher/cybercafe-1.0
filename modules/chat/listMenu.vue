@@ -158,7 +158,7 @@
 			},
 			decorateBubble(){
 				uni.navigateTo({
-					url: '/pages/setting/decrateSetting'
+					url: '/pages/setting/decorateSetting'
 				})
 			}
 		}
