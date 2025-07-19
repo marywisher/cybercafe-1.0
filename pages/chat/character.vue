@@ -1,9 +1,15 @@
 <template>
 	<view>
 		<view class="character-bg" :style="dynamicImg"></view>
+		<view class="character-header display-flex">
+			<!-- 顶部 -->
+			<view class="header-left">
+				<view class="iconfont icon-xiayibu" @tap="back"></view>
+			</view>
+		</view>
 		<view class="view-for-tap" @tap="showMoreImg"></view>
 		
-		<descriptionPart ref="cDP" @afterLoad="afterLoad"></descriptionPart>
+		<descriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"></descriptionPart>
 		<image-part ref="cImgPart" :originImg="character_image" :dark="darkMode" :ckey="character_key"
 			showCreate showLocal showOnline @afterClick="afterSelectImg"></image-part>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
@@ -60,6 +66,9 @@
 			afterLoad(param){
 				this.character_image = param.image;
 				this.character_key = param.key;
+			},
+			back(){
+				uni.navigateBack();
 			}
 		},
 		onLoad(option) {
@@ -89,5 +98,26 @@
 		left: 0; 
 		z-index: 1; 
 		background: rgba(0, 0, 0, 0);
+	}
+	.character-header{
+		position: fixed;
+		top: 5vh;
+		left: 0;
+		width: calc(100vw - 2 * $uni-spacing-base);
+		z-index: 2;
+	}
+	.icon-xiayibu{
+		transform: rotate(180deg);
+		color: $uni-color-main;
+		font-size: $uni-font-size-huge;
+		margin-left: $uni-spacing-base;
+	}
+	.character-des{
+		z-index: 3;
+	}
+	@media (prefers-color-scheme: dark) {
+		.icon-xiayibu{
+			color: $uni-color-dark-main;
+		}
 	}
 </style>
