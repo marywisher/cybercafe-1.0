@@ -158,6 +158,7 @@
 		top: 5vh;
 		left: 0;
 		width: calc(100vw - 2 * $uni-spacing-base);
+		color: $uni-color-main;
 	}
 	.chat-body{
 		position: absolute;
@@ -215,6 +216,9 @@
 		top: 20vh;
 	}
 	@media (prefers-color-scheme: dark) {
+		.chat-header{
+			color: $uni-color-dark-main;
+		}
 		.icon-fasong{
 			color: $uni-color-dark-main;
 		}

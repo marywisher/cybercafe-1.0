@@ -20,12 +20,8 @@ export default{
 					}
 					store.commit('dialogue/setDiaData', {
 						'ai': res.result.api_id,
+						'aiSelect': res.result.api_id == -1 ? '自设模型' : res.result.ai_select
 					});
-					if(!store.state.dialogue.aiSelect){
-						store.commit('dialogue/setDiaData', {
-							'aiSelect': res.result.ai_select
-						});
-					}
 					resolve(res.result.entity_id);
 				}else {
 					uni.showToast({

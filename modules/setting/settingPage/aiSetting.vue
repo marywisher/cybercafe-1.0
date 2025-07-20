@@ -46,6 +46,11 @@
 				select_id: -1
 			}
 		},
+		watch:{
+			ai(newValue){
+				this.select_id = -1;
+			}
+		},
 		computed:{
 			...mapState('user', ['modalData', 'modalShow']),
 			...mapState('dialogue', ['ai', 'aiGroup', 'aiRange']),

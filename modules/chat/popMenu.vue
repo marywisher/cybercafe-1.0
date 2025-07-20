@@ -10,7 +10,7 @@
 					<view class="iconfont icon-chatou menu-icon-left"></view>
 					<view class="under-line text-center">{{aiSelect}}</view>
 				</view>				
-				<view class="iconfont icon-shezhi" @tap="gotoAiSetting"></view>
+				<view class="iconfont icon-shezhi menu-icon-right" @tap="gotoAiSetting"></view>
 			</view>
 			<view class="display-flex pop-menu-line">
 				<view class="iconfont icon-pintu menu-icon-left"></view>
@@ -23,6 +23,10 @@
 			<view class="display-flex pop-menu-line">
 				<view class="iconfont icon-tiaojieqitiaojie menu-icon-left"></view>
 				<span>回复格式设置</span>
+			</view>
+			<view class="display-flex pop-menu-line">
+				<view class="iconfont icon-shezhi menu-icon-left"></view>
+				<span>本容器设置</span>
 			</view>
 			<view class="display-flex pop-menu-line" @tap="changeEntity">
 				<view class="iconfont icon-zuoyoujiantou-2 menu-icon-left"></view>
@@ -52,11 +56,27 @@
 		components:{
 			aiSetting
 		},
+		watch:{
+			aiRange(newValue){
+				if(newValue.hasOwnProperty(this.ai)){
+					this.setDiaData({
+						'aiSelect': newValue[this.ai].nickName
+					})
+				}
+			},
+			ai(newValue){
+				if(this.aiRange.hasOwnProperty(newValue)){
+					this.setDiaData({
+						'aiSelect': this.aiRange[newValue].nickName
+					})
+				}
+			}
+		},
 		computed:{
-			...mapState('dialogue', ['aiSelect']),
+			...mapState('dialogue', ['ai', 'aiRange', 'aiSelect']),
 		},
 		methods:{
-			...mapMutations('dialogue', ['getDiaData']),
+			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			init(){
 				this.$refs.popAiSetting.closeView();
 				this.$refs.rightMenuPop.closeView();
@@ -114,10 +134,10 @@
 	.pop-menu-line .menu-icon-left{
 		margin-right: $uni-spacing-lg;
 	}
-	.cybercafe-main-menu-short .pop-menu-line .icon-shezhi{
+	.cybercafe-main-menu-short .pop-menu-line .menu-icon-right{
 		display: none;
 	}
-	.cybercafe-main-menu-long .pop-menu-line .icon-shezhi{
+	.cybercafe-main-menu-long .pop-menu-line .menu-icon-right{
 		position: absolute;
 		top: 0;
 		right: 0;

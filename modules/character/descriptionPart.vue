@@ -12,11 +12,11 @@
 			</picker>
 		</view>
 		<view class="character-line">
-			<view><label class="required">*</label>简介 {{short_description.length}} / 100字</view>
-			<view class="hint">用于列表显示，会传AI</view>
+			<view><label class="required">*</label>简介  / 100字</view>
+			<view class="hint">用于角色列表展示</view>
 			<textarea autoHeight v-model="short_description" maxlength="100" :cursor-spacing="150"
-			 :styles="dynamicStyle" placeholder="请输入角色概述" adjust-position  
-			 @blur="autoSave('short_description', short_description, '角色概述')"></textarea>
+			 :styles="dynamicStyle" placeholder="请输入角色简介" adjust-position  
+			 @blur="autoSave('basic', short_description, '简介')"></textarea>
 		</view>
 		<view class="hint character-line" v-html="hint"></view>
 		<cybercafe-card cardTitle="补充说明">
@@ -26,14 +26,14 @@
 					<view class="iconfont icon-jianhao" @tap="reduceDes('basic', index)"></view>
 				</view>
 				<view>
-					<textarea class="inner-ta" autoHeight :cursor-spacing="150"
+					<textarea class="inner-ta" autoHeight :cursor-spacing="150" v-model="basic_description[index]"
 					 :styles="dynamicStyle" :placeholder="'请输入角色' + index" adjust-position  
-					 @blur="autoSave('basic_description' + index, basic_description[index], '角色' + index)"></textarea>
+					 @blur="autoSave('basic', basic_description[index], index)"></textarea>
 				</view>
 			</cybercafe-view>
 			<cybercafe-view>
 				<view class="display-flex sp-between display-line">
-					<view><input v-model="basic_key" @input="addDes('basic')" /></view>
+					<view><input v-model="basic_key" placeholder="请输入角色补充项" /></view>
 					<view v-if="basic_ta_show == false" class="iconfont icon-jiahao" @tap="toggleTaFun('basic', 'show')"></view>
 					<view v-else class="iconfont icon-jianhao" @tap="toggleTaFun('basic', 'hide')"></view>
 				</view>
@@ -45,25 +45,40 @@
 		</cybercafe-card>
 		<view class="character-flag-tag world-tag">世界观</view>
 		<view class="character-line after-tag">
-			<view>剧情背景 {{full_description.length}} / 2000字</view>
-			<view class="hint">不用重复简介，会传AI</view>
+			<view>故事背景  / 2000字</view>
 			<textarea autoHeight v-model="full_description" maxlength="2000" :cursor-spacing="150"
 				 :styles="dynamicStyle" placeholder="请输入故事介绍" adjust-position 
-				 @blur="autoSave('full_description', full_description, '剧情背景')"></textarea>
+				 @blur="autoSave('extend', full_description, '故事背景')"></textarea>
 		</view>
 		<cybercafe-card cardTitle="其它设定">
-			<view class="character-line">
-				<view>角色限制 {{full_description.length}} / 2000字</view>
-				<view class="hint">会传AI</view>
-				<textarea class="inner-ta" autoHeight maxlength="2000" :cursor-spacing="150"
-					 :styles="dynamicStyle" placeholder="请输入角色的行为习惯限制、口头禅" adjust-position 
-					 @blur="autoSave('full_description', full_description, '角色限制')"></textarea>
-			</view>
+			<cybercafe-view v-for="(item, index) in extend_description" :key="index">
+				<view>角色限制  / 2000字</view>
+				<view class="display-flex sp-between display-line">
+					<view>{{index}}</view>
+					<view class="iconfont icon-jianhao" @tap="reduceDes('extend', index)"></view>
+				</view>
+				<view>
+					<textarea class="inner-ta" autoHeight :cursor-spacing="150" v-model="extend_description[index]"
+					 :styles="dynamicStyle" :placeholder="'请输入角色' + index" adjust-position  
+					 @blur="autoSave('extend', extend_description[index], index)"></textarea>
+				</view>
+			</cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line">
+					<view><input v-model="extend_key" placeholder="请输入角色限制项" /></view>
+					<view v-if="extend_ta_show == false" class="iconfont icon-jiahao" @tap="toggleTaFun('extend', 'show')"></view>
+					<view v-else class="iconfont icon-jianhao" @tap="toggleTaFun('extend', 'hide')"></view>
+				</view>
+				<view v-if="extend_ta_show">
+					<textarea class="inner-ta" autoHeight :cursor-spacing="150" v-model="extend_value"
+					 :styles="dynamicStyle" :placeholder="'请输入角色' + extend_key" adjust-position  @input="addDes('extend')"></textarea>
+				</view>
+			</cybercafe-view>
 		</cybercafe-card>
 		<view class="character-flag-tag branch-story-tag">副本剧情</view>
 		<view class="character-line after-tag"></view>
 		<view class="character-line">
-			<view>开场白 {{character_prologue.length}} / 500字</view>
+			<view>开场白  / 500字</view>
 			<textarea autoHeight v-model="character_prologue" maxlength="500" :cursor-spacing="150"
 				 :styles="dynamicStyle" placeholder="开场白" adjust-position 
 				 @blur="autoSave('character_prologue', character_prologue, '开场白')"></textarea>
@@ -95,7 +110,9 @@
 				character_name: '',
 				default_image: configData.defaultImg,
 				character_gender: 0,
+				gender_cn: '未知',
 				gender: ['未知', '男', '女'],
+				discription_data: '', //字段数据
 				character_prologue: '',
 				tag: [],
 				character_tag: '',
@@ -113,22 +130,6 @@
 				extend_value: '',
 				basic_ta_show: false,
 				extend_ta_show: false,
-				
-				submit_mode: false,
-				online: false,
-				
-				edit_flag: false,//编辑后退出提醒
-				
-				position: {
-					x: 0,
-					y: 0
-				},
-				show_menu: false,
-				upload_process: [{title:'语义检测',desc:'未完成'}, {title:'标签提取',desc:'未完成'},
-					{title:'内容上传',desc:'未完成'},{title:'图片上传',desc:'未完成'},{title:'完成提交',desc:''}],
-				active: 0,
-				show_btn: false,
-				
 				
 				hint: "请统一使用<label class=\"required\">{{user}}</label>或<label class=\"required\">你</label>指代主控，<label class=\"required\">{{char}}</label>或<label class=\"required\">他/她</label>指代角色"
 			}
@@ -148,18 +149,18 @@
 				this.getUserData();
 				
 				let character_data = await baseQuery.getDataByKey('cybercafe_character', {character_id: this.character_id});
-				//console.log(character_data);
+				console.log(character_data);
 				//if(!character_data) return;
 				this.character_name = character_data[0].character_name;
-				let description = character_data[0].character_description;
-				if(!common.isJsonString(description)){
-					let pos = description.indexOf('\\n');
+				this.discription_data = character_data[0].character_description;
+				if(!common.isJsonString(this.discription_data)){
+					let pos = this.discription_data.indexOf('\\n');
 					if(pos == -1){
-						pos = description.indexOf('\r\n');
+						pos = this.discription_data.indexOf('\r\n');
 					}
-					let gender_pos = description.substr(0, pos).indexOf('，');
-					let gender_str = description.substr(0, gender_pos);
-					switch(gender_str){
+					let gender_pos = this.discription_data.substr(0, pos).indexOf('，');
+					this.gender_cn = this.discription_data.substr(0, gender_pos);
+					switch(this.gender_cn){
 						default: 
 						this.character_gender = 0;
 						break;
@@ -171,41 +172,112 @@
 						break;
 					}
 					
-					this.short_description = pos > -1 ? common.textOperation(description.substr(gender_pos + 1, pos - 1), '你').text 
-						: common.textOperation(description, '你').text;
-					this.full_description = pos > -1 ? common.textOperation(description.substr(pos + 2), '你').text : '';
+					this.short_description = pos > -1 ? common.textOperation(this.discription_data.substr(gender_pos + 1, pos - 1), '你').text 
+						: common.textOperation(this.discription_data, '你').text;
+					this.full_description = pos > -1 ? common.textOperation(this.discription_data.substr(pos + 2), '你').text : '';
 					this.character_memo = character_data[0].character_memo ? character_data[0].character_memo : '';
+					this.character_prologue = character_data[0].character_prologue;
 				}else{
-					this.short_description = common.textOperation(description.basic['简介'], '你').text;
-					this.full_description = common.textOperation(description.extend['故事背景'], '你').text;
-					const {简介, ...newObj} = description.basic;
-					const {故事背景, ...newObj1} = description.extend;
-					this.basic_description = newObj;
-					this.extend_description = newObj1;
+					this.discription_data = JSON.parse(this.discription_data);
+					this.gender_cn = this.discription_data.性别;
+					switch(this.gender_cn){
+						default: 
+						this.character_gender = 0;
+						break;
+						case '男':
+						this.character_gender = 1;
+						break;
+						case '女':
+						this.character_gender = 2;
+						break;
+					}
+					this.short_description = common.textOperation(this.discription_data.基础信息.简介, '你').text;
+					this.full_description = common.textOperation(this.discription_data.扩展信息.故事背景, '你').text;
+					const {简介, ...basicObj} = this.discription_data.基础信息;
+					const {故事背景, ...extendObj} = this.discription_data.扩展信息;
+					this.basic_description = basicObj;
+					this.extend_description = extendObj;
+					this.character_prologue = this.discription_data.开场白;
 				}
-				this.character_prologue = character_data[0].character_prologue;
+				
 				this.character_image = character_data[0].character_img ? character_data[0].character_img : this.default_image;
 				
 				this.$emit('afterLoad', 
 					{'image': this.character_image,
 					'key': this.character_key});
 			},
-			autoSave(key, value, cn){
+			async autoSave(kind, value, cn){
 				//检测
-				//保存
-				uni.showToast({
-					title: cn + '已保存',
-					icon: 'none'
-				})
+				console.log(kind, value, cn);
+				if(this.character_id){
+					let whereArr = {'character_id': this.character_id};
+					if(typeof this.discription_data === 'object'){//处理后才能保存
+						if(['昵称', '性别', '开场白'].includes(cn)) this.discription_data[cn] = value;
+						else if(kind == 'basic') this.discription_data.基础信息[cn] = value;
+						else this.discription_data.扩展信息[cn] = value;
+					}else{
+						this.discription_data = {
+							'昵称': this.character_name,
+							'性别': this.gender_cn,
+							'基础信息': {
+								'简介': this.short_description,
+							},
+							'扩展信息': {
+								'故事背景': this.full_description,
+							},
+							'开场白': this.character_prologue
+						};
+						for(let key in this.basic_description){
+							this.discription_data.基础信息[key] = this.basic_description[key];
+						}
+						for(let key in this.extend_description){
+							this.discription_data.扩展信息[key] = this.extend_description[key];
+						}
+					}
+					let updateArr = {
+						'character_description': JSON.stringify(this.discription_data)
+					};
+					if('character_name' == kind) updateArr[kind] = value;
+					let feedback = await baseQuery.updateDataByKey('cybercafe_character', updateArr, whereArr);
+					if(feedback == 'inserted' || feedback == 'updated'){
+						//保存
+						uni.showToast({
+							title: cn + '已保存',
+							icon: 'none'
+						})
+					}
+				}
 			},
 			genderChange(e){
+				//console.log(e.detail.value);
 				this.character_gender = e.detail.value;
+				this.gender_cn = '未知';
+				switch(this.character_gender){
+					default: 
+					this.gender_cn = '未知';
+					break;
+					case 1:
+					this.gender_cn = '男';
+					break;
+					case 2:
+					this.gender_cn = '女';
+					break;
+				}
+				console.log(this.gender_cn);
+				this.autoSave('character_gender', this.gender_cn, '性别');
 			},
 			addDes(key){
-				
+				console.log(this[key + '_key'], this[key + '_value']);
+				if(this[key + '_key'].trim().length > 0 && this[key + '_value'].trim().length > 0){
+					this[key + '_description'][this[key + '_key'].trim()] = this[key + '_value'].trim();
+					this[key + '_ta_show'] = false;
+					this[key + '_key'] = '';
+					this[key + '_value'] = '';
+				}
 			},
 			reduceDes(key, index){
 				console.log(key, index);
+				//提示删除项，删除后一并从数据库中删除
 			},
 			toggleTaFun(key, flag){
 				console.log(key, flag)
@@ -222,7 +294,7 @@
 
 <style lang="scss">
 	input{
-		max-width: 30vw;
+		max-width: 35vw;
 	}
 	textarea{
 		line-height: calc(2 * $uni-font-size-lg);
@@ -233,12 +305,12 @@
 		border-radius: $uni-border-radius-base;
 		color: $uni-text-color;
 	}
-	.character-line{
-		margin-bottom: $uni-spacing-lg;
-	}
 	.character-container{
 		position: relative;
 		margin-top: 90vw;
+	}
+	.character-line{
+		margin-bottom: $uni-spacing-lg;
 	}
 	.character-flag-tag{
 		position: absolute;
@@ -289,49 +361,6 @@
 		margin-top: calc(5 * $uni-spacing-lg);
 	}
 	
-	
-	.submit-pop {
-		position: absolute;
-		background-color: white;
-		border: 1px solid #ccc;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-		z-index: 1000;
-		font-size: 14px;
-		border-radius: 10rpx;
-		padding: 10rpx
-	}
-	.submit-btn{
-		padding: 10rpx;
-	}
-	.upload-pop{
-		/*background-color: white;*/
-		box-shadow: none;
-	}
-	.uni-steps__column-title {
-		font-size: 16px !important;
-		line-height: 30px !important;
-	}
-	.uni-steps__column-desc{
-		font-size: 14px !important;
-		line-height: 30px !important;
-	}
-	.uni-steps__column-line-item{
-		height: 76px;
-	}
-	.tags{
-		margin: 20rpx 0;
-		flex-wrap: wrap;
-	}
-	.pop-btn{
-		position: absolute;
-		right: 20px;
-		bottom: 20px;
-	}
-	.modal-view{
-		z-index: 999;
-		top: 20vh;
-	}
-	
 	.icon-jiahao{
 		color: $uni-color-main;
 	}
@@ -346,9 +375,6 @@
 		margin-bottom: $uni-spacing-base;
 	}
 	@media (prefers-color-scheme: dark) {
-		.submit-pop, .upload-pop {
-			background-color: #1f1f1f;
-		}
 		.icon-jiahao{
 			color: $uni-color-dark-main;
 		}

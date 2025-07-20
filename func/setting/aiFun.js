@@ -3,13 +3,15 @@ import store from '@/store';
 
 export default {
 	changeAi(select_id){
+		console.log(select_id);
 		store.commit('dialogue/setDiaData', {
 			'ai': select_id,
 			'aiSelect': store.state.dialogue.aiRange[select_id].nickName,
 		});
-		
+		console.log(store.state.dialogue.aiRange[select_id]);
 		request.post('entityController/setEntitySetting',
-			{'ai_select': select_id}).then(res => {
+			{'ai_select': select_id,
+			'ai_name': store.state.dialogue.aiRange[select_id].model }).then(res => {
 			//console.log(res.result);
 			if (res.code != 200) {
 				uni.showToast({
@@ -110,6 +112,7 @@ export default {
 								level: res.result.other[i].level,
 								enabled: false
 							}
+							ai_show_in_menu[i] = false;
 						} 
 					}
 					for(let i in res.result.noBuilt){
@@ -156,7 +159,7 @@ export default {
 						ai_show_in_menu[-1] = true;
 					}					
 					
-					//console.log(rangeValue);
+					//console.log(store.state.dialogue.ai);
 					store.commit('dialogue/setDiaData', {
 						'aiRange': rangeValue,
 						'aiGroup': res.result.group,
@@ -165,7 +168,7 @@ export default {
 					store.commit('setting/setSettingData', {
 						'aiShowInMenu': ai_show_in_menu
 					});
-					//console.log(store.state.setting.aiShowInMenu);
+					//console.log(store.state.dialogue.aiSelect);
 					resolve(rangeValue);
 				}else {
 					uni.showToast({

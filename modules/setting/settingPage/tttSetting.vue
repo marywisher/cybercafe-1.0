@@ -54,9 +54,9 @@
 		},
 		watch:{
 			ai(newValue){
-				console.log(newValue);
+				//console.log(newValue);
 				this.maxtoken = this.aiRange[this.ai].maxTokens
-				console.log(this.maxtoken);
+				//console.log(this.maxtoken);
 				if(this.token_value > this.maxtoken) this.token_value = this.maxtoken
 				this.setSettingData({
 					'maxToken': this.maxtoken,
@@ -64,7 +64,7 @@
 				})
 			},
 			enable(newValue){
-				console.log(newValue);
+				//console.log(newValue);
 				this.disable_flag = !newValue;
 			}
 		},

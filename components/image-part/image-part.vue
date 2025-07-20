@@ -286,7 +286,7 @@
 		top: 0;
 		left: 0;
 		text-align: center;
-		z-index: 2;
+		z-index: 4;
 	}
 	.swiper-box{
 		height: 80vh;

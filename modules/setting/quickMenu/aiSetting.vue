@@ -1,24 +1,25 @@
 <template>
-	<view>
-		<cybercafe-view class="pop-view" ref="popView" isAbsolute isScrollable closeAble viewTitle="备选大模型">
-			<cybercafe-view v-for="(item, index) in range" :key="item.id"
-				:id="item.id" :crtView="item.id == ai" :selectView="select_id != ai && select_id == item.id"
-				:disabledView="!item.enabled" popViewStyle="position:relative;">
-				<view @tap="selectItem(item.id)">
-					<view class="display-flex sp-between">
-						<view>{{item.nickName}}</view>
-						<view>{{item.price}}</view>
-					</view>
-					<view v-if="item.id != 200" class="hint">模型官方名称：{{item.name}}</view>
-					<view class="hint">{{item.description}}</view>
-					<cybercafe-button btnClass="btn-primary" @btnClick="showModal" btnName="切换"
-						btnStyle="position: absolute; bottom: 3px; right: 3px; z-index: 2;" 
-						v-if="select_id != ai && select_id == item.id"></cybercafe-button>
-					<view v-if="item.level == 2" class="vip-hint">仅供月卡</view>
+	<cybercafe-view class="pop-view" ref="popView" isAbsolute isScrollable closeAble viewTitle="备选大模型">
+		<view class="hint display-flex display-line" @tap="gotoAiSetting">
+			<view class="iconfont icon-shezhi"></view> 更多设置
+		</view>
+		<cybercafe-view v-for="(item, index) in range" :key="item.id"
+			:id="item.id" :crtView="item.id == ai" :selectView="select_id != ai && select_id == item.id"
+			:disabledView="!item.enabled" popViewStyle="position:relative;">
+			<view @tap="selectItem(item.id)">
+				<view class="display-flex sp-between">
+					<view>{{item.nickName}}</view>
+					<view>{{item.price}}</view>
 				</view>
-			</cybercafe-view>
+				<view v-if="item.id != 200" class="hint">模型官方名称：{{item.name}}</view>
+				<view class="hint">{{item.description}}</view>
+				<cybercafe-button btnClass="btn-primary" @btnClick="showModal" btnName="切换"
+					btnStyle="position: absolute; bottom: 3px; right: 3px; z-index: 2;" 
+					v-if="select_id != ai && select_id == item.id"></cybercafe-button>
+				<view v-if="item.level == 2" class="vip-hint">仅供月卡</view>
+			</view>
 		</cybercafe-view>
-	</view>
+	</cybercafe-view>
 </template>
 
 <script>
@@ -33,7 +34,7 @@
 		data(){
 			return{
 				range: {},
-				select_id: -1,
+				select_id: -2,
 			}
 		},
 		watch:{
@@ -57,6 +58,9 @@
 					this.$forceUpdate();
 				}
 			},
+			ai(newValue){
+				this.select_id = -2;
+			}
 		},
 		computed:{
 			...mapState('user', ['modalData', 'modalShow']),
@@ -95,6 +99,12 @@
 					},
 					'modalShow': true,
 				});
+			},
+			gotoAiSetting(){
+				this.closeView();
+				uni.navigateTo({
+					url: '/pages/setting/aiSetting'
+				})
 			},
 		},
 	}

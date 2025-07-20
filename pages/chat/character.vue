@@ -115,6 +115,10 @@
 	.character-des{
 		z-index: 3;
 	}
+	.modal-view{
+		z-index: 999;
+		top: 20vh;
+	}
 	@media (prefers-color-scheme: dark) {
 		.icon-xiayibu{
 			color: $uni-color-dark-main;

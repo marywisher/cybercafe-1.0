@@ -37,7 +37,7 @@
 			</view>
 			<view class="display-flex sp-between display-line">
 				<view class="display-flex ai-setting-btn">
-					<cybercafe-button btnClass="btn-default" :btnDisable="!connected || ai == -1" 
+					<cybercafe-button btnClass="btn-default" :btnDisable="!api_key || ai == -1" 
 						btnName="设为默认模型"  @btnClick="setAI"></cybercafe-button>
 				</view>
 				<view v-if="connected" class="hint required text-center">{{connect_text}}</view>
@@ -67,6 +67,7 @@
 </template>
 
 <script>
+	import aiFun from '@/func/setting/aiFun';
 	import Base64 from '@/func/common/base64.min.js';
 	import request from '@/func/common/request';
 	import {
@@ -90,11 +91,13 @@
 			}
 		},
 		computed:{
-			...mapState('dialogue', ['ai', 'aiGroup', 'aiRange', 'aiShowInMenu']),
-			...mapState('setting', ['customApiKey', 'customDomain',	'customModel', 'customParsedUrl',
+			...mapState('user', ['modalData', 'modalShow']),
+			...mapState('dialogue', ['ai', 'aiGroup', 'aiRange']),
+			...mapState('setting', ['aiShowInMenu', 'customApiKey', 'customDomain',	'customModel', 'customParsedUrl',
 				'maxToken', 'temperature', 'tokenSetting', 'topP']),
 		},
 		methods:{
+			...mapMutations('user', ['setUserData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			init(){
@@ -102,7 +105,7 @@
 				this.parsed_url = this.customParsedUrl;
 				this.model = this.customModel;
 				this.api_key = this.customApiKey;
-				if(this.api_key) this.connected = true;
+				//if(this.api_key) this.connected = true;
 				
 				//console.log(this.aiGroup);
 				const sortedKeys = Object.keys(this.aiGroup).sort((a, b) => {
@@ -198,11 +201,11 @@
 							})
 						}
 					}else{
-						/* uni.showToast({
+						uni.showToast({
 							title: res.msg,
 							icon: 'none'
-						}) */
-						console.log(res.msg);
+						})
+						//console.log(res.msg);
 						_self.connected = true;
 						_self.connect_text = '通讯失败，请检查重试';
 					}
@@ -213,6 +216,23 @@
 				});
 			},
 			setAI(){
+				let _self = this;
+				this.setUserData({
+					'modalData': {
+						content: "要切换到选中的大模型吗？",
+						cancelText: "放弃",
+						confirmText: "切换",
+						success: (res) => {
+							if (res.confirm) {
+								_self.changeAiFun();
+							}
+						},
+					},
+					'modalShow': true,
+				});
+				uni.$emit('openModal');
+			},
+			changeAiFun(){
 				if(this.select_id != -1){
 					this.setSettingData({
 						'maxToken': this.aiRange[this.select_id].maxTokens,
@@ -236,8 +256,14 @@
 						'model': this.customModel,
 						'domain': this.customDomain,
 						'parsedUrl': this.customParsedUrl,
-						'maxTokens': this.maxToken
+						'maxTokens': this.maxToken,
+						'nickName': '自设模型',
+						'price': '自行支付',
+						'description': '',
+						'level': 1,
+						'enabled': true
 					};
+					//console.log(this.aiShowInMenu);
 					let ai_show_in_menu = this.aiShowInMenu;
 					if(ai_show_in_menu[-1] == undefined) ai_show_in_menu[-1] = true;
 					this.setSettingData({
@@ -245,9 +271,7 @@
 						'aiShowInMenu': ai_show_in_menu
 					});
 				}
-				this.setDiaData({
-					'ai': -1
-				})
+				aiFun.changeAi(this.select_id);
 			}
 		}
 	}

@@ -1,17 +1,25 @@
 <template>
 	<view>
 		<cybercafe-view v-for="(item, index) in entity_list" :key="item.entity_id">
-			 <view class="display-flex" @tap="gotoEntity" :id="item.entity_id">
+			 <view class="display-flex">
 				<image v-if="item.entity_img && item.entity_img != default_img"
-					class="entity-img" mode="aspectFill" :src="item.entity_img"></image>
+					class="entity-img" mode="aspectFill" :src="item.entity_img"
+					 @tap="gotoEntity(item.entity_id)"></image>
 				<view class="item-content">
-					<view class="display-flex sp-between">
-						<view>{{item.entity_title}}</view>
-						<view class="hint">{{item.message_count}}条记录 <span class="iconfont icon-xiayibu"></span></view>
+					<view class="display-flex sp-between display-line">
+						<view class="display-flex display-line">
+							<view @tap="gotoEntity(item.entity_id)">{{item.entity_title}} </view>
+							<span class="iconfont icon-shezhi" @tap="gotoEntitySetting(item.entity_id)"></span>
+						</view>
+						<view class="hint display-flex display-line" @tap="gotoEntity(item.entity_id)">{{item.message_count}}条记录 
+							<view class="iconfont icon-xiayibu"></view>
+						</view>
 					</view>
-					<view class="display-flex item-character-line">
+					<view class="display-flex item-character-line display-line" @tap="gotoEntitySetting(item.entity_id)">
 						<image v-for="(citem, cindex) in item.character_img" mode="aspectFill"
 							class="item-character" :src="citem" :key="cindex"></image>
+						<view class="iconfont icon-jiahao"></view>
+						<view class="iconfont icon-jianhao"></view>
 					</view>
 				</view>				
 			 </view>
@@ -43,8 +51,8 @@
 			async init(){
 				this.entity_list = await dialogueQuery.getAllEntityList();
 			},
-			async gotoEntity(e){
-				this.setSettingData({'entityId': e.currentTarget.id});
+			async gotoEntity(entity_id){
+				this.setSettingData({'entityId': entity_id});
 				uni.navigateBack({
 				    delta: 1, // 返回上一级页面
 				    success: () => {
@@ -53,6 +61,9 @@
 				        });
 				    }
 				});
+			},
+			gotoEntitySetting(entity_id){
+				console.log('设置页')
 			}
 		},
 		onLoad() {

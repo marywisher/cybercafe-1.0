@@ -123,6 +123,13 @@
 	.title-red{
 		color: $uni-color-main;
 	}
+	.icon-guanbi{
+		color: $uni-color-main;
+		border-radius: $uni-border-radius-circle;
+		border: $uni-border-base solid $uni-color-main;
+		padding: $uni-spacing-base;
+		font-size: $uni-font-size-sm !important;
+	}
 	.icon-guanbi.close-right-top{
 		position: absolute;
 		top: 0;
@@ -167,6 +174,10 @@
 		}
 		.disabled-view{
 			color: $uni-color-subtitle;
+		}
+		.icon-guanbi{
+			color: $uni-color-dark-main;
+			border-color: $uni-color-dark-main;
 		}
 	}
 </style>
