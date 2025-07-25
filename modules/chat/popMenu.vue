@@ -10,42 +10,36 @@
 					<view class="iconfont icon-chatou menu-icon-left"></view>
 					<view class="under-line text-center">{{aiSelect}}</view>
 				</view>				
-				<view class="iconfont icon-shezhi menu-icon-right" @tap="gotoAiSetting"></view>
+				<view class="iconfont icon-shezhi menu-icon-right iconai" @tap="gotoAiSetting"></view>
 			</view>
-			<view class="display-flex pop-menu-line">
-				<view class="iconfont icon-pintu menu-icon-left"></view>
-				<span>功能卡设置</span>
-			</view>
-			<view class="display-flex pop-menu-line">
-				<view class="iconfont icon-ziyuan menu-icon-left"></view>
-				<span>着色设置</span>
-			</view>
-			<view class="display-flex pop-menu-line">
-				<view class="iconfont icon-tiaojieqitiaojie menu-icon-left"></view>
-				<span>回复格式设置</span>
+			<view class="display-flex pop-menu-line" @tap="openSetting('order')">
+				<view class="iconfont icon-shangxiajiantou menu-icon-left"></view>
+				<span>知识树调整</span>
 			</view>
 			<view class="display-flex pop-menu-line">
 				<view class="iconfont icon-shezhi menu-icon-left"></view>
 				<span>本容器设置</span>
 			</view>
 			<view class="display-flex pop-menu-line" @tap="changeEntity">
-				<view class="iconfont icon-zuoyoujiantou-2 menu-icon-left"></view>
+				<view class="iconfont icon-shangxiajiantou1 menu-icon-left"></view>
 				<span>切换容器</span>
 			</view>
-			<view class="display-flex pop-menu-line required" @tap="delEntity">
+			<!-- <view class="display-flex pop-menu-line required" @tap="delEntity">
 				<view class="required iconfont icon-shanchu menu-icon-left"></view>
 				<span>解散本容器</span>
-			</view>
+			</view> -->
 			<!-- 正则 破甲 -->
 		</cybercafe-menu>
 		
-		<aiSetting ref="popAiSetting"></aiSetting>
+		<aiSetting ref="aiSettingView"></aiSetting>
+		<orderSetting ref="orderSettingView"></orderSetting>
 	</view>
 </template>
 
 <script>
 	import aiSetting from '@/modules/setting/quickMenu/aiSetting';
 	import entityBaseInfo from '@/func/entity/entityBaseInfo';
+	import orderSetting from '@/modules/setting/quickMenu/orderSetting';
 	import {
 		mapMutations,
 		mapState,
@@ -54,7 +48,8 @@
 	export default{
 		name: 'popMenu',
 		components:{
-			aiSetting
+			aiSetting,
+			orderSetting
 		},
 		watch:{
 			aiRange(newValue){
@@ -86,7 +81,7 @@
 			},
 			openSetting(param){
 				this.$refs.rightMenuPop.closeView();
-				this.$refs.popAiSetting.openView();
+				this.$refs[param + 'SettingView'].openView();
 			},
 			gotoAiSetting(){
 				this.$refs.rightMenuPop.closeView();
@@ -112,7 +107,7 @@
 		position: fixed;
 		height: 80vh;
 		flex-direction: column;
-		z-index: 2;
+		z-index: 4;
 	}
 	.pop-menu-line{
 		margin: calc(4 * $uni-spacing-lg) $uni-width-none;
@@ -132,7 +127,7 @@
 		display: none;
 	}
 	.pop-menu-line .menu-icon-left{
-		margin-right: $uni-spacing-lg;
+		margin: $uni-width-none $uni-spacing-base;
 	}
 	.cybercafe-main-menu-short .pop-menu-line .menu-icon-right{
 		display: none;
@@ -153,7 +148,9 @@
 	.required .iconfont{
 		color: $uni-color-error !important;
 	}
-	
+	.icon-shangxiajiantou1{
+		transform: rotate(90deg);
+	}
 	@media (prefers-color-scheme: dark) {
 		.cybercafe-main-menu .iconfont{
 			color: $uni-text-color-grey;

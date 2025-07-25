@@ -2,8 +2,8 @@
 	<view class="group-item">
 		<view class="display-flex sp-between" @tap="openDetail">
 			<label class="group-title">{{cardTitle}}</label>
-			<view v-if="show_detail" class="iconfont icon-shouqi"></view>
-			<view v-else class="iconfont icon-xiala"></view>
+			<view v-if="show_detail" class="iconfont icon-xiayibu iconshouqi"></view>
+			<view v-else class="iconfont icon-xiayibu iconxiala"></view>
 		</view>
 		<view v-if="show_detail">
 			<slot></slot>
@@ -49,5 +49,11 @@
 	.group-title {
 		font-weight: bold;
 		font-size: $uni-font-size-huge;
+	}
+	.iconshouqi{
+		transform: rotate(-90deg);
+	}
+	.iconxiala{
+		transform: rotate(-90deg);
 	}
 </style>

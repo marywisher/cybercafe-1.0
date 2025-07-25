@@ -98,6 +98,28 @@
 	.display-hide{
 		display: none;
 	}
+	.flag-tag{
+		position: absolute;
+		background-color: $uni-color-main;
+		color: $uni-bg-color-grey;
+		font-size: $uni-font-size-sm;
+		padding: $uni-spacing-base $uni-spacing-base $uni-spacing-base $uni-spacing-lg;
+		line-height: $uni-font-size-sm;
+	}
+	.flag-tag:after{
+		position: absolute;
+		content: "";
+		width: 0;
+		height: 0;
+		top: 0;
+		right: calc(-1 * $uni-spacing-lg);
+		border-top: calc(1.1 * $uni-spacing-lg) solid $uni-color-main;
+		border-bottom: calc(1.1 * $uni-spacing-lg) solid $uni-color-main;
+		border-right: $uni-spacing-lg solid transparent;
+	}
+	.after-tag{
+		margin-top: calc(5 * $uni-spacing-lg);
+	}
 	
 	@media (prefers-color-scheme: dark) {
 		button {

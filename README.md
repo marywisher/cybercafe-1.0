@@ -1,13 +1,19 @@
 # cybercafe-git
-����ʳ��cybercafe�ײ�ܹ�������uni-app������Ӧ����android+sqlite
-- С���� https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3
-��Ŀǰ�ڲ�0.6�汾�Ĳ���˵����С�����ϣ�
-- Bվ��У��Ժ󹫲�
-- QQȺ��42094098��������
-��Ŀǰ�ڲ��0.6��APK��Ⱥ�ļ����
-- Discord��https://discord.gg/NQ4s7j3C
+赛博食堂cybercafe前端底层架构，基于uni-app开发，应用于android+sqlite
+
+| 社交渠道 | 链接及说明 |
+| ------- | ----------- |
+| 小红书   | [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)（目前内测0.6版本的操作说明在小红书上） |
+| B站     | 搭建中，稍后公布 |
+| QQ群    | 42094098（已满）（目前内测的0.6版APK和PC模拟器在群文件夹里） |
+| Discord | [https://discord.gg/NQ4s7j3C](https://discord.gg/NQ4s7j3C) （内测0.6版APK也打了分包提交在社区了） |
 
 
-��Ϊ�Ķ��Ƚϴ�Ŀǰ����һ���˲߻��������ԣ������е�������ӭ��ҹ�ע�����빱�״��룬������issue��������pr��
+| 支持平台 |
+| ------- |
+| 安卓手机 |
+| PC（模拟器运行）|
 
-���ڿ�������1.0�棬Ŀǰ֧�����¹��ܣ����Ժ󲹳䣩
+因为改版的改动比较大，目前就我一个人策划开发测试，进度有点慢，欢迎大家关注、参与贡献代码，或者捉虫，或者点菜。
+
+正在开发的是1.0版，目前支持以下功能：（稍后补充）

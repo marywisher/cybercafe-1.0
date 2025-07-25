@@ -2,7 +2,10 @@
 	<view v-show="visible">
 		<view class="cybercafe-menu-bg" @tap="closeView"></view>
 		<view class="cybercafe-main-menu"
-			:class="{'cybercafe-main-menu-short': mode == 'short', 'cybercafe-main-menu-long': mode == 'long'}">
+			:class="{'cybercafe-main-menu-short': mode == 'short',
+			 'cybercafe-main-menu-long': mode == 'long',
+			 'cybercafe-main-menu-left': menuSide == 'left',
+			 'cybercafe-main-menu-right': menuSide == 'right'}">
 			<view class="display-flex title-line"  @tap="changeMode">
 				<view class="title iconfont icon-xiayibu"></view>
 				<span>{{viewTitle}}</span>
@@ -25,6 +28,10 @@
 			viewTitle:{
 				type: String,
 				default: ''
+			},
+			menuSide:{
+				type: String,
+				default: 'left'
 			}
 		},
 		data(){
@@ -57,29 +64,35 @@
 
 <style lang="scss">
 	.cybercafe-menu-bg{
-		position: absolute;
+		position: fixed;
 		width: 100vw;
 		height: 100vh;
 		top: 0;
 		left: 0;
-		z-index: -1;
+		z-index: 3;
 		background-color: transparent;
 	}
 	.cybercafe-main-menu{
 		position: fixed;
-		left: 0;
 		border: $uni-border-base solid $uni-bg-color-grey;
 		background-color: $uni-bg-color-grey;
 		color: $uni-text-color;
 		padding: $uni-spacing-base;
+		z-index: 4;
+	}
+	.cybercafe-main-menu-left{
+		left: 0;
 		border-radius: $uni-width-none $uni-border-radius-lg $uni-border-radius-lg $uni-width-none;
-		z-index: 2;
+	}
+	.cybercafe-main-menu-right{
+		right: 0;
+		border-radius: $uni-border-radius-lg $uni-width-none $uni-width-none $uni-border-radius-lg;
 	}
 	.cybercafe-main-menu-short{
 		width: 10vw;
 	}
 	.cybercafe-main-menu-long{
-		width: 60vw;
+		width: 50vw;
 	}
 	.title-line{
 		border-bottom: $uni-border-base solid $uni-text-color-grey;

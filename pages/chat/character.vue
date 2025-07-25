@@ -1,13 +1,13 @@
 <template>
 	<view>
 		<view class="character-bg" :style="dynamicImg"></view>
+		<view class="view-for-tap" @tap="showMoreImg"></view>
 		<view class="character-header display-flex">
 			<!-- 顶部 -->
-			<view class="header-left">
-				<view class="iconfont icon-xiayibu" @tap="back"></view>
+			<view class="header-right">
+				<popMenuVue ref="cMenu"></popMenuVue>
 			</view>
 		</view>
-		<view class="view-for-tap" @tap="showMoreImg"></view>
 		
 		<descriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"></descriptionPart>
 		<image-part ref="cImgPart" :originImg="character_image" :dark="darkMode" :ckey="character_key"
@@ -20,6 +20,7 @@
 	import config from '@/config.json';
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import descriptionPart from '@/modules/character/descriptionPart';
+	import popMenuVue from '@/modules/character/popMenu';
 	import {
 		mapMutations,
 		mapState,
@@ -34,10 +35,12 @@
 			}
 		},
 		components:{
-			descriptionPart
+			descriptionPart,
+			popMenuVue
 		},
 		watch:{
 			modalShow(newValue){
+				//console.log(newValue);
 				if(newValue){
 					this.$refs.cModal.show(this.modalData);
 					this.setUserData({
@@ -47,7 +50,7 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode']),
+			...mapState('user', ['darkMode', 'modalData', 'modalShow']),
 			dynamicImg() {
 				return this.darkMode == 'light' ?
 				`background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.1) 80%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 1)), url('${this.character_image}');` : 
@@ -59,17 +62,25 @@
 			showMoreImg(){
 				//console.log('show gallery');
 				this.$refs.cImgPart.openBox(this.character_id.toString());
+				this.$refs.cMenu.closeView();
 			},
-			afterSelectImg(e){
+			async afterSelectImg(e){
 				this.character_image = e;
+				let whereArr = {'character_id': this.character_id};
+				let updateArr = {'character_img': this.character_image};
+				let feedback = await baseQuery.updateDataByKey('cybercafe_character', updateArr, whereArr);
+				if(feedback == 'inserted' || feedback == 'updated'){
+					//保存
+					uni.showToast({
+						title: '数据已保存',
+						icon: 'none'
+					})
+				}
 			},
 			afterLoad(param){
 				this.character_image = param.image;
 				this.character_key = param.key;
 			},
-			back(){
-				uni.navigateBack();
-			}
 		},
 		onLoad(option) {
 			this.character_id = option.id;
@@ -103,25 +114,18 @@
 		position: fixed;
 		top: 5vh;
 		left: 0;
-		width: calc(100vw - 2 * $uni-spacing-base);
-		z-index: 2;
-	}
-	.icon-xiayibu{
-		transform: rotate(180deg);
-		color: $uni-color-main;
-		font-size: $uni-font-size-huge;
-		margin-left: $uni-spacing-base;
+		width: 100vw;
+		z-index: 3;
+		justify-content: flex-end;
 	}
 	.character-des{
-		z-index: 3;
+		z-index: 2;
 	}
 	.modal-view{
 		z-index: 999;
 		top: 20vh;
 	}
 	@media (prefers-color-scheme: dark) {
-		.icon-xiayibu{
-			color: $uni-color-dark-main;
-		}
+		
 	}
 </style>

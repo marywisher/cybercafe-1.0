@@ -79,14 +79,6 @@
   content: "\e6b0";
 }
 
-.icon-shouqi:before {
-  content: "\e6b8";
-}
-
-.icon-xiala:before {
-  content: "\e6b9";
-}
-
 .icon-xiayibu:before {
   content: "\e6ba";
 }
@@ -123,12 +115,24 @@
   content: "\ec77";
 }
 
+.icon-baocun:before {
+  content: "\e6bf";
+}
+
 .icon-feiquanping:before {
   content: "\e610";
 }
 
 .icon-ziyuan:before {
   content: "\e622";
+}
+
+.icon-paixu-sanheng:before {
+  content: "\e64b";
+}
+
+.icon-shangxiajiantou:before {
+  content: "\e7cd";
 }
 
 .icon-quanping:before {
@@ -139,16 +143,16 @@
   content: "\e6c1";
 }
 
+.icon-shangxiajiantou1:before {
+  content: "\e501";
+}
+
 .icon-banping:before {
   content: "\e81a";
 }
 
 .icon-dengpao:before {
   content: "\e552";
-}
-
-.icon-zuoyoujiantou-2:before {
-  content: "\e654";
 }
 
 .icon-saozhou:before {
