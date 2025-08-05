@@ -81,7 +81,7 @@
 				})
 				this.getUserData();
 				this.dark_mode = this.darkMode;
-				await entityBaseInfo.entityInit(this);
+				await entityBaseInfo.entityInit();
 				await entityBaseInfo.getMessage();
 			},
 			gotoSetting(){

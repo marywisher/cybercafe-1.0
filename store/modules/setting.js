@@ -20,6 +20,7 @@ export default {
 		entityId: 1,
 		fontColor: ['rgb(52,52,52)', 'rgb(52,52,52)'],
 		fontSize: 14,
+		globalTreeOrder: '[{"id":1,"title":"故事背景","enable":true},{"id":2,"title":"简介","enable":true},{"id":3,"title":"补充说明","enable":true},{"id":4,"title":"聊天记录","enable":false}]',
 		imgRadius: 20,
 		imgWidth: 40,
 		maxToken: 4096,

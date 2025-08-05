@@ -94,7 +94,6 @@
 
 <style lang="scss">
 	.display-line{
-		clear: both;
 		margin-bottom: $uni-spacing-base;
 	}
 	.bubble-setting-label{

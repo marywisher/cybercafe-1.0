@@ -87,7 +87,9 @@
 				//console.log('close');
 				this.visible = false;
 				if(this.closeAble){
-					this.$emit('close');
+					this.$nextTick(() => {
+						this.$emit('close');
+					})
 				}
 			}
 		}

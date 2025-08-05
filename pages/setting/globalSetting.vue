@@ -67,26 +67,16 @@
 				my_version: ''
 			}
 		},
-		watch:{
-			modalShow(newValue){
-				if(newValue){
-					this.$refs.cModal.show(this.modalData);
-					this.setUserData({
-						'modalShow': false
-					})
-				}
-			}
-		},
 		computed: {
 			...mapState('user', ['darkMode', 'latestVersion', 'modalData', 'modalShow', 'userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			uploadData(){
-				baseQuery.syncDBUpload(this);
+				baseQuery.syncDBUpload();
 			},
 			downloadData(){
-				baseQuery.syncDBDownload(this);
+				baseQuery.syncDBDownload();
 			},
 			turnLight(e){
 				if(e.detail.value == true){
@@ -163,6 +153,14 @@
 			}
 			//console.log(uni.getSystemInfoSync());
 			this.my_version = uni.getSystemInfoSync().appWgtVersion;
+			
+			let _self = this;
+			uni.$on('openModal', () => {
+				_self.$refs.cModal.show(_self.modalData);
+				_self.setUserData({
+					'modalShow': false
+				})
+			})
 		}
 	}
 </script>

@@ -63,6 +63,7 @@
 	}
 	.display-line{//配合display-flex一起用，保证一行对齐
 		align-items: center;
+		clear: both;
 	}
 	.sp-between{
 		justify-content: space-between;

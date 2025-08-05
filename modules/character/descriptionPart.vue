@@ -34,7 +34,8 @@
 			</cybercafe-view>
 			<cybercafe-view>
 				<view class="display-flex sp-between display-line">
-					<view><input v-model="basic_key" placeholder="请输入角色补充项" confirm-type="done" /></view>
+					<view><input v-model="basic_key" placeholder="请输入角色补充项" 
+						confirm-type="done"  @confirm="toggleTaFun('basic', 'show')"/></view>
 					<view v-if="basic_ta_show == false" class="iconfont icon-jiahao" @tap="toggleTaFun('basic', 'show')"></view>
 					<view v-else class="iconfont icon-jianhao" @tap="toggleTaFun('basic', 'hide')"></view>
 				</view>
@@ -67,7 +68,8 @@
 			</cybercafe-view>
 			<cybercafe-view>
 				<view class="display-flex sp-between display-line">
-					<view><input v-model="extend_key" placeholder="请输入角色限定项" confirm-type="done" /></view>
+					<view><input v-model="extend_key" placeholder="请输入角色限定项" 
+						confirm-type="done"  @confirm="toggleTaFun('extend', 'show')" /></view>
 					<view v-if="extend_ta_show == false" class="iconfont icon-jiahao" @tap="toggleTaFun('extend', 'show')"></view>
 					<view v-else class="iconfont icon-jianhao" @tap="toggleTaFun('extend', 'hide')"></view>
 				</view>
@@ -220,7 +222,7 @@
 			},
 			async autoSave(kind, value){
 				//检测
-				console.log(kind, value);
+				//console.log(kind, value);
 				let hint_name = '';
 				if(this.character_name.length == 0){
 					hint_name = "角色名称";
@@ -294,23 +296,23 @@
 					this.gender_cn = '女';
 					break;
 				}
-				console.log(this.gender_cn);
+				//console.log(this.gender_cn);
 				this.autoSave('character_gender', this.gender_cn);
 			},
 			addDes(key){
-				console.log(this[key + '_key'], this[key + '_value']);
+				//console.log(this[key + '_key'], this[key + '_value']);
 				this[key + '_value'] = this[key + '_value'].trim();
 				this[key + '_value'] = this[key + '_value'].trim();
 				if(this[key + '_key'].length > 0 && this[key + '_value'].length > 0){
-					this.autoSave(this[key + '_key'], this[key + '_value']);
 					this[key + '_description'][this[key + '_key']] = this[key + '_value'];
+					this.autoSave(this[key + '_key'], this[key + '_value']);
 					this[key + '_ta_show'] = false;
 					this[key + '_key'] = '';
 					this[key + '_value'] = '';
 				}
 			},
 			reduceDes(key, index){
-				console.log(key, index);
+				//console.log(key, index);
 				let _self = this;
 				this.setUserData({
 					'modalData': {
@@ -375,7 +377,6 @@
 		width: 90%;
 	}
 	.display-line{
-		clear: both;
 		margin-bottom: $uni-spacing-base;
 	}
 	@media (prefers-color-scheme: dark) {

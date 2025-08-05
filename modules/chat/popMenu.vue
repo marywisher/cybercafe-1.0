@@ -13,15 +13,19 @@
 				<view class="iconfont icon-shezhi menu-icon-right iconai" @tap="gotoAiSetting"></view>
 			</view>
 			<view class="display-flex pop-menu-line" @tap="openSetting('order')">
-				<view class="iconfont icon-shangxiajiantou menu-icon-left"></view>
-				<span>知识树调整</span>
+				<view class="iconfont icon-shuangxiangjiantou1 menu-icon-left"></view>
+				<span>语序调整</span>
+			</view>
+			<view class="display-flex pop-menu-line">
+				<view class="iconfont icon-ziyuan menu-icon-left"></view>
+				<span>着色设置</span>
 			</view>
 			<view class="display-flex pop-menu-line">
 				<view class="iconfont icon-shezhi menu-icon-left"></view>
 				<span>本容器设置</span>
 			</view>
 			<view class="display-flex pop-menu-line" @tap="changeEntity">
-				<view class="iconfont icon-shangxiajiantou1 menu-icon-left"></view>
+				<view class="iconfont icon-shangxiajiantou menu-icon-left"></view>
 				<span>切换容器</span>
 			</view>
 			<!-- <view class="display-flex pop-menu-line required" @tap="delEntity">
@@ -73,7 +77,7 @@
 		methods:{
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			init(){
-				this.$refs.popAiSetting.closeView();
+				this.$refs.aiSettingView.closeView();
 				this.$refs.rightMenuPop.closeView();
 			},
 			openMenuFun(){
@@ -148,7 +152,7 @@
 	.required .iconfont{
 		color: $uni-color-error !important;
 	}
-	.icon-shangxiajiantou1{
+	.icon-shangxiajiantou{
 		transform: rotate(90deg);
 	}
 	@media (prefers-color-scheme: dark) {

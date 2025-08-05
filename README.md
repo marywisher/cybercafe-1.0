@@ -6,7 +6,7 @@
 | 小红书   | [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)（目前内测0.6版本的操作说明在小红书上） |
 | B站     | 搭建中，稍后公布 |
 | QQ群    | 42094098（已满）（目前内测的0.6版APK和PC模拟器在群文件夹里） |
-| Discord | [https://discord.gg/NQ4s7j3C](https://discord.gg/NQ4s7j3C) （内测0.6版APK也打了分包提交在社区了） |
+| Discord | [https://discord.gg/vMg7K7SF](https://discord.gg/vMg7K7SF) （内测0.6版APK也打了分包提交在社区了） |
 
 
 | 支持平台 |

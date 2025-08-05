@@ -131,10 +131,6 @@
   content: "\e64b";
 }
 
-.icon-shangxiajiantou:before {
-  content: "\e7cd";
-}
-
 .icon-quanping:before {
   content: "\e658";
 }
@@ -143,7 +139,7 @@
   content: "\e6c1";
 }
 
-.icon-shangxiajiantou1:before {
+.icon-shangxiajiantou:before {
   content: "\e501";
 }
 
@@ -153,6 +149,10 @@
 
 .icon-dengpao:before {
   content: "\e552";
+}
+
+.icon-shuangxiangjiantou1:before {
+  content: "\e61b";
 }
 
 .icon-saozhou:before {

@@ -195,78 +195,101 @@ export default {
 			}
 		});
 	},
-	async syncDBDownload() {
+	syncDBDownload() {
 		//let finish_flag = 0;
 		let _self = this;
 		store.commit('user/setUserData', {
 			'modalData': {
-				title: '下载前将删除已有数据',
+				title: '温馨提示',
+				content: '下载前将删除原有数据',
 				confirmText: '确定覆盖',
 				cancelText: '再想想',
 				success: function (res) {
 					if (res.confirm) {
-						uni.showLoading({
-							title: '下载中',
-							mask: true
-						})
-					
-						request.post('aiController/syncDBDownload').then(response => {
-							//console.log(response.result);
-							if(response.code == 200){
-								let result = JSON.parse(response.result);
-								for (let table_name in result) {
-									if(table_name != 'setting'){
-									//console.log('table_name:' + table_name);
-										let tableData = {}; // 创建一个临时存储对象用于当前table
-										let table = result[table_name];
-										sqlite.executeSQL('delete from cybercafe_' + table_name);
-										// 遍历当前table中的所有键值对
-										for (let key in table) {
-											for (let data_key in table[key]) {
-												//console.log('table_key:' + data_key);
-												//console.log('table_value:' + JSON.stringify(table[key][data_key]));
-												tableData[data_key] = table[key][data_key]; // 将键值对存储到临时对象
-											}
-											// 遍历完当前table后，调用创建表格的函数
-											_self.insertDataByKey('cybercafe_' + table_name, tableData);
-										}
-									}
-								}
-								sqlite.executeSQL('delete from cybercafe_setting');
-								for (let store_key in result.setting){
-									let settingData = {
-										setting_key: store_key,
-										setting_value: JSON.stringify(result.setting[store_key])
-									};
-									_self.insertDataByKey('cybercafe_setting', settingData);
-								}
-								
-								uni.showToast({
-									title: '下载完成请重启',
-									icon: 'success'
-								})
-							}else{
-								uni.showToast({
-									title: response.msg,
-									icon: 'none'
-								})
-							}
-						}).catch(e => {
-							console.error('捕获到错误：', error);
-							uni.showToast({
-								title: error,
-								icon: 'none'
-							})
-						}).finally(() => {
-							uni.hideLoading();
-						});
+						_self.downloadConfirmFun();
 					}
 				}
 			},
 			'modalShow': true
-		});		
+		});	
+		uni.$emit('openModal');
 	},
-	async syncDBUpload() {
+	downloadConfirmFun(){
+		uni.showLoading({
+			title: '下载中',
+			mask: true
+		})
+		let _self = this;
+		request.post('aiController/syncDBDownload').then(response => {
+			//console.log(response.result);
+			if(response.code == 200){
+				let result = JSON.parse(response.result);
+				for (let table_name in result) {
+					if(table_name != 'setting'){
+					//console.log('table_name:' + table_name);
+						let tableData = {}; // 创建一个临时存储对象用于当前table
+						let table = result[table_name];
+						sqlite.executeSQL('delete from cybercafe_' + table_name);
+						// 遍历当前table中的所有键值对
+						for (let key in table) {
+							for (let data_key in table[key]) {
+								//console.log('table_key:' + data_key);
+								//console.log('table_value:' + JSON.stringify(table[key][data_key]));
+								tableData[data_key] = table[key][data_key]; // 将键值对存储到临时对象
+							}
+							// 遍历完当前table后，调用创建表格的函数
+							_self.insertDataByKey('cybercafe_' + table_name, tableData);
+						}
+					}
+				}
+				sqlite.executeSQL('delete from cybercafe_setting');
+				for (let store_key in result.setting){
+					let settingData = {
+						setting_key: store_key,
+						setting_value: JSON.stringify(result.setting[store_key])
+					};
+					_self.insertDataByKey('cybercafe_setting', settingData);
+				}
+				
+				uni.showToast({
+					title: '下载完成请重启',
+					icon: 'success'
+				})
+			}else{
+				uni.showToast({
+					title: response.msg,
+					icon: 'none'
+				})
+			}
+		}).catch(e => {
+			console.error('捕获到错误：', error);
+			uni.showToast({
+				title: error,
+				icon: 'none'
+			})
+		}).finally(() => {
+			uni.hideLoading();
+		});
+	},
+	syncDBUpload() {
+		let _self = this;
+		store.commit('user/setUserData', {
+			'modalData': {
+				title: '温馨提示',
+				content: '即将上传数据到线上',
+				confirmText: '确定上传',
+				cancelText: '再想想',
+				success: function (res) {
+					if (res.confirm) {
+						_self.uploadConfirmFun();
+					}
+				},
+			},
+			'modalShow': true,
+		});
+		uni.$emit('openModal');
+	},
+	async uploadConfirmFun(){
 		uni.showLoading({
 			title: '上传中',
 			mask: true
@@ -306,5 +329,5 @@ export default {
 				icon: 'none'
 			})
 		}
-	},
+	}
 }
