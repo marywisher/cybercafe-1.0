@@ -21,7 +21,7 @@
 		<view class="chat-bottom content display-flex sp-between">
 			<characterPart ref="chatCharPart"></characterPart>
 			<input class="chat-input" />
-			<view class="iconfont icon-fasong"></view>
+			<view class="iconfont icon-fasong" @tap="sendMessage"></view>
 			<!-- 底部 -->
 		</view>
 		<view v-if="show_to_btm_btn" class="fix-btm" @tap="clickToBtm">>></view>
@@ -36,6 +36,7 @@
 	import listPart from '@/modules/chat/listPart';
 	import popMenu from '@/modules/chat/popMenu';
 	import titlePart from '@/modules/chat/titlePart';
+	import promptFun from '@/func/entity/promptFun';
 	import {
 		mapMutations,
 		mapState,
@@ -48,7 +49,8 @@
 				show_to_btm_btn: false,
 				upcount: 0,
 				scroll: 0,
-				dark_mode: 'light'
+				dark_mode: 'light',
+				edit: false,
 			}
 		},
 		components: {
@@ -60,16 +62,18 @@
 		},
 		watch:{
 			modalShow(newValue){
-				if(newValue){
+				if(newValue && this.modalPageId == 'chat'){
 					this.$refs.cModal.show(this.modalData);
 					this.setUserData({
-						'modalShow': false
+						'modalShow': false,
+						'modalPageId': ''
 					})
 				}
 			}
 		},
 		computed:{
-			...mapState('user', ['userKey', 'userName', 'darkMode', 'modalData', 'modalShow']),
+			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow',
+				'userKey', 'userName']),
 			...mapState('setting', ['entityId']),
 		},
 		methods:{
@@ -116,6 +120,9 @@
 				setTimeout(() => {
 					this.$refs.chatListPart.handleLongPress(e);
 				}, 1000);
+			},
+			sendMessage(){
+				promptFun.preOperation();
 			},
 		},
 		onLoad() {

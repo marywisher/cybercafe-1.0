@@ -10,11 +10,10 @@
 						:class="{ 'novel-subject': !item.character_id, 'deep-cell': index % 2 }" 
 						:style="dynamicNovelStyle(item.character_id)">
 						<view class="novel-box">
-							<!-- <text :style="dynamicFont">{{item.text}}</text> -->
 							<view v-html="item.html" :style="dynamicFont(item.character_id ? 'left' : 'right')" :showline="false"></view>
 						</view>
 					</view>
-					<view v-else class="display-flex chat-line" :class="{'right' : !item.character_id, 'left': item.character_id}">
+					<view class="display-flex chat-line" :class="{'right' : !item.character_id, 'left': item.character_id}">
 						<view class="chat-img-box" :style="dynamicImgStyle">
 							<image v-if="item.character_id > 0" 
 								:src="dynamicsImg('list-left:', item.character_id)" 
@@ -25,7 +24,6 @@
 						</view>
 						<view class="chat-box" :style="dynamicChatBox">
 							<view class="chat-item">
-								<!-- <text :style="dynamicFont">{{item.text}}</text> -->
 								<view v-html="item.html" :style="dynamicFont(item.character_id ? 'left' : 'right')" :showline="false"></view>
 							</view>
 						</view>
@@ -34,12 +32,11 @@
 			</view>
 			
 			<view class="btm" v-if="history_list.length > 0">
-				<view id="0" @tap="showPop" @longpress="handleLongPress">
+				<view id="0" @longpress="handleLongPress">
 					<view v-if="entityMode == 'novel'" class="novel-line" 
 						:class="{ 'deep-cell': (history_list.length - 1) % 2 }" 
 						:style="dynamicNovelStyle(cDisplayId)">
 						<view class="novel-box">
-							<!-- <text :style="dynamicFont">{{option_first_text}}</text> -->
 							<view v-html="option_first_html" :style="dynamicFont(cDisplayId ? 'left' : 'right')" :showline="false"></view>
 						</view>
 					</view>
@@ -53,15 +50,19 @@
 								:style="dynamicImgStyle"></image>
 						</view>
 						<view class="chat-box" :style="dynamicChatBox">
-							<view class="chat-item">
-								<!-- <text :style="dynamicFont">{{option_first_text}}</text> -->
-								<view v-html="option_first_html" :style="dynamicFont(cDisplayId ? 'left' : 'right')" :showline="false"></view>
+							<view v-if="!edit_mode" class="chat-item">
+								<view v-html="option_first_html" :showline="false" 
+								:style="dynamicFont(cDisplayId ? 'left' : 'right')"></view>
 							</view>
+							<editPart ref="chatEditPart" :edit="edit_mode" :side="cDisplayId ? 'left' : 'right'"
+								:style="dynamicChatBox" @editChange="editChange"
+								@swiperChange="swiperChange"></editPart>
 						</view>
 					</view>
 				</view>
 			</view>
 		</scroll-view>
+		
 		<view :style="dynamicsHeight" v-html="entity_css"></view>
 		
 		<listMenu ref="customMenu" @menu-click="handleMenuClick"></listMenu>
@@ -75,6 +76,7 @@
 	import common from '@/func/common/common';
 	import entityBaseInfo from '@/func/entity/entityBaseInfo';
 	import listMenu from '@/modules/chat/listMenu';
+	import editPart from '@/modules/chat/editPart';
 	import {
 		mapMutations,
 		mapState,
@@ -107,11 +109,13 @@
 				lock_mode: false,
 				hiding: false,
 				showing: false,
-				loading_text: '点击加载更多数据'
+				loading_text: '点击加载更多数据',
+				edit_mode: false,
 			}
 		},
 		components:{
-			listMenu
+			listMenu,
+			editPart
 		},
 		watch: {
 			refreshList(newOption){
@@ -152,9 +156,9 @@
 			...mapState('user', ['darkMode']),
 			...mapState('dialogue', ['cDisplayId', 'characterlist', 'crtCharacterId', 
 				'entityMode', 'historylist', 
-				'openEdit', 'optionFirst', 'refreshList']),
+				'openEdit', 'optionFirst', 'options', 'refreshList']),
 			...mapState('setting', ['bubbleAlign', 'bubbleColor', 'bubbleOpacity', 
-				'chatCss', 'chatPattern', 'entityId', 
+				'chatCss', 'chatPattern', 'editContent', 'entityId', 
 				'fontColor', 'fontSize', 'imgWidth', 'imgRadius',]),
 			dynamicNovelStyle() {
 				return function(character_id) {
@@ -213,7 +217,7 @@
 		methods: {
 			...mapMutations('user', ['getUserData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
-			...mapMutations('setting', ['getSettingData']),
+			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			async init(){
 				this.getDiaData();
 				this.getUserData();
@@ -241,18 +245,8 @@
 						this.showing = true;
 					}, 2000);
 				}
-			},
-			showPop() {
-				/* this.hideMenu();
-				//console.log('openEdit', this.openEdit);
-				//console.log('optionFirst', this.option_first_text);
-				let contents = this.editContent != undefined ? this.editContent : {};
-				contents[this.entityId] = this.option_first_text;
-				this.setDiaData({
-					'blankMode': false,
-					'editContent': contents,
-					'openEdit': true
-				}); */
+				
+				this.$refs.chatEditPart.init();
 			},
 			async handleLongPress(event) {
 				//console.log(event.currentTarget);
@@ -281,10 +275,6 @@
 					this.$refs.customMenu.showMenu(this.menu_x * 0.32, pageY - 120, menu_items, event.currentTarget.id, this.option_first_text);
 				}
 			},
-			/* handleContextMenu(event) {
-			    // 阻止桌面浏览器的上下文菜单
-			    event.preventDefault();
-			}, */
 			handleMenuClick(item, id) {
 				//console.log('选择了菜单项:', item.value, id);
 				if(item.value == 'delete'){
@@ -354,6 +344,13 @@
 					url: '/pages/chat/character?id=' + character_id
 				})
 			},
+			swiperChange(crt_index){
+				this.option_first_html = common.textToHtml(this.options[crt_index].text, this.cDisplayId ? 'left' : 'right', true);
+			},
+			editChange(param){
+				this.hideMenu();
+				this.edit_mode = param;
+			}
 		},
 		mounted(){
 			// 获取系统信息
@@ -406,17 +403,6 @@
 	.chat-line.right .chat-img-box{
 		margin-left: 10px;
 	}
-	/* .chat-line image{
-		width: 80rpx;
-		height: 80rpx;
-		border-radius: 40rpx;
-	}
-	.chat-line .chat-box{
-		border-radius: 10rpx;
-	}
-	.chat-line .chat-box > view{
-		margin: 0 20rpx;
-	} */
 	.ani-show{
 		animation: showView 0.5s forwards;
 	}

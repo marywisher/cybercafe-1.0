@@ -65,16 +65,17 @@
 		},
 		watch:{
 			modalShow(newValue){
-				if(newValue){
+				if(newValue && this.modalPageId == 'bubbleMarket'){
 					this.$refs.cModal.show(this.modalData);
 					this.setUserData({
-						'modalShow': false
+						'modalShow': false,
+						'modalPageId': ''
 					})
 				}
 			}
 		},
 		computed: {
-			...mapState('user', ['modalData', 'modalShow', 'totalReward']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'totalReward']),
 			...mapState('setting', ['bubbleAlign', 'imgWidth', 'imgRadius']),
 			...mapState('bubble', ['cssAfter', 'cssPrev',
 				'sampleTextLeft', 'sampleTextRight', 'searchKeys']),
@@ -101,6 +102,7 @@
 							success: (res) => {},
 						},
 						'modalShow': true,
+						'modalPageId': 'bubbleMarket'
 					});
 				} else {
 					this.setUserData({
@@ -115,13 +117,14 @@
 							},
 						},
 						'modalShow': true,
+						'modalPageId': 'bubbleMarket'
 					});
 				}
 			},
 			buyPattern() {
 				let _self = this;	
 				uni.showLoading();
-				request.post("settingController/downloadPattern", {
+				request.post("settingController/downloadPattern", 'bubbleMarket', {
 					pattern_id: this.market_arr[this.operate_id].pattern_id
 				}).then(res => {
 					if (res.code == 200) {
@@ -145,7 +148,7 @@
 			},
 			loadPattern(){
 				let _self = this;
-				request.post("settingController/getPatterns", {
+				request.post("settingController/getPatterns", 'bubbleMarket', {
 					type: 'b',
 					except: this.search_keys ? this.search_keys.join() : '',
 				}).then(res => {

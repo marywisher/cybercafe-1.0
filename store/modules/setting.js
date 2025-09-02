@@ -12,10 +12,8 @@ export default {
 		chatFgCss: '',
 		chatHtml: '<div class="chat-bubble {{side}}">{{text}}</div>',
 		chatPattern: 1,
-		customApiKey: '',
-		customDomain: '',
-		customModel: '',
-		customParsedUrl: '',
+		customApi: [],
+		customPrompt: [],
 		editContent: {}, //编辑的内容,{entityId: txt,}
 		entityId: 1,
 		fontColor: ['rgb(52,52,52)', 'rgb(52,52,52)'],
@@ -24,10 +22,11 @@ export default {
 		imgRadius: 20,
 		imgWidth: 40,
 		maxToken: 4096,
-		temperature: 0.95,
-		topP: 0.5,
-		tokenSetting: 4096, //用户设置的token，显示时不得大于该大模型的max_token
+		promptSelect: 0, //预设
 		replyMode: 'click', // 自动auto 手动点击click 回复方式
+		temperature: 0.95,
+		tokenSetting: 4096, //用户设置的token，显示时不得大于该大模型的max_token
+		topP: 0.5,
 	},
 	getters: {},
 	mutations: {

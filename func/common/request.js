@@ -10,7 +10,7 @@ export default {
 	      last_called: 0, // 存储上一次调用的时间戳
 	    };
 	},
-	async post(option, options = {}) {
+	async post(option, pageId = 'index', options = {}) {
 		//console.log(configData.domain);
 		let res;
 		let url = configData.domain;
@@ -52,7 +52,8 @@ export default {
 										cancelText: '晓得了',
 										success: function (res) {}
 									},
-								'modalShow': true
+								'modalShow': true,
+								'modalPageId': pageId
 							});
 						return;
 					}else if(res.data.code == 302){
@@ -68,7 +69,7 @@ export default {
 						console.log('重新登录，来自：' + option);
 						console.log(res.msg);
 						uni.reLaunch({
-							url: '../login/login?msg=' + res.msg
+							url: '../login/login' + (res.msg ? '?msg=' + res.msg : '')
 						});
 					}else{
 						resolve(res.data);

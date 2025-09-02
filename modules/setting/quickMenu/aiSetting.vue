@@ -1,7 +1,7 @@
 <template>
 	<cybercafe-view class="pop-view" ref="popView" isAbsolute isScrollable closeAble viewTitle="备选大模型">
 		<view class="hint display-flex display-line" @tap="gotoAiSetting">
-			<view class="iconfont icon-shezhi"></view> 更多设置
+			<view class="iconfont icon-shezhi"></view> 大模型设置
 		</view>
 		<cybercafe-view v-for="(item, index) in range" :key="item.id"
 			:id="item.id" :crtView="item.id == ai" :selectView="select_id != ai && select_id == item.id"
@@ -43,6 +43,7 @@
 				if(newValue != {}){
 					for(let it in newValue){
 						//console.log(it, this.aiShowInMenu[it]);
+						if(this.userGroup == 1 && it < -1) continue;
 						if(!this.aiShowInMenu[it]) continue;
 						this.range[it] = {
 							'id': newValue[it].id,
@@ -59,11 +60,11 @@
 				}
 			},
 			ai(newValue){
-				this.select_id = -2;
+				this.select_id = -4;
 			}
 		},
 		computed:{
-			...mapState('user', ['modalData', 'modalShow']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'userGroup']),
 			...mapState('dialogue', ['ai', 'aiRange']),
 			...mapState('setting', ['aiShowInMenu']),
 		},
@@ -92,12 +93,13 @@
 						confirmText: "切换",
 						success: (res) => {
 							if (res.confirm) {
-								aiFun.changeAi(_self.select_id);
+								aiFun.changeAi(_self.select_id, 'chat');
 								_self.closeView();
 							}
 						},
 					},
 					'modalShow': true,
+					'modalPageId': 'chat'
 				});
 			},
 			gotoAiSetting(){

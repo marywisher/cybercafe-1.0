@@ -1,6 +1,6 @@
 <template>
-	<view>
-		<view class="display-flex header-title">
+	<view v-show="title">
+		<view class="display-flex header-title display-line">
 			<view class="title-label">{{title}}</view>
 			<span class="iconfont icon-dianping" @tap="openPop"></span>
 		</view>

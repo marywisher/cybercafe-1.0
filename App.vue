@@ -94,6 +94,8 @@
 		padding: $uni-spacing-base $uni-spacing-lg;
 		border: $uni-border-base solid $uni-border-color;
 		border-radius: $uni-border-radius-base;
+	}
+	input{
 		color: $uni-text-color !important;
 	}
 	.display-hide{
@@ -137,6 +139,9 @@
 			background-color: $uni-bg-dark-color-gray;
 		}
 		input, textarea{
+			border-color: $uni-text-color-grey;
+		}
+		input{
 			color: $uni-text-color-disable !important;
 		}
 	}

@@ -40,7 +40,7 @@ export default {
 				// 转换为JSON字符串
 				let jsonData = JSON.stringify(deviceData);
 				
-				request.post("userController/relogin", {
+				request.post("userController/relogin", 'chat', {
 					device: jsonData,
 					version: VERSION
 				}).then(res => {
@@ -67,7 +67,8 @@ export default {
 										cancelText: '明白了',
 										success: function (res) {}
 									},
-									'modalShow': true
+									'modalShow': true,
+									'modalPageId': 'chat'
 								});
 							});
 						}

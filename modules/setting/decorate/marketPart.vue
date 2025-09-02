@@ -18,11 +18,9 @@
 	export default {
 		name: "marketPart",
 		computed: {
-			...mapState('user', ['modalData', 'modalShow']),
 			...mapState('bubble', ['patternName']),
 		},
 		methods: {
-			...mapMutations('user', ['setUserData']),
 			...mapMutations('bubble', ['getBubbleData']),
 			init(){
 				this.getBubbleData();

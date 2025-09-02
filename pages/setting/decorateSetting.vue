@@ -21,16 +21,17 @@
 		},
 		watch:{
 			modalShow(newValue){
-				if(newValue){
+				if(newValue && this.modalPageId == 'decorateSetting'){
 					this.$refs.cModal.show(this.modalData);
 					this.setUserData({
-						'modalShow': false
+						'modalShow': false,
+						'modalPageId': ''
 					})
 				}
 			}
 		},
 		computed:{
-			...mapState('user', ['modalData', 'modalShow']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -45,4 +46,8 @@
 </script>
 
 <style>
+	.modal-view{
+		z-index: 999;
+		top: 20vh;
+	}
 </style>

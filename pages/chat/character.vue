@@ -2,15 +2,10 @@
 	<view>
 		<view class="character-bg" :style="dynamicImg"></view>
 		<view class="view-for-tap" @tap="showMoreImg"></view>
-		<view class="character-header display-flex">
-			<!-- 顶部 -->
-			<view class="header-right">
-				<popMenuVue ref="cMenu"></popMenuVue>
-			</view>
-		</view>
+		<pop-menu-vue></pop-menu-vue>
 		
 		<descriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"></descriptionPart>
-		<image-part ref="cImgPart" :originImg="character_image" :dark="darkMode" :ckey="character_key"
+		<image-part ref="cImgPart" :originImg="character_image" :dark="darkMode" 
 			showCreate showLocal showOnline @afterClick="afterSelectImg"></image-part>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
@@ -31,7 +26,7 @@
 			return {
 				character_image: configData.avatarImg,
 				character_id: 0,
-				character_key: '',//由character转过来不改，仅于线上提交后更新
+				//character_key: '',//由character转过来不改，仅于线上提交后更新
 			}
 		},
 		components:{
@@ -41,16 +36,17 @@
 		watch:{
 			modalShow(newValue){
 				//console.log(newValue);
-				if(newValue){
+				if(newValue && this.modalPageId == 'character'){
 					this.$refs.cModal.show(this.modalData);
 					this.setUserData({
-						'modalShow': false
+						'modalShow': false,
+						'modalPageId': ''
 					})
 				}
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalShow']),
+			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
 			dynamicImg() {
 				return this.darkMode == 'light' ?
 				`background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.1) 80%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 1)), url('${this.character_image}');` : 
@@ -79,7 +75,8 @@
 			},
 			afterLoad(param){
 				this.character_image = param.image;
-				this.character_key = param.key;
+				//this.character_key = param.key;
+				this.$forceUpdate();
 			},
 		},
 		onLoad(option) {
@@ -109,14 +106,6 @@
 		left: 0; 
 		z-index: 1; 
 		background: rgba(0, 0, 0, 0);
-	}
-	.character-header{
-		position: fixed;
-		top: 5vh;
-		left: 0;
-		width: 100vw;
-		z-index: 3;
-		justify-content: flex-end;
 	}
 	.character-des{
 		z-index: 2;

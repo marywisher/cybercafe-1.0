@@ -26,7 +26,8 @@ export default {
 		ippos: '',
 		
 		modalShow: false,
-		modalData: {}
+		modalData: {},
+		modalPageId: '' // 添加页面标识，用于确定在哪个页面显示弹窗
 	},
 	getters: {},
 	mutations: {
@@ -34,6 +35,7 @@ export default {
 			Object.keys(obj).forEach(key => {
 			    state[key] = obj[key]
 			})
+			//console.log(state)
 			uni.setStorageSync('userInfo', state);
 		},
 		getUserData: function(state){

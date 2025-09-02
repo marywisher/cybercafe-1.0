@@ -1,9 +1,13 @@
 <template>
 	<view class="group-item">
-		<view class="display-flex sp-between" @tap="openDetail">
-			<label class="group-title">{{cardTitle}}</label>
-			<view v-if="show_detail" class="iconfont icon-xiayibu iconshouqi"></view>
-			<view v-else class="iconfont icon-xiayibu iconxiala"></view>
+		<view class="display-flex sp-between display-line">
+			<view class="display-flex display-line">
+				<label class="group-title" @tap="openDetail">{{cardTitle}}</label>
+				<view v-if="icon.length > 0" class="iconfont" :class="'icon-' + icon" 
+					@tap="iconFun"></view>
+			</view>
+			<view v-if="show_detail" class="iconfont icon-xiayibu iconshouqi" @tap="openDetail"></view>
+			<view v-else class="iconfont icon-xiayibu iconxiala" @tap="openDetail"></view>
 		</view>
 		<view v-if="show_detail">
 			<slot></slot>
@@ -22,6 +26,16 @@
 			cardTitle: {
 				type: String,
 				default: ''
+			},
+			icon: {
+				type: String,
+				default: ''
+			},
+			iconParam: {
+				type: Object,
+				default: function(){
+					return {}
+				}
 			}
 		},
 		data(){
@@ -40,6 +54,9 @@
 				if(this.show_detail) this.show_detail = false;
 				else this.show_detail = true;
 				this.$emit('toggleDetail', this.show_detail);
+			},
+			iconFun(){
+				this.$emit('iconFun', this.iconParam);
 			}
 		}
 	}
@@ -49,6 +66,7 @@
 	.group-title {
 		font-weight: bold;
 		font-size: $uni-font-size-huge;
+		margin-right: $uni-spacing-base;
 	}
 	.iconshouqi{
 		transform: rotate(-90deg);

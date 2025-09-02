@@ -210,9 +210,9 @@ export default {
 					}
 				}
 			},
-			'modalShow': true
+			'modalShow': true,
+			'modalPageId': 'globalSetting'
 		});	
-		uni.$emit('openModal');
 	},
 	downloadConfirmFun(){
 		uni.showLoading({
@@ -220,7 +220,7 @@ export default {
 			mask: true
 		})
 		let _self = this;
-		request.post('aiController/syncDBDownload').then(response => {
+		request.post('aiController/syncDBDownload', 'globalSetting').then(response => {
 			//console.log(response.result);
 			if(response.code == 200){
 				let result = JSON.parse(response.result);
@@ -252,9 +252,19 @@ export default {
 				}
 				
 				uni.showToast({
-					title: '下载完成请重启',
+					title: '',
 					icon: 'success'
 				})
+				store.commit('user/setUserData', {
+					'modalData': {
+						title: '温馨提示',
+						content: '下载完成请重启',
+						cancelText: 'OK',
+						success: function (res) {}
+					},
+					'modalShow': true,
+					'modalPageId': 'globalSetting'
+				});	
 			}else{
 				uni.showToast({
 					title: response.msg,
@@ -286,8 +296,8 @@ export default {
 				},
 			},
 			'modalShow': true,
+			'modalPageId': 'globalSetting'
 		});
-		uni.$emit('openModal');
 	},
 	async uploadConfirmFun(){
 		uni.showLoading({
@@ -308,7 +318,7 @@ export default {
 		
 		//console.log(JSON.stringify(data));
 		if (JSON.stringify(data).length > 0) {
-			request.post('aiController/syncDBUpload', {
+			request.post('aiController/syncDBUpload', 'globalSetting', {
 				'data': JSON.stringify(data)
 			}).then(response => {
 				if(response){

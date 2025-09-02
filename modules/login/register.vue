@@ -4,11 +4,11 @@
 			popViewStyle="margin:20vh auto;padding: 5vw;">
 			<view class="content">
 				<label class="hint required">* 为必填项</label><br>
-				<view class="display-flex sp-between register-line">
+				<view class="display-flex display-line sp-between register-line">
 					<label>邮箱<span class="required">*</span></label>
 					<input v-model="username"  focus placeholder="请输入注册邮箱" @input="checkEmail" />
 				</view>
-				<view class="display-flex sp-between register-line">
+				<view class="display-flex display-line sp-between register-line">
 					<label>验证码<span class="required">*</span></label>
 					<view class="display-flex">
 						<input v-model="verify_code" maxlength="6" style="width: 158px;" @input="setVerifyCode" />
@@ -16,7 +16,7 @@
 							btnName="发送"></cybercafe-button>
 					</view>					
 				</view>
-				<view class="display-flex sp-between">
+				<view class="display-flex display-line sp-between">
 					<label>邀请码</label>
 					<input v-model="invite_code" maxlength="8" placeholder="请填写邀请码" @input="setInviteCode" />
 				</view>
@@ -24,7 +24,7 @@
 					<view class="hint">（注册成功送1w米粒，填写邀请码再送1w米粒）</view>
 				</view>
 				
-				<view class="display-flex sp-between">
+				<view class="display-flex display-line sp-between">
 					<view>
 						<cybercafe-button btnClass="btn-default" @btnClick="login"
 							btnName="密码登录"></cybercafe-button>
@@ -34,6 +34,7 @@
 							btnName="注册/登录"></cybercafe-button>
 					</view>
 				</view>
+				<view class="hint text-center info" @tap="gotoInfo">—— 食堂使用说明 ——</view>
 			</view>
 		</cybercafe-view>
 	</view>
@@ -59,7 +60,8 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'isLogin']),
+			...mapState('user', ['darkMode', 'isLogin', 'modalData', 'modalPageId',
+				'modalShow']),
 		},
 		methods: {
 			...mapMutations('user', ['setUserData', 'getUserData']),
@@ -97,7 +99,7 @@
 				}
 				
 				uni.showLoading();
-				request.post("userController/sendVerifyCode", {
+				request.post("userController/sendVerifyCode", 'login', {
 					name: this.username,
 				}).then(res => {
 					if (res.code == 200) {
@@ -148,7 +150,7 @@
 				}
 				
 				uni.showLoading();
-				request.post("userController/newRegister", {
+				request.post("userController/newRegister", 'chat', {
 					name: this.username,
 					verify: this.verify_code,
 					code: this.invite_code,
@@ -175,6 +177,7 @@
 								success: (res) => {}
 							},
 							'modalShow': true,
+							'modalPageId': 'chat'
 						});
 						/* uni.switchTab({
 							url: '/pages/index/index'
@@ -197,6 +200,11 @@
 					uni.hideLoading();
 				});
 			},
+			gotoInfo(){
+				uni.navigateTo({
+					url: '../index/info?p=using'
+				})
+			}
 		},
 	}
 </script>
@@ -204,5 +212,8 @@
 <style lang="scss">
 	.register-line{
 		margin-bottom: $uni-spacing-lg;
+	}
+	.info{
+		margin-top:20rpx;
 	}
 </style>

@@ -29,8 +29,21 @@
 			customAiSetting,
 			tttSetting
 		},
+		watch:{
+			modalShow(newValue){
+				if(newValue && this.modalPageId == 'aiSetting'){
+					this.$nextTick(() => {
+						this.$refs.cModal.show(this.modalData);
+					})
+					this.setUserData({
+						'modalShow': false,
+						'modalPageId': ''
+					})
+				}
+			}
+		},
 		computed:{
-			...mapState('user', ['modalData', 'modalShow']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -45,12 +58,15 @@
 				})
 				//this.$forceUpdate();
 				let _self = this;
-				uni.$on('openModal', () => {
-					_self.$refs.cModal.show(_self.modalData);
-					_self.setUserData({
-						'modalShow': false
+				/* uni.$on('openModal', () => {
+					_self.$nextTick(() => {
+						_self.$refs.cModal.show(_self.modalData);
+						_self.setUserData({
+							'modalShow': false,
+							'modalPageId': ''
+						})
 					})
-				})
+				}) */
 				uni.$on('toggleTTT', (param) => {
 					_self.tttSettingShow = param;
 				})

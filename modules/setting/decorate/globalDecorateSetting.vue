@@ -106,7 +106,7 @@
 				this.setSettingData({'bubbleOpacity': this.bubble_opacity});
 			},
 			updateSetting(){
-				request.post('entityController/setEntitySetting', {
+				request.post('entityController/setEntitySetting', 'decorateSetting', {
 					mode: this.entityMode
 				}).then(res => {
 					//console.log(res.result);

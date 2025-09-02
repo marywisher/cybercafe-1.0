@@ -14,6 +14,7 @@
 	import common from '@/func/common/common';
 	import dialogueQuery from '@/func/dbManager/dialogueQuery';
 	import entityBaseInfo from '@/func/entity/entityBaseInfo';
+	import promptFun from '@/func/entity/promptFun';
 	import {
 		mapMutations,
 		mapState,
@@ -29,7 +30,7 @@
 			};
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalShow']),
+			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
 			...mapState('dialogue', ['historylist']),
 		},
 		methods: {
@@ -91,7 +92,8 @@
 							}
 						},
 					},
-					'modalShow': true
+					'modalShow': true,
+					'modalPageId': 'chat'
 				})
 			},
 			deleteMessage(){
@@ -109,7 +111,7 @@
 								'historylist': this.historylist,
 								'refreshList': true,
 							});
-							entityBaseInfo.beforeChat();
+							promptFun.preOperation();
 							break;
 						}
 					}
@@ -151,7 +153,7 @@
 						
 				let ai_id = message_data[0].ai_id;
 				entityBaseInfo.getResponseByAiId(ai_id);
-				entityBaseInfo.beforeChat();		
+				promptFun.preOperation();		
 				this.setDiaData({
 					'refreshList': true,
 				});

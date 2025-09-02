@@ -5,28 +5,28 @@
 		<cybercafe-view ref="loginView" :is-absolute="true" :closeAble="false" :viewTitle="form_flag == 'login' ? '登录' : '修改密码'"
 			popViewStyle="margin:20vh auto;padding: 5vw;">
 			<view class="content">
-				<view class="display-flex sp-between login-line">
+				<view class="display-flex display-line sp-between login-line">
 					<label>账号<span class="required">*</span></label>
 					<input v-model="account" focus placeholder="请输入注册邮箱" />
 				</view>
-				<view class="display-flex sp-between login-line" v-if="form_flag == 'login'">
+				<view class="display-flex display-line sp-between login-line" v-if="form_flag == 'login'">
 					<label>密码<span class="required">*</span></label>
 					<input type="password" v-model="pwd" placeholder="请输入密码" />
 				</view>
 				<view v-else>
-					<view class="display-flex sp-between">
+					<view class="display-flex display-line sp-between">
 						<label>新密码<span class="required">*</span></label>
 						<input type="password" v-model="pwd" placeholder="请输入新的密码" />
 					</view>
 					<view class="display-flex login-line" style="justify-content: flex-end;">
 						<view class="hint">（至少8个字符，包含至少1个大写字母、1个小写字母和1个数字）</view>
 					</view>
-					<view class="display-flex sp-between login-line">
+					<view class="display-flex display-line sp-between login-line">
 						<label>重复密码<span class="required">*</span></label>
 						<input type="password" v-model="repeatpwd" placeholder="与密码一致" />
 					</view>
 				</view>
-				<view v-if="form_flag == 'login'" class="display-flex sp-between">
+				<view v-if="form_flag == 'login'" class="display-flex display-line sp-between">
 					<view class="hint" @tap="openReset">忘记密码？</view>
 					<view>
 						<cybercafe-button btnClass="btn-default" :btnDisable="true"
@@ -37,7 +37,7 @@
 							btnName="登录"></cybercafe-button>
 					</view>
 				</view>
-				<view v-else class="display-flex sp-between">
+				<view v-else class="display-flex display-line sp-between">
 					<view>
 						<cybercafe-button btnClass="btn-primary" @btnClick="submit('resetForm')"
 							btnName="修改"></cybercafe-button>
@@ -47,6 +47,7 @@
 							btnName="取消"></cybercafe-button>
 					</view>
 				</view>
+				<view class="hint text-center info" @tap="gotoInfo">—— 食堂使用说明 ——</view>
 			</view>
 		</cybercafe-view>
 	</view>
@@ -81,7 +82,8 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'isLogin', 'modalData', 'modalShow']),
+			...mapState('user', ['darkMode', 'isLogin', 'modalData', 'modalPageId',
+				'modalShow']),
 		},
 		methods: {
 			...mapMutations('user', ['setUserData', 'getUserData']),
@@ -104,6 +106,7 @@
 							success: (res) => {},
 						},
 						'modalShow': true,
+						'modalPageId': 'login'
 					});
 				}
 			},
@@ -118,7 +121,7 @@
 				uni.showLoading();
 				let _self = this
 				if(this.form_flag == 'login'){//login
-					request.post("userController/login", {
+					request.post("userController/login", 'login', {
 						account: this.account,//Base64.encode(this.account),
 						pwd: this.pwd
 					}).then(res => {
@@ -140,12 +143,13 @@
 							
 							setTimeout(() => {
 								_self.setUserData({
-									modalData: {
-										title: '登录',
-										content: '欢迎，' + res.result.name,
-										cancelText: 'OK'
+									'modalData': {
+										'title': '登录',
+										'content': '欢迎，' + res.result.name,
+										'cancelText': 'OK'
 									},
-									modalShow: true,
+									'modalShow': true,
+									'modalPageId': 'chat'
 								});
 							}, 2000);
 							uni.navigateTo({
@@ -185,7 +189,7 @@
 					}
 					let _self = this;
 					uni.showLoading();
-					request.post("userController/resetPwd", {
+					request.post("userController/resetPwd", 'login', {
 						qq: this.account,
 						pwd: this.pwd
 					}).then(res => {
@@ -203,6 +207,7 @@
 									},
 								},
 								'modalShow': true,
+								'modalPageId': 'login'
 							});
 						}
 					}).catch(e => {
@@ -212,7 +217,7 @@
 					});
 				}
 			},
-			logoutConfirm() {
+			/* logoutConfirm() {
 				console.log('logout');
 				this.resetUserData();
 				let _self = this;
@@ -224,9 +229,15 @@
 						success: (res) => {},
 					},
 					'modalShow': true,
+					'modalPageId': 'login'
 				});
 				this.$emit('afterLogout');
-			},
+			}, */
+			gotoInfo(){
+				uni.navigateTo({
+					url: '../index/info?p=using'
+				})
+			}
 		}
 	}
 </script>
@@ -234,5 +245,8 @@
 <style lang="scss">
 	.login-line{
 		margin-bottom: $uni-spacing-lg;
+	}
+	.info{
+		margin-top:20rpx;
 	}
 </style>

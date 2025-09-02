@@ -8,7 +8,8 @@ export default {
 
 function feedback(){
 	//incubator
-	request.post("characterController/getIncubator", {creater: store.state.user.userId}).then(res => {
+	request.post("characterController/getIncubator", 'chat',
+		{creater: store.state.user.userId}).then(res => {
 		if (res.code == 200) {
 			//console.log(res.result);
 			for(let i = 0; i < res.result.length; i ++){

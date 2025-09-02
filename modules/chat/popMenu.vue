@@ -6,27 +6,36 @@
 		<cybercafe-menu ref="rightMenuPop" class="pop-menu display-flex sp-between"
 			viewTitle="快捷菜单">
 			<view class="display-flex pop-menu-line">
-				<view class="display-flex" @tap="openSetting('ai')">
+				<view class="display-flex display-line" @tap="openSetting('ai')">
 					<view class="iconfont icon-chatou menu-icon-left"></view>
-					<view class="under-line text-center">{{aiSelect}}</view>
+					<view class="under-line text-center menu-text">{{aiSelect}}</view>
 				</view>				
 				<view class="iconfont icon-shezhi menu-icon-right iconai" @tap="gotoAiSetting"></view>
 			</view>
-			<view class="display-flex pop-menu-line" @tap="openSetting('order')">
-				<view class="iconfont icon-shuangxiangjiantou1 menu-icon-left"></view>
-				<span>语序调整</span>
+			<view class="display-flex pop-menu-line">
+				<view class="display-flex display-line" @tap="openSetting('order')">
+					<view class="iconfont icon-shuangxiangjiantou1 menu-icon-left"></view>
+					<view class="text-center menu-text">语序调整</view>
+				</view>
+				<view class="iconfont icon-shezhi menu-icon-right" @tap="gotoPromptSetting"></view>
 			</view>
 			<view class="display-flex pop-menu-line">
-				<view class="iconfont icon-ziyuan menu-icon-left"></view>
-				<span>着色设置</span>
+				<view class="display-flex display-line">
+					<view class="iconfont icon-ziyuan menu-icon-left"></view>
+					<view class="text-center menu-text">着色设置</view>
+				</view>
 			</view>
 			<view class="display-flex pop-menu-line">
-				<view class="iconfont icon-shezhi menu-icon-left"></view>
-				<span>本容器设置</span>
+				<view class="display-flex display-line">
+					<view class="iconfont icon-shezhi menu-icon-left"></view>
+					<view class="text-center menu-text">本容器设置</view>
+				</view>
 			</view>
 			<view class="display-flex pop-menu-line" @tap="changeEntity">
-				<view class="iconfont icon-shangxiajiantou menu-icon-left"></view>
-				<span>切换容器</span>
+				<view class="display-flex display-line">
+					<view class="iconfont icon-shangxiajiantou menu-icon-left"></view>
+					<view class="text-center menu-text">切换容器</view>
+				</view>
 			</view>
 			<!-- <view class="display-flex pop-menu-line required" @tap="delEntity">
 				<view class="required iconfont icon-shanchu menu-icon-left"></view>
@@ -93,6 +102,12 @@
 					url: '/pages/setting/aiSetting'
 				})
 			},
+			gotoPromptSetting(){
+				this.$refs.rightMenuPop.closeView();
+				uni.navigateTo({
+					url: '/pages/setting/promptSetting'
+				})
+			},
 			delEntity(){
 				entityBaseInfo.delEntity();
 			},
@@ -147,6 +162,8 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+	.pop-menu-line .menu-text{
 		width: 30vw;
 	}
 	.required .iconfont{

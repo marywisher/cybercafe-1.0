@@ -95,6 +95,10 @@
   content: "\e6ec";
 }
 
+.icon-dagouwuquan:before {
+  content: "\e632";
+}
+
 .icon-fasong:before {
   content: "\e604";
 }
@@ -115,16 +119,16 @@
   content: "\ec77";
 }
 
-.icon-baocun:before {
-  content: "\e6bf";
-}
-
 .icon-feiquanping:before {
   content: "\e610";
 }
 
 .icon-ziyuan:before {
   content: "\e622";
+}
+
+.icon-shuaxin:before {
+  content: "\e618";
 }
 
 .icon-paixu-sanheng:before {

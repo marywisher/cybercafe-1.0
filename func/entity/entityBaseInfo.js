@@ -3,11 +3,13 @@ import dialogueQuery from "../dbManager/dialogueQuery";
 import request from "../common/request";
 import store from "@/store";
 import common from "../common/common";
+import promptFun from "./promptFun";
 
 export default{
 	async getEntityId(entity_id = 0){
 		return new Promise((resolve, reject) => {
-			request.post('entityController/getEntitySettings', {'entity_id': entity_id}).then(res => {
+			request.post('entityController/getEntitySettings', 'chat',
+				{'entity_id': entity_id}).then(res => {
 				//console.log(res.result);
 				if (res.code == 200) {
 					store.commit('setting/setSettingData', {
@@ -108,15 +110,22 @@ export default{
 			if(store.state.dialogue.breakpointMessageId == 0){
 				let lastHistory = historyList[historyList.length - 1];
 				let message_time = lastHistory ? lastHistory.message_time : 0;
+				//console.log(ai_id);
+				let option_list = await this.getResponseByAiId(ai_id);
+				if(option_list == false){
+					option_list = [{
+						html: common.textToHtml(lastHistory.text),
+						text: lastHistory.text,
+					}];
+				}
 				store.commit('dialogue/setDiaData', {
 					'messageTime': message_time,
 					'optionFirst': lastHistory.text,
-					'crtCharacterId': lastHistory.character_id
+					'crtCharacterId': lastHistory.character_id,
+					'options': option_list
 				});
-				//console.log(ai_id);
-				this.getResponseByAiId(ai_id);
 			}
-			this.beforeChat();
+			promptFun.preOperation();
 			//console.log(message_id);
 			store.commit('dialogue/setDiaData', {
 				'breakpointMessageId': message_id,
@@ -143,90 +152,38 @@ export default{
 				}
 			}
 						
-			//console.log(JSON.stringify(response_list));
-			store.commit('dialogue/setDiaData', {
-				'options': response_list,
-			});
+			return response_list;
 		}else{
-			store.commit('dialogue/setDiaData', { 
-				'options': [] ,
-			});
+			return false;
 		}
 	},
-	beforeChat() {
-		this.getIntroduction();
-	
-		this.getReadyChatData();
-	},
-	getIntroduction() {
-		//console.log(store.state.dialogue.characterlist);
-		//console.log(store.state.dialogue.crtCharacterId);
-		let introduction = '';
-		if (store.state.dialogue.crtCharacterId > 0 && store.state.dialogue.characterlist.hasOwnProperty(store.state.dialogue.crtCharacterId)){
-			introduction = store.state.dialogue.characterlist[store.state.dialogue.crtCharacterId].character_name + '，'
-				+ store.state.dialogue.characterlist[store.state.dialogue.crtCharacterId].character_description; // 人物详情
-		}else{
-			introduction = store.state.dialogue.characterlist[0].character_description + store.state.dialogue.characterlist[0].group_description;
-		}
-		//console.log(store.state.dialogue.crtCharacterId);
-		store.commit('dialogue/setDiaData', {
-			'introduction': introduction
-		});
-	},
-	getReadyChatData() {
+	getChatHistory(lengthLimit) {
 		//预处理
 		let historyList = store.state.dialogue.historylist;
-		let last_message = historyList.pop();
+		//let last_message = historyList.pop();
 		//console.log(historyList);
 		let history_text_length = 0;
 		let temp_history_list = [];
 		for (let i = historyList.length - 1; i >= 0; i --){
 			temp_history_list.unshift(historyList[i]);
 			history_text_length += historyList[i].text.length;
-			if(history_text_length > 4000 * 1.5) break;
+			if(history_text_length > lengthLimit * 1.5) break;
 		} 
 		//console.log(history_text_length);
 		//console.log(store.state.dialogue.crtCharacterId);
 		let text_length = 0;
-		let introduction = store.state.dialogue.introduction;
-		//console.log(introduction);
-		let character_name = 'test';
-		if(store.state.dialogue.crtCharacterId == 0){
-			character_name = store.state.dialogue.me;
-		}else if(store.state.dialogue.crtCharacterId > 0){
-			character_name = store.state.dialogue.characterlist[store.state.dialogue.crtCharacterId].character_name;
-		}
-		//console.log(character_name);
-		let cdata = {
-			"entity_id": store.state.setting.entityId,
-			"time": store.state.dialogue.messageTime,
-			"character_name": character_name,
-			"messages": [{
-				"role": "system",
-				"content": introduction +
-					(store.state.dialogue.crtCharacterId > 0 ? store.state.dialogue.characterlist[0] : '')
-			}],
-		};
 		
 		//console.log(cdata);
-		text_length += introduction.length + (store.state.dialogue.crtCharacterId > 0 ? store.state.dialogue
-			.characterlist[0].length : 0);
-	
+		let tmp_str = '';
 		for (let i in temp_history_list) {
-			let tmp_data = {
-				"role": temp_history_list[i].character_id < 1 ? 'user' : 'assistant',
-				"content": temp_history_list[i].text
-			};
-			//console.log(tmp_data);
-			cdata.messages.push(tmp_data);
+			tmp_str += (temp_history_list[i].character_id > 0 ? 
+				store.state.dialogue.characterlist[temp_history_list[i].character_id].character_name
+				: store.state.dialogue.me)
+				+ ':' + temp_history_list[i].text + ' ';
 		}
-		historyList.push(last_message);
-		cdata.messages[cdata.messages.length - 1].role = 'user';
-		store.commit('dialogue/setDiaData', {
-			'chatlist': cdata,
-		});
+		return tmp_str;
 	},
-	delEntity(){
+	delEntity(pageId){
 		if(store.state.setting.entityId == 0) return;
 		//let _self = this;
 		store.commit('user/setUserData', {
@@ -252,7 +209,7 @@ export default{
 						});
 						
 						//删除线上的entity
-						request.post("entityController/deleteEntity", {
+						request.post("entityController/deleteEntity", pageId, {
 							entity_id: store.state.setting.entityId
 						}).then(res => {
 							if (res.code == 200) {
@@ -283,6 +240,7 @@ export default{
 				},
 			},
 			'modalShow': true,
+			'modalPageId': pageId
 		});
 	},
 }

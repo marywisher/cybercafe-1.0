@@ -3,7 +3,10 @@
 		<view class="hint required character-line">* 为必填项</view>
 		<view class="flag-tag base-tag">基础信息</view>
 		<view class="after-tag display-flex sp-between character-line display-line">
-			<view><label class="required">*</label>昵称 {{character_name.length}} / 16字</view>
+			<view class="display-flex display-line">
+				<view><label class="required">*</label>昵称 </view>
+				<view class="hint" style="margin-left: 10rpx;">{{character_name.length}} / 16字</view>
+			</view>
 			<input v-model="character_name" maxlength="16" :styles="dynamicStyle" 
 			confirm-type="done" @confirm="autoSave('character_name', character_name)"></input>
 			<view>性别</view>
@@ -12,8 +15,10 @@
 			</picker>
 		</view>
 		<view class="character-line">
-			<view><label class="required">*</label>简介 {{short_description.length}} / 100字</view>
-			<view class="hint">用于角色列表展示</view>
+			<view class="display-flex display-line sp-between">
+				<view><label class="required">*</label>简介</view>
+				<view class="hint">{{short_description.length}} / 100字， 用于角色列表展示</view>
+			</view>
 			<textarea autoHeight v-model="short_description" maxlength="100" :cursor-spacing="150"
 			 :styles="dynamicStyle" placeholder="请输入角色简介" adjust-position  
 			 confirm-type="done" @confirm="autoSave('basic', short_description)"></textarea>
@@ -22,7 +27,8 @@
 		<cybercafe-card cardTitle="补充说明">
 			<cybercafe-view v-for="(item, basic_index) in basic_description" :key="basic_index">
 				<view class="display-flex sp-between display-line">
-					<view>{{basic_index}} {{basic_description[basic_index].length}}字</view>
+					<view>{{basic_index}}</view>
+					<view class="hint">{{basic_description[basic_index].length}} 字</view>
 					<view class="iconfont icon-jianhao" @tap="reduceDes('basic', basic_index)"></view>
 				</view>
 				<view>
@@ -48,15 +54,18 @@
 		</cybercafe-card>
 		<view class="flag-tag world-tag">世界观</view>
 		<view class="character-line after-tag">
-			<view>故事背景 {{full_description.length}} / 2000字</view>
-			<textarea autoHeight v-model="full_description" maxlength="2000" :cursor-spacing="150"
+			<view class="display-flex display-line sp-between">故事背景
+				<view class="hint">{{full_description.length}} 字</view>
+			</view>
+			<textarea autoHeight v-model="full_description" :cursor-spacing="150"
 				 :styles="dynamicStyle" placeholder="请输入故事介绍" adjust-position 
 				 confirm-type="done" @confirm="autoSave('extend', full_description)"></textarea>
 		</view>
 		<cybercafe-card cardTitle="其它设定">
 			<cybercafe-view v-for="(item2, extend_index) in extend_description" :key="extend_index">
 				<view class="display-flex sp-between display-line">
-					<view>{{extend_index}} {{extend_description[extend_index].length}}字</view>
+					<view>{{extend_index}}</view>
+					<view class="hint">{{extend_description[extend_index].length}} 字</view>
 					<view class="iconfont icon-jianhao" @tap="reduceDes('extend', extend_index)"></view>
 				</view>
 				<view>
@@ -83,14 +92,18 @@
 		<view class="flag-tag branch-story-tag">副本剧情</view>
 		<view class="character-line after-tag"></view>
 		<view class="character-line">
-			<view>前情提要 {{character_story.length}} / 500字</view>
-			<textarea autoHeight v-model="character_story" maxlength="500" :cursor-spacing="150"
+			<view class="display-flex display-line sp-between">前情提要 
+				<view class="hint">{{character_story.length}} 字</view>
+			</view>
+			<textarea autoHeight v-model="character_story" :cursor-spacing="150"
 				 :styles="dynamicStyle" placeholder="请输入前情提要" adjust-position 
 				 @blur="autoSave('character_story', character_story)"></textarea>
 		</view>
 		<view class="character-line">
-			<view>开场白 {{character_prologue.length}} / 500字</view>
-			<textarea autoHeight v-model="character_prologue" maxlength="500" :cursor-spacing="150"
+			<view class="display-flex display-line sp-between">开场白 
+				<view class="hint">{{character_prologue.length}} 字</view>
+			</view>
+			<textarea autoHeight v-model="character_prologue" :cursor-spacing="150"
 				 :styles="dynamicStyle" placeholder="请输入开场白" adjust-position 
 				 @blur="autoSave('character_prologue', character_prologue)"></textarea>
 		</view>
@@ -114,9 +127,7 @@
 		name: 'descriptionPart',
 		data(){
 			return{
-				character_image: configData.avatarImg,
 				character_id: 0,
-				character_key: '',//由character转过来不改，仅于线上提交后更新
 				
 				character_name: '',
 				default_image: configData.defaultImg,
@@ -147,8 +158,8 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'lastTimestampSubmit', 'modalData', 'modalShow',
-				'powerLevel', 'userKey']),
+			...mapState('user', ['darkMode', 'lastTimestampSubmit', 'modalData', 'modalPageId',
+				'modalShow', 'powerLevel', 'userKey']),
 			dynamicStyle(){
 				return this.darkMode == 'light' ? {backgroundColor: '#fff', color: '#333'} : 
 					{backgroundColor: '#1f1f1f', color: '#999'};
@@ -166,6 +177,7 @@
 				this.character_name = character_data[0].character_name;
 				this.discription_data = character_data[0].character_description;
 				if(!common.isJsonString(this.discription_data)){
+					//console.log('旧结构');
 					let pos = this.discription_data.indexOf('\\n');
 					if(pos == -1){
 						pos = this.discription_data.indexOf('\r\n');
@@ -190,6 +202,7 @@
 					this.character_memo = character_data[0].character_memo ? character_data[0].character_memo : '';
 					this.character_prologue = character_data[0].character_prologue;
 				}else{
+					//console.log('新结构');
 					this.discription_data = JSON.parse(this.discription_data);
 					this.gender_cn = this.discription_data.性别;
 					switch(this.gender_cn){
@@ -203,22 +216,24 @@
 						this.character_gender = 2;
 						break;
 					}
-					this.short_description = common.textOperation(this.discription_data.基础信息.简介, '你').text;
-					this.full_description = common.textOperation(this.discription_data.扩展信息.故事背景, '你').text;
+					if(this.discription_data.基础信息.hasOwnProperty('简介')) 
+						this.short_description = common.textOperation(this.discription_data.基础信息.简介, '你').text;
+					if(this.discription_data.扩展信息.hasOwnProperty('故事背景')) 
+						this.full_description = common.textOperation(this.discription_data.扩展信息.故事背景, '你').text;
 					const {简介, ...basicObj} = this.discription_data.基础信息;
 					const {故事背景, ...extendObj} = this.discription_data.扩展信息;
 					this.basic_description = basicObj;
 					this.extend_description = extendObj;
-					this.character_story = this.discription_data.副本.前情提要;
-					this.character_prologue = this.discription_data.副本.开场白;
-					if(basicObj.hasOwnProperty(this.basic_key)) this.basic_key = '';
+					if(this.discription_data.hasOwnProperty('副本')){
+						if(this.discription_data.副本.hasOwnProperty('前情提要')) this.character_story = this.discription_data.副本.前情提要;
+						if(this.discription_data.副本.hasOwnProperty('开场白')) this.character_prologue = this.discription_data.副本.开场白;
+					}
+					
+					//if(basicObj.hasOwnProperty(this.basic_key)) this.basic_key = '';
 				}
-				
-				this.character_image = character_data[0].character_img ? character_data[0].character_img : this.default_image;
-				
+				let character_image = character_data[0].character_img ? character_data[0].character_img : this.default_image;
 				this.$emit('afterLoad', 
-					{'image': this.character_image,
-					'key': this.character_key});
+					{'image': character_image});//,'key': character_key
 			},
 			async autoSave(kind, value){
 				//检测
@@ -238,7 +253,8 @@
 							cancelText: "OK",
 							success: (res) => {},
 						},
-						'modalShow': true
+						'modalShow': true,
+						'modalPageId': 'character'
 					})
 					return;
 				}
@@ -328,7 +344,8 @@
 							}
 						},
 					},
-					'modalShow': true
+					'modalShow': true,
+					'modalPageId': 'character'
 				})
 			},
 			toggleTaFun(key, flag){

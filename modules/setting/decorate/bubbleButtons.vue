@@ -33,7 +33,7 @@
 	export default {
 		name: "bubbleButtons",
 		computed: {
-			...mapState('user', ['modalData', 'modalShow', 'userKey']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'userKey']),
 			...mapState('bubble', ['bubbleColor1', 'bubbleColor2', 'cssAfter', 'cssPrev',
 				'displayCss', 'displayHtml',
 				'fontColor1', 'fontColor2', 'nextId',
@@ -92,14 +92,15 @@
 							}
 						},
 					},
-					'modalShow': true
+					'modalShow': true,
+					'modalPageId': 'decorateSetting'
 				})
 			},
 			upload() {
 				let _self = this;
 				let date = common.getCurrentTimeStampStr();
 				uni.showLoading();
-				request.post("settingController/updatePattern", {
+				request.post("settingController/updatePattern", 'decorateSetting', {
 					key: this.patternKey,
 					type: 'b',
 					name: this.patternName,

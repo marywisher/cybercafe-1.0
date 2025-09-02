@@ -51,6 +51,12 @@
 			}
 		},
 		{
+			"path": "pages/setting/promptSetting",
+			"style": {
+				"navigationBarTitleText": "提示词设置"
+			}
+		},
+		{
 			"path": "pages/setting/decorateSetting",
 			"style": {
 				"navigationBarTitleText": "样式设置"
@@ -60,6 +66,12 @@
 			"path": "pages/setting/bubbleMarket",
 			"style": {
 				"navigationBarTitleText": "气泡市场"
+			}
+		},
+		{
+			"path": "pages/index/info",
+			"style": {
+				"navigationBarTitleText": "说明"
 			}
 		},
 		{

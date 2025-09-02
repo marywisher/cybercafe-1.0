@@ -18,7 +18,7 @@ export default {
 		}
 		//console.log(key_arr);
 		let _self = this;
-		request.post("settingController/getPatternByKey", {
+		request.post("settingController/getPatternByKey", 'decorateSetting', {
 			keys: key_arr.join(),
 			time: time_param
 		}).then(res => {

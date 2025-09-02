@@ -52,7 +52,7 @@
 			}
 		},
 		computed:{
-			...mapState('user', ['modalData', 'modalShow']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 			...mapState('dialogue', ['ai', 'aiGroup', 'aiRange']),
 			...mapState('setting', ['aiShowInMenu']),
 		},
@@ -71,19 +71,19 @@
 					//console.log(i);
 					let model = {};
 					for(let j in this.aiGroup[i].models){
-						let aiId = this.aiGroup[i].models[j].id;
-						if(!this.aiRange.hasOwnProperty(aiId) || this.aiRange[aiId].builtIn == 'no-built') continue;
+						let ai_id = this.aiGroup[i].models[j].id;
+						if(!this.aiRange.hasOwnProperty(ai_id) || this.aiRange[ai_id].builtIn == 'no-built') continue;
 						let ai = {
-							'id': this.aiRange[aiId].id,
-							'name': this.aiRange[aiId].name,
-							'nickName': this.aiRange[aiId].nickName,
-							'price': this.aiRange[aiId].price,
-							'description': this.aiRange[aiId].description,
-							'crt': aiId == this.ai,
-							'level': aiId == 200 ? 2 : this.aiRange[aiId].level,
-							'enabled': this.aiRange[aiId].enabled,
-							'showInMenu': this.aiRange[aiId].enabled ? this.aiShowInMenu[aiId] : false,
-							'switchText': this.aiShowInMenu[aiId] ? '显示于快捷菜单' : '不显示'
+							'id': this.aiRange[ai_id].id,
+							'name': this.aiRange[ai_id].name,
+							'nickName': this.aiRange[ai_id].nickName,
+							'price': this.aiRange[ai_id].price,
+							'description': this.aiRange[ai_id].description,
+							'crt': ai_id == this.ai,
+							'level': ai_id == 200 ? 2 : this.aiRange[ai_id].level,
+							'enabled': this.aiRange[ai_id].enabled,
+							'showInMenu': this.aiRange[ai_id].enabled ? this.aiShowInMenu[ai_id] : false,
+							'switchText': this.aiShowInMenu[ai_id] ? '显示于快捷菜单' : '不显示'
 						};
 						model[j] = ai;
 						//console.log(model);
@@ -133,14 +133,14 @@
 						confirmText: "切换",
 						success: (res) => {
 							if (res.confirm) {
-								aiFun.changeAi(_self.select_id);
+								aiFun.changeAi(_self.select_id, 'aiSetting');
 								uni.$emit('toggleTTT', true);
 							}
 						},
 					},
 					'modalShow': true,
+					'modalPageId': 'aiSetting'
 				});
-				uni.$emit('openModal');
 				//console.log(this.modalShow)
 			},
 		}

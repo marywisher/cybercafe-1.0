@@ -23,6 +23,12 @@
 					<span class="iconfont icon-xiayibu"></span>
 				</view>
 			</cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="gotoPrompt">
+					<view class="global-setting-label">提示词设置</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
 		</cybercafe-view>
 		<cybercafe-view>
 			<cybercafe-view>
@@ -45,6 +51,25 @@
 			</cybercafe-view>
 		</cybercafe-view>
 		<cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="gotoInfo('using')">
+					<view class="global-setting-label">使用说明</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>			
+			</cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="gotoInfo('version')">
+					<view class="global-setting-label">版本更新说明</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="gotoLogin">
+					<view class="global-setting-label">退出账号</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
+			
 			<view>最新版本：{{latestVersion}}<br>当前版本：{{my_version}}</view>
 			<cybercafe-button v-show="latestVersion > my_version" btnClass="btn-primary" 
 				btnName="更新版本" @btnClick="beforeUpdateVersion"></cybercafe-button>
@@ -67,8 +92,22 @@
 				my_version: ''
 			}
 		},
+		watch:{
+			modalShow(newValue){
+				if(newValue && this.modalPageId == 'globalSetting'){
+					this.$nextTick(() => {
+						this.$refs.cModal.show(this.modalData);
+					})
+					this.setUserData({
+						'modalShow': false,
+						'modalPageId': ''
+					})
+				}
+			}
+		},
 		computed: {
-			...mapState('user', ['darkMode', 'latestVersion', 'modalData', 'modalShow', 'userId']),
+			...mapState('user', ['darkMode', 'latestVersion', 'modalData', 'modalPageId',
+				'modalShow', 'userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -139,6 +178,21 @@
 				uni.navigateTo({
 					url: './aiSetting'
 				})
+			},
+			gotoPrompt(){
+				uni.navigateTo({
+					url: './promptSetting'
+				})
+			},
+			gotoInfo(param){
+				uni.navigateTo({
+					url: '../index/info?p=' + param
+				})
+			},
+			gotoLogin(){
+				uni.navigateTo({
+					url: '/pages/login/login'
+				})
 			}
 		},
 		onLoad() {
@@ -153,14 +207,6 @@
 			}
 			//console.log(uni.getSystemInfoSync());
 			this.my_version = uni.getSystemInfoSync().appWgtVersion;
-			
-			let _self = this;
-			uni.$on('openModal', () => {
-				_self.$refs.cModal.show(_self.modalData);
-				_self.setUserData({
-					'modalShow': false
-				})
-			})
 		}
 	}
 </script>

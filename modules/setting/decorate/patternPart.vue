@@ -64,7 +64,7 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['modalData', 'modalShow']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 			...mapState('bubble', ['patternIndex', 'patternRange']),
 		},
 		methods: {
@@ -111,7 +111,8 @@
 								}
 							}
 						},
-						'modalShow': true
+						'modalShow': true,
+						'modalPageId': 'decorateSetting'
 					})
 				}else{
 					this.setUserData({
@@ -125,14 +126,15 @@
 								}
 							}
 						},
-						'modalShow': true
+						'modalShow': true,
+						'modalPageId': 'decorateSetting'
 					})
 				}
 			},
 			confirmFun(key, index){
 				let _self = this;
 				uni.showLoading();
-				request.post("settingController/setPatternStatus", {
+				request.post("settingController/setPatternStatus", 'decorateSetting', {
 					key: key,
 					status: 0
 				}).then(res => {
@@ -178,7 +180,8 @@
 								}
 							}
 						},
-						'modalShow': true
+						'modalShow': true,
+						'modalPageId': 'decorateSetting'
 					})
 				}else{
 					_self.updating(key);
@@ -187,7 +190,7 @@
 			updating(key){
 				let _self = this;
 				uni.showLoading();
-				request.post("settingController/getPatternByKey", {
+				request.post("settingController/getPatternByKey", 'decorateSetting', {
 					keys: key,
 					time: 'ignore'
 				}).then(res => {
@@ -226,7 +229,7 @@
 				baseQuery.updateDataByKey('cybercafe_bubble_pattern', 
 					updateData, whereObj).then(()=>{}, (e)=>{console.log(e)});
 				this.pattern_range[this.operate_index].pattern_name = val;
-				request.post("settingController/updatePattern", {
+				request.post("settingController/updatePattern", 'decorateSetting', {
 					key: this.pattern_range[this.operate_index].pattern_key,
 					type: 'b',
 					name: val,

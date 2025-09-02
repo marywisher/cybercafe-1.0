@@ -4,7 +4,7 @@
 		<view >
 			<text class="gradient-text">{{slogan}}</text>
 		</view>
-		<!-- <cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal> -->
+		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
 
@@ -22,18 +22,19 @@
 				slogan: 'CyberCafe'
 			}
 		},
-		/* watch:{
+		watch:{
 			modalShow(newValue){
-				if(newValue){
+				if(newValue && this.modalPageId == 'index'){
 					this.$refs.cModal.show(this.modalData);
 					this.setUserData({
-						'modalShow': false
+						'modalShow': false,
+						'modalPageId': ''
 					})
 				}
 			}
-		}, */
+		},
 		computed:{
-			...mapState('user', ['isLogin', 'modalData', 'modalShow']),
+			...mapState('user', ['isLogin', 'modalData', 'modalPageId', 'modalShow']),
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -46,15 +47,12 @@
 		},
 		onLoad(options) {
 			//每日随机一个tip options.msg
-			console.log(options)
+			//console.log(options)
 			setTimeout(() => {
 				uni.reLaunch({
 					url: '/pages/chat/index'
 				})
 			}, 500)
-		},
-		methods: {
-			
 		}
 	}
 </script>

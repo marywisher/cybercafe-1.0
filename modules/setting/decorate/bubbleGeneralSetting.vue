@@ -76,6 +76,10 @@
 				} else {
 					this.bubble_align_text = "居中";
 				}
+				uni.showToast({
+					title: '此设置重启后更适配',
+					icon: 'none'
+				})
 			},
 			imgWidthChange(e) {
 				this.setSettingData({

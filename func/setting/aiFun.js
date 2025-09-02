@@ -2,16 +2,19 @@ import request from '../common/request';
 import store from '@/store';
 
 export default {
-	changeAi(select_id){
-		console.log(select_id);
+	changeAi(selectId, pageId){
+		//console.log(selectId);
+		let ai_range = {};
+		ai_range = store.state.dialogue.aiRange[selectId];
+		
 		store.commit('dialogue/setDiaData', {
-			'ai': select_id,
-			'aiSelect': store.state.dialogue.aiRange[select_id].nickName,
+			'ai': selectId,
+			'aiSelect': ai_range.nickName,
 		});
-		console.log(store.state.dialogue.aiRange[select_id]);
-		request.post('entityController/setEntitySetting',
-			{'ai_select': select_id,
-			'ai_name': store.state.dialogue.aiRange[select_id].model }).then(res => {
+		//console.log(ai_range.model);
+		request.post('entityController/setEntitySetting', pageId,
+			{'ai_select': selectId,
+			'ai_name': ai_range.model }).then(res => {
 			//console.log(res.result);
 			if (res.code != 200) {
 				uni.showToast({
@@ -33,14 +36,14 @@ export default {
 	},
 	async getAiRange(){
 		return new Promise((resolve, reject) => {
-			request.post('cafeController/getAiSettings', {}).then(res => {
+			request.post('cafeController/getAiSettings', 'chat', {}).then(res => {
 				//console.log(res.result);
 				if (res.code == 200) {
-					let rangeValue = {};
+					let range_value = {};
 					let ai_show_in_menu = store.state.setting.aiShowInMenu ? store.state.setting.aiShowInMenu : {};
 					for(let i in res.result.range){
 						if(res.result.range[i]){
-							rangeValue[i] = {
+							range_value[i] = {
 								id: res.result.range[i].originId,
 								newApiId: res.result.range[i].newApiId,
 								name: res.result.range[i].name,
@@ -66,7 +69,7 @@ export default {
 					
 					for(let i in res.result.vip){
 						if(res.result.vip[i]){
-							rangeValue[i] = {
+							range_value[i] = {
 								id: res.result.vip[i].originId,
 								newApiId: res.result.vip[i].newApiId,
 								name: res.result.vip[i].name,
@@ -86,13 +89,13 @@ export default {
 								level: 2,
 								enabled: store.state.user.userGroup == 2 ? true : false
 							}
-							if(ai_show_in_menu[i] == undefined && rangeValue[i].enabled) ai_show_in_menu[i] = true;
+							if(ai_show_in_menu[i] == undefined && range_value[i].enabled) ai_show_in_menu[i] = true;
 						} 
 					}
 					
 					for(let i in res.result.other){
-						if(res.result.other[i] && !rangeValue.hasOwnProperty(i)){
-							rangeValue[i] = {
+						if(res.result.other[i] && !range_value.hasOwnProperty(i)){
+							range_value[i] = {
 								id: res.result.other[i].originId,
 								newApiId: res.result.other[i].newApiId,
 								name: res.result.other[i].name,
@@ -116,8 +119,8 @@ export default {
 						} 
 					}
 					for(let i in res.result.noBuilt){
-						if(res.result.noBuilt[i] && !rangeValue.hasOwnProperty(i)){
-							rangeValue[i] = {
+						if(res.result.noBuilt[i] && !range_value.hasOwnProperty(i)){
+							range_value[i] = {
 								id: res.result.noBuilt[i].originId,
 								newApiId: res.result.noBuilt[i].newApiId,
 								name: res.result.noBuilt[i].name,
@@ -135,41 +138,44 @@ export default {
 						} 
 					}
 					//自设
-					if(store.state.setting.customApiKey){
-						let tmp_max_token = 0;
-						for(let i in rangeValue){
-							if(store.state.setting.customModel == rangeValue[i].model){
-								tmp_max_token = rangeValue[i].maxTokens;
-								break;
+					if(store.state.setting.customApi){
+						let custom_id = -1;
+						for(let j = 0; j < store.state.setting.customApi.length; j ++){
+							let tmp_max_token = 0;
+							for(let i in range_value){
+								if(store.state.setting.customApi[j].model == range_value[i].model){
+									tmp_max_token = range_value[i].maxTokens;
+									break;
+								}
 							}
+							range_value[custom_id - j] = {
+								'id': -1,
+								'name': store.state.setting.customApi[j].model,
+								'model': store.state.setting.customApi[j].model,
+								'nickName': '自设模型',
+								'price': '自行支付',
+								'description': '',
+								'domain': store.state.setting.customApi[j].domain,
+								'parsedUrl': store.state.setting.customApi[j].parsed_url,
+								'maxTokens': tmp_max_token,
+								'level': 1,
+								'enabled': true
+							}
+							ai_show_in_menu[custom_id - j] = true;
 						}
-						rangeValue[-1] = {
-							'id': -1,
-							'name': store.state.setting.customModel,
-							'model': store.state.setting.customModel,
-							'nickName': '自设模型',
-							'price': '自行支付',
-							'description': '',
-							'domain': store.state.setting.customDomain,
-							'parsedUrl': store.state.setting.customParsedUrl,
-							'maxTokens': tmp_max_token,
-							'level': 1,
-							'enabled': true
-						}
-						ai_show_in_menu[-1] = true;
 					}					
 					
 					//console.log(store.state.dialogue.ai);
 					store.commit('dialogue/setDiaData', {
-						'aiRange': rangeValue,
+						'aiRange': range_value,
 						'aiGroup': res.result.group,
-						'aiSelect': rangeValue[store.state.dialogue.ai].nickName,
+						'aiSelect': range_value[store.state.dialogue.ai].nickName,
 					});
 					store.commit('setting/setSettingData', {
 						'aiShowInMenu': ai_show_in_menu
 					});
 					//console.log(store.state.dialogue.aiSelect);
-					resolve(rangeValue);
+					resolve(range_value);
 				}else {
 					uni.showToast({
 						title: res.msg,

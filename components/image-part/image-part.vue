@@ -16,14 +16,8 @@
 				<image class="ipimg" mode="aspectFit" :src="default_image" @tap="openCrop"></image>
 			</swiper-item>
 		</swiper>
-		
-		<view class="swiper-dot">
-			<view class="display-flex" :style="dynamicViewWidth">
-				<view v-for="(item, index) in (showCreate ? images.concat(['1', '2']) : images.concat(['1']))"
-					:key="index" class="swiper-dot-item" :id="index"
-					:class="{'swiper-dot-active': index == swiper_current}" @tap="clickItem"></view>
-			</view>
-		</view>
+		<cybercafeSwiperDot :list="(showCreate ? images.concat(['1', '2']) : images.concat(['1']))"
+			@tapDot="clickItem" :swiperCurrent="swiper_current"></cybercafeSwiperDot>
 		
 		<cybercafe-view ref="popup" @maskClick="closeCrop" isAbsolute closeAble :closeType="0"
 			popViewStyle="position: fixed; bottom: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none;">
@@ -41,6 +35,7 @@
 	import common from '@/func/common/common';
 	import baseQuery from '@/func/dbManager/baseQuery';
 	import request from '@/func/common/request';
+	import cybercafeSwiperDot from '../cybercafe-swiper-dot/cybercafe-swiper-dot';
 	import {
 		mapMutations,
 		mapState,
@@ -96,6 +91,9 @@
 				//console.log(newValue);
 			}
 		},
+		components: {
+			cybercafeSwiperDot
+		},
 		computed: {
 			...mapState('user', ['screen']),
 			beEmpty(){
@@ -128,12 +126,12 @@
 				let _self = this;
 				if(this.showOnline){
 					if(this.id != 'entity' && (parseInt(this.id) > 0 || this.ckey)){//character线上数据
-						request.post('characterController/getCharacterImages', {
+						request.post('characterController/getCharacterImages', 'character', {
 							'character_id': this.id,
 							'key': this.ckey
 						}).then(res => {
 							if (res.code == 200) {
-								//console.log(res.result.img);
+								console.log(res.result.img);
 								for(let j = 0; j < res.result.img.length; j ++){
 									if(_self.images.indexOf(res.result.img[j].img_url) == -1 && res.result.img[j].img_url != _self.originImg){
 										_self.images.push(res.result.img[j].img_url);
@@ -271,8 +269,7 @@
 			},
 			clickItem(e){//swiper点
 				//console.log(e);
-				if(e.currentTarget.id == this.swiper_current) return;
-				this.swiper_current = e.currentTarget.id;
+				this.swiper_current = e;
 			},
 		}
 	}
@@ -291,6 +288,11 @@
 	.swiper-box{
 		height: 80vh;
 	}
+	.swiper-dot{
+		width: 100vw;
+		position: fixed;
+		bottom: 20vh;
+	}
 	.ipimg{
 		width: 100vw;
 		min-height: 100vw;
@@ -300,30 +302,5 @@
 		top: 13vh;
 		left: 3vh;
 		z-index: 5000;
-	}
-	
-	.swiper-dot{
-		width: 100vw;
-		position: fixed;
-		bottom: 20vh;
-	}
-	.swiper-dot > view{
-		margin: 0 auto;
-	}	
-	.swiper-dot-item{
-		width: $uni-spacing-lg;
-		height: $uni-spacing-lg;
-		border-radius: $uni-border-radius-huge;
-		background-color: $uni-color-secondary;
-		margin-right: $uni-spacing-lg;
-	}
-	.swiper-dot-active{
-		width: calc(3 * $uni-spacing-lg);
-		background-color: $uni-color-main;
-	}
-	@media (prefers-color-scheme: dark) {
-		.swiper-dot-active{
-			background-color: $uni-color-dark-main;
-		}
 	}
 </style>
