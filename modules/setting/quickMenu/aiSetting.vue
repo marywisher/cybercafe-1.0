@@ -13,7 +13,7 @@
 				</view>
 				<view v-if="item.id != 200" class="hint">模型官方名称：{{item.name}}</view>
 				<view class="hint">{{item.description}}</view>
-				<cybercafe-button btnClass="btn-primary" @btnClick="showModal" btnName="切换"
+				<cybercafe-button btnClass="btn-primary" @tapBtn="showModal" btnName="切换"
 					btnStyle="position: absolute; bottom: 3px; right: 3px; z-index: 2;" 
 					v-if="select_id != ai && select_id == item.id"></cybercafe-button>
 				<view v-if="item.level == 2" class="vip-hint">仅供月卡</view>

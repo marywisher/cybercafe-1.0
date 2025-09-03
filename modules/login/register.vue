@@ -12,7 +12,7 @@
 					<label>验证码<span class="required">*</span></label>
 					<view class="display-flex">
 						<input v-model="verify_code" maxlength="6" style="width: 158px;" @input="setVerifyCode" />
-						<cybercafe-button btnClass="btn-default" @btnClick="sendVerify"
+						<cybercafe-button btnClass="btn-default" @tapBtn="sendVerify"
 							btnName="发送"></cybercafe-button>
 					</view>					
 				</view>
@@ -26,11 +26,11 @@
 				
 				<view class="display-flex display-line sp-between">
 					<view>
-						<cybercafe-button btnClass="btn-default" @btnClick="login"
+						<cybercafe-button btnClass="btn-default" @tapBtn="login"
 							btnName="密码登录"></cybercafe-button>
 					</view>
 					<view>
-						<cybercafe-button btnClass="btn-primary" @btnClick="submitRegister"
+						<cybercafe-button btnClass="btn-primary" @tapBtn="submitRegister"
 							btnName="注册/登录"></cybercafe-button>
 					</view>
 				</view>

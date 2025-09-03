@@ -25,7 +25,8 @@ export default {
 		
 		entityImage: '',
 		cDisplayId: 0,//crtCharaterId 仅用户list展示时
-		aiSelect: '',
+		aiSelect: '',//模型名，用于显示
+		
 		aiRange:{},//包括线上的名字和本地的名字
 		entityMode: 'chat',//novel chat
 		aiGroup:{},

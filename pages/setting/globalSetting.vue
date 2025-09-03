@@ -72,7 +72,7 @@
 			
 			<view>最新版本：{{latestVersion}}<br>当前版本：{{my_version}}</view>
 			<cybercafe-button v-show="latestVersion > my_version" btnClass="btn-primary" 
-				btnName="更新版本" @btnClick="beforeUpdateVersion"></cybercafe-button>
+				btnName="更新版本" @tapBtn="beforeUpdateVersion"></cybercafe-button>
 		</cybercafe-view>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>

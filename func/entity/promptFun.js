@@ -87,14 +87,6 @@ export default {
 			&& common.isJsonString(character_data[0].character_description)){
 			//console.log(character_data[0].character_description);
 			character_json = JSON.parse(character_data[0].character_description);
-			/* for(let j in character_json){
-				//console.log(j);
-				if(j != '基础信息' && j != '扩展信息' && j != '副本'){
-					content += ' ' + character_json[j]
-				}
-				//console.log(content);
-			} */
-			//console.log(character_json)
 		}else{
 			content += ' ' + character_data[0].character_description;
 		}

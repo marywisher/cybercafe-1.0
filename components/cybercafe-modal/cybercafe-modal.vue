@@ -3,9 +3,9 @@
 		<view class="content-line text-center">{{content}}</view>
 		<view class="display-flex btn-line sp-between">
 			<cybercafe-button class="cancel-btn" btnClass="btn-default" v-if="cancelText"
-				@btnClick="cancelFun" :btnName="cancelText"></cybercafe-button>
+				@tapBtn="cancelFun" :btnName="cancelText"></cybercafe-button>
 			<cybercafe-button class="confirm-btn" btnClass="btn-primary" v-if="confirmText"
-				@btnClick="confirmFun" :btnName="confirmText"></cybercafe-button>
+				@tapBtn="confirmFun" :btnName="confirmText"></cybercafe-button>
 		</view>	
 	</cybercafe-view>
 </template>

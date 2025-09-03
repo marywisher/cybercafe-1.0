@@ -86,16 +86,15 @@ export default {
 			});
 		});
 	},
-	/* getResponse(option, data, param) {// 仅用于chat通讯
+	getResponse(option, data) {// 仅用于chat通讯
 		//console.log(option);
-		let ai_type = option.type;
+		//let ai_type = data.type;
 		//console.log(data['id'], data['token']);
 		this.post(option, data).then(response => {
 			console.log(response);
 			if(response.code == 200){
 				//console.log(ai_type);
 				handle.afterResponseFun({
-					key: param,
 					value: {
 						content: response.result,
 					}
@@ -109,18 +108,17 @@ export default {
 								content: response.msg,
 								cancelText: '晓得了',
 								success: function (res) {}
-							}
-						'modalShow': true
+							},
+						'modalShow': true,
+						'modalPageId': pageId
 					});
 				handle.afterResponseFun({
-					key: param,
 					value: {
 						content: response.result,
 					}
 				});
 			}else {
 				//console.error(response.msg);
-				uni.hideLoading();
 				uni.showToast({
 					title: response.msg,
 					icon: "none"
@@ -128,83 +126,37 @@ export default {
 			}
 		}).catch(e => {
 			console.error(e);
-			uni.hideLoading();
 			uni.showToast({
 				title: e,
 				icon: "none"
 			})
+		}).finally(() => {
+			uni.hideLoading();
 		});
 	},
-	bothSideRequest(model, data, ai, param_prefix) {
+	chatRequest() {
 		//console.log(this.last_called);
 		const now = Date.now();
 		if(now - this.last_called < 10000){
-			if(!data.task || data.task == 'chat'){
-				uni.showToast({
-					title: '别心急，慢点，再慢点',
-					icon: "none"
-				})
-			}
+			uni.showToast({
+				title: '别心急，慢点，再慢点',
+				icon: "none"
+			})
 			uni.hideLoading();
 			return;
 		}
-		data.type = ai;
-		//console.log(data.type);
-		data.model = model;
-		switch (ai){
-			case 7:
-				//console.log(data);
-				this.getResponse('aiController/chat2', data, param_prefix);
-				break;
-			default:
-				data.key = store.state.user.user_key;
-				this.getResponse('aiController/chat', data, param_prefix);
-				break;
-		}
+		console.log(store.state.dialogue.aiRange);
+		let data = store.state.dialogue.chatlist;
+		data.type = store.state.dialogue.ai;
+		data.key = store.state.user.userKey;
+		data.model = store.state.dialogue.aiRange[store.state.dialogue.ai].model;
+		data.temperature = store.state.setting.temperature;
+		data.top_p = store.state.setting.topP;
+		console.log(data);
+		return;
+		this.getResponse('newAiController/chat', data);
 		this.last_called = now;
-	}, */
-	/* getLocalResponse(option, data) {
-		console.log(option);
-		this.post(option, data).then(response => {
-			console.log(response);
-			if(response.code == 200){
-				handle.afterResponseFun({
-					key: option,
-					value: response.result
-				});
-			}else if(response.code == 303){
-				uni.hideLoading();
-				store.commit('user/setUserData',
-					{
-						'modalData':
-							{
-								content: response.msg,
-								cancelText: '晓得了',
-								success: function (res) {}
-							}
-						'modalShow': true
-					});
-				handle.afterResponseFun({
-					key: option,
-					value: response.result
-				});
-			}else{
-				console.error(response.msg);
-				uni.hideLoading();
-				uni.showToast({
-					title: response.msg,
-					icon: "none"
-				})
-			}
-		}).catch(e => {
-			console.error(e);
-			uni.hideLoading();
-			uni.showToast({
-				title: e,
-				icon: "none"
-			})
-		});
-	}, */
+	},
 	getIp(){
 		let _self = this;
 		//console.log('getip');

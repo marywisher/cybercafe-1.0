@@ -33,17 +33,17 @@
 							btnName="注册稍后开放"></cybercafe-button><!--/验证码登录-->
 					</view>
 					<view>
-						<cybercafe-button btnClass="btn-primary" @btnClick="submit('loginForm')"
+						<cybercafe-button btnClass="btn-primary" @tapBtn="submit('loginForm')"
 							btnName="登录"></cybercafe-button>
 					</view>
 				</view>
 				<view v-else class="display-flex display-line sp-between">
 					<view>
-						<cybercafe-button btnClass="btn-primary" @btnClick="submit('resetForm')"
+						<cybercafe-button btnClass="btn-primary" @tapBtn="submit('resetForm')"
 							btnName="修改"></cybercafe-button>
 					</view>
 					<view>
-						<cybercafe-button btnClass="btn-default" @btnClick="closeReset"
+						<cybercafe-button btnClass="btn-default" @tapBtn="closeReset"
 							btnName="取消"></cybercafe-button>
 					</view>
 				</view>

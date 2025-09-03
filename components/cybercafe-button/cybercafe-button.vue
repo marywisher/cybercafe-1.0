@@ -31,7 +31,7 @@
 			btnFun(param){
 				//console.log(this.btnDisable);
 				if(this.btnDisable) return;
-				this.$emit('btnClick', param);
+				this.$emit('tapBtn', param);
 			}
 		}
 	}

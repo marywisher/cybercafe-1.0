@@ -4,7 +4,7 @@
 		<view class="pattern-select" @tap="patternChange">{{patternName}}</view>
 		<view>
 			<cybercafe-button btnClass="btn-primary"
-				 btnName="气泡市场" @btnClick="morePattern"></cybercafe-button>
+				 btnName="气泡市场" @tapBtn="morePattern"></cybercafe-button>
 		</view>
 	</view>
 </template>

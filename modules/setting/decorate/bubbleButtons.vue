@@ -3,17 +3,17 @@
 		<view class="display-flex sp-between">
 			<view v-if="(patternStatus == 4 || patternStatus == 6) && showCode">
 				<cybercafe-button btnClass="btn-warn" :btnDisable="patternHtml.length == 0 || patternCss.length == 0"
-					@btnClick="saveNew" btnName="另存" btnStyle="font-size: 10px;"></cybercafe-button>
+					@tapBtn="saveNew" btnName="另存" btnStyle="font-size: 10px;"></cybercafe-button>
 			</view>
 			<view v-if="(patternStatus == 4 || patternStatus == 6) && showCode && patternIndex > 2">
 				<cybercafe-button :btnDisable="patternHtml.length == 0 || patternCss.length == 0"
-					@btnClick="save" btnName="保存" btnStyle="font-size: 10px;"></cybercafe-button>
+					@tapBtn="save" btnName="保存" btnStyle="font-size: 10px;"></cybercafe-button>
 			</view>
 			<view>
-				<cybercafe-button @btnClick="reset" btnName="重置" btnStyle="font-size: 10px;"></cybercafe-button>
+				<cybercafe-button @tapBtn="reset" btnName="重置" btnStyle="font-size: 10px;"></cybercafe-button>
 			</view>
 			<view>
-				<cybercafe-button btnClass="btn-primary" @btnClick="apply" btnName="应用"></cybercafe-button>
+				<cybercafe-button btnClass="btn-primary" @tapBtn="apply" btnName="应用"></cybercafe-button>
 			</view>
 		</view>
 		<cybercafe-dialogueModal ref="newPatterName" title="样式名" @confirm="dialogInputConfirm"></cybercafe-dialogueModal>

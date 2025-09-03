@@ -4,7 +4,7 @@
 			<input v-model="value_str" @input="check"/>
 			<view>
 				<cybercafe-button btnClass="btn-primary" :btnDisable="unsavable"
-					@btnClick="confirmFun" btnName="修改"
+					@tapBtn="confirmFun" btnName="修改"
 					btnStyle="height: 60rpx; border-radius: 0 12rpx 12rpx 0; font-size: 32rpx; line-height: 60rpx;"></cybercafe-button>
 			</view>
 		</view>

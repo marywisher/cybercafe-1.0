@@ -16,22 +16,22 @@
 							</span>
 						</view>
 						<view>
-							<cybercafe-button btnClass="btn-primary" @btnClick="changePattern" btnName="切换"
+							<cybercafe-button btnClass="btn-primary" @tapBtn="changePattern" btnName="切换"
 								 v-if="operate_id == item.pattern_id && item.pattern_id != patternIndex" ></cybercafe-button>
 						</view>
 					</view>
 					<view v-if="item.pattern_id > 2" class="display-flex sp-between" style="padding-top: 10px;">
 						<view>
 							<cybercafe-button btnClass="btn-warn" 
-								@btnClick="deletePattern(item.pattern_key, index, item.status)" btnName="删除" ></cybercafe-button>
+								@tapBtn="deletePattern(item.pattern_key, index, item.status)" btnName="删除" ></cybercafe-button>
 						</view>
 						<view>
-							<cybercafe-button btnClass="btn-primary" @btnClick="renamePattern(index, item.pattern_name)" 
+							<cybercafe-button btnClass="btn-primary" @tapBtn="renamePattern(index, item.pattern_name)" 
 								btnName="重命名" v-if="item.pattern_status != 1" size="mini" ></cybercafe-button>
 						</view>
 						<view>
 							<cybercafe-button btnClass="btn-default"
-								@btnClick="clickToUpdateData(item.pattern_key, item.pattern_status)" btnName="更新" ></cybercafe-button>
+								@tapBtn="clickToUpdateData(item.pattern_key, item.pattern_status)" btnName="更新" ></cybercafe-button>
 						</view>
 					</view>
 				</view>

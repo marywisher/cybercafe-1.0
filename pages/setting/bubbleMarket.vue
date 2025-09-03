@@ -32,7 +32,7 @@
 				<view v-html="item.pattern_css"></view>
 			</view>
 			<view class="text-center">
-				<cybercafe-button btnClass="btn-default" @btnClick="showModal(item.pattern_id)"
+				<cybercafe-button btnClass="btn-default" @tapBtn="showModal(item.pattern_id)"
 					btnName="下载（10,000米粒/次）"></cybercafe-button>
 			</view>
 		</cybercafe-view>

@@ -1,9 +1,9 @@
 <template>
 	<view>
 		<cybercafe-button v-if="isLogin" class="logout-btn"
-			btnClass="btn-primary" btnName="安全退出" @btnClick="logoutFun"></cybercafe-button>
+			btnClass="btn-primary" btnName="安全退出" @tapBtn="logoutFun"></cybercafe-button>
 		<cybercafe-button v-else class="logout-btn"
-			btnClass="btn-primary" btnName="登录" @btnClick="loginFun"></cybercafe-button>
+			btnClass="btn-default" btnName="登录" @tapBtn="loginFun"></cybercafe-button>
 		<login ref="cpLogin" :showIcon="false"></login>
 		<register ref="cpRegister"></register>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>

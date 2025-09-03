@@ -5,8 +5,10 @@
 				v-model="edit_text" class="edit-box" :styles="dynamicStyle"
 				trim="both" @input="autoSaveContent" @confirm="confirmFun"></textarea>
 			<view class="display-flex display-line sp-between icon-part">
-				<view class="iconfont icon-guanbi" @tap="cancelFun"></view>
-				<view class="iconfont icon-dagouwuquan" @tap="confirmFun"></view>
+				<cybercafe-button btnClass="btn-default"
+					btnName="" class="iconfont icon-guanbi" @tapBtn="cancelFun"/>
+				<cybercafe-button btnClass="btn-default"
+					btnName="" class="iconfont icon-dagouwuquan" @tapBtn="confirmFun"/>
 			</view>
 		</view>
 		<view v-else class="display-flex display-line sp-between">
@@ -15,8 +17,10 @@
 					@tapDot="clickItem" :swiperCurrent="swiper_current"></cybercafe-swiper-dot>
 			</view>
 			<view class="display-flex display-line icon-part">
-				<view v-if="!refresh_disabled" class="iconfont icon-shuaxin" @tap="respeakFun"/>
-				<view class="iconfont icon-dianping" @tap="changeToEdit"/>				
+				<cybercafe-button v-if="!refresh_disabled" btnClass="btn-default" 
+					btnName="" class="iconfont icon-shuaxin" @tapBtn="respeakFun"/>
+				<cybercafe-button btnClass="btn-default" btnName="" class="iconfont icon-dianping" 
+					@tapBtn="changeToEdit" />
 			</view>
 		</view>
 	</view>
@@ -24,6 +28,7 @@
 
 <script>
 	import common from '@/func/common/common';
+	import request from '@/func/common/request';
 	import {
 		mapMutations,
 		mapState,
@@ -34,7 +39,7 @@
 		data(){
 			return{
 				swiper_current: 0,
-				refresh_disabled: true,//没有chatlist或Options时不可用true
+				refresh_disabled: false,//没有chatlist或Options时不可用true
 				edit_text: '',//等价于editContent[this.entity_id]
 				option_list: [],
 			}
@@ -76,7 +81,7 @@
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			init(){
 				this.option_list = this.options;
-				if(this.option_list.length == 0) this.refresh_disabled = true;
+				//if(this.option_list.length == 0) this.refresh_disabled = true;
 			},
 			respeakFun(e){
 				if (this.refresh_disabled == false) {// && content.text === '重说'
@@ -85,8 +90,8 @@
 						title: '内容由AI生成，仅供娱乐'
 					});
 					//console.log(this.option_count);
-					let tmpChatData = this.chatlist;
-					//request.bothSideRequest(LIVELY, tmpChatData, this.ai, 'options');
+					//let tmpChatData = this.chatlist;
+					request.chatRequest();
 				}
 			},
 			autoSaveContent(e){
@@ -124,6 +129,10 @@
 	}
 	.icon-part{
 		color: $uni-color-main;
+		margin-top: $uni-spacing-base;
+	}
+	.icon-shuaxin{
+		margin-right: $uni-spacing-base;
 	}
 	@media (prefers-color-scheme: dark) {
 		.icon-part{

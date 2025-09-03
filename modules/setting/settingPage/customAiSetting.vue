@@ -9,7 +9,7 @@
 						<view class="ai-setting-right">
 							<view class="display-flex ai-setting-btn">
 								<cybercafe-button btnClass="btn-primary"
-									btnName="点击设置" @btnClick="customChange"></cybercafe-button>
+									btnName="点击设置" @tapBtn="customChange"></cybercafe-button>
 							</view>
 						</view>
 					</view>
@@ -34,19 +34,19 @@
 							<view v-show="crt_api.api_key != ''" class="custom-select" @tap="keyChange">{{crt_api.api_key}}</view>
 							<view v-show="crt_api.api_key == ''" class="display-flex ai-setting-btn">
 								<cybercafe-button btnClass="btn-primary"
-									btnName="黏贴密钥" @btnClick="keyChange"></cybercafe-button>
+									btnName="黏贴密钥" @tapBtn="keyChange"></cybercafe-button>
 							</view>
 						</view>
 					</view>
 					<view class="display-flex sp-between display-line">
 						<view class="display-flex ai-setting-btn">
 							<cybercafe-button btnClass="btn-default" :btnDisable="!crt_api.api_key || ai == (-1 - crt_index)" 
-								btnName="设为默认模型"  @btnClick="setAI"></cybercafe-button>
+								btnName="设为默认模型"  @tapBtn="setAI"></cybercafe-button>
 						</view>
 						<view v-if="crt_api.connected" class="hint required text-center">{{crt_api.connect_text}}</view>
 						<view class="display-flex ai-setting-btn">
 							<cybercafe-button btnClass="btn-primary" :btnDisable="crt_api.connected || crt_api.uncheckable" 
-								btnName="测试通讯"  @btnClick="checkConnect"></cybercafe-button>
+								btnName="测试通讯"  @tapBtn="checkConnect"></cybercafe-button>
 						</view>
 					</view>
 				</view>
@@ -212,7 +212,6 @@
 				})
 			},
 			customChange(){
-				this.crt_index = index;
 				this.$refs.modelList.openView();
 			},
 			changeView(index){
