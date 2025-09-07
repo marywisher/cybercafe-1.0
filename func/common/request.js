@@ -22,7 +22,7 @@ export default {
 		post_data['id'] = store.state.user.userId;
 		post_data['token'] = store.state.user.token;
 
-		//console.log(option.type);
+		//console.log(pageId);
 		console.log(configData.domain + option);
 		console.log('post_data:' + JSON.stringify(post_data));
 		
@@ -48,9 +48,8 @@ export default {
 								'refreshFlag': 'fail',
 								'modalData':
 									{
-										content: res.data.msg,
-										cancelText: '晓得了',
-										success: function (res) {}
+										'content': res.data.msg,
+										'cancelText': '晓得了',
 									},
 								'modalShow': true,
 								'modalPageId': pageId
@@ -78,7 +77,7 @@ export default {
 				fail: err => {
 					uni.hideLoading();
 					uni.showToast({
-						title: '网络问题，请稍后再试',
+						title: err.msg,
 						icon: "none"
 					})
 					throw new Error('网络问题，请稍后再试:' + JSON.stringify(err));
@@ -90,7 +89,7 @@ export default {
 		//console.log(option);
 		//let ai_type = data.type;
 		//console.log(data['id'], data['token']);
-		this.post(option, data).then(response => {
+		this.post(option, 'chat', data).then(response => {
 			console.log(response);
 			if(response.code == 200){
 				//console.log(ai_type);
@@ -145,15 +144,15 @@ export default {
 			uni.hideLoading();
 			return;
 		}
-		console.log(store.state.dialogue.aiRange);
+		//console.log(store.state.dialogue.aiRange);
 		let data = store.state.dialogue.chatlist;
 		data.type = store.state.dialogue.ai;
 		data.key = store.state.user.userKey;
 		data.model = store.state.dialogue.aiRange[store.state.dialogue.ai].model;
 		data.temperature = store.state.setting.temperature;
 		data.top_p = store.state.setting.topP;
-		console.log(data);
-		return;
+		data.max_token = store.state.setting.tokenSetting;
+		//console.log(data);
 		this.getResponse('newAiController/chat', data);
 		this.last_called = now;
 	},

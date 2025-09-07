@@ -73,10 +73,13 @@ export default {
 		request_data.messages = [];
 		//默认系统提示词
 		//console.log(store.state.setting.customPrompt)
+		let sys_prompt = '';
 		if(store.state.setting.customPrompt.length > 0){
+			sys_prompt = store.state.setting.customPrompt[store.state.setting.promptSelect].系统提示词;
+			sys_prompt = sys_prompt.replace('{{char}}', character_name).replace('{{user}}', store.state.dialogue.me);
 			request_data.messages[0] = {
 				'role': 'system',
-				'content': store.state.setting.customPrompt[store.state.setting.promptSelect].系统提示词
+				'content': sys_prompt
 			}
 		}
 		let content = '';
@@ -117,8 +120,16 @@ export default {
 			}
 			//console.log(content);
 		}
-		let content_length = content.length;
-		//console.log(store.state.setting.tokenSetting - content_length);
+		content = content.replace('{{char}}', character_name).replace('{{user}}', store.state.dialogue.me);
+		let content_length = content.length + sys_prompt.length;
+		store.commit('setting/setSettingData',{
+			'promptLength': content_length
+		});
+		console.log(store.state.setting.tokenSetting - content_length);
+		//字数超限提示
+		if(content_length > store.state.setting.tokenSetting){
+			return;
+		}
 		let history_str = entityBaseInfo.getChatHistory(store.state.setting.tokenSetting - content_length);
 		//console.log(history_str);
 		/* if(history_str == 0){
@@ -132,7 +143,7 @@ export default {
 			'role': 'user',
 			'content': content
 		})
-		console.log(request_data);
+		//console.log(request_data);
 		store.commit('dialogue/setDiaData', {
 			'chatlist': request_data,
 		});

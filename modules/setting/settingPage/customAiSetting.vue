@@ -231,7 +231,7 @@
 				let data = {
 					'domain': this.custom_api[this.crt_index].domain,
 					'parsed_url': this.custom_api[this.crt_index].parsed_url,
-					'api_key': this.custom_api[this.crt_index].api_key,
+					'apiKey': this.custom_api[this.crt_index].api_key,
 					'model': this.custom_api[this.crt_index].model
 				}
 				let _self = this;

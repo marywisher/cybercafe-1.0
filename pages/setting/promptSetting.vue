@@ -5,8 +5,7 @@
 				<view class="custom-prompt-part">
 					<cybercafe-card cardTitle="系统提示词">
 						<view class="hint text-right">{{crt_prompt && crt_prompt.系统提示词.value ? crt_prompt.系统提示词.value.length : 0}} 字</view>
-						<textarea class="inner-ta" autoHeight v-model="crt_prompt.系统提示词.value" 
-							maxlength="100" :cursor-spacing="150"
+						<textarea class="inner-ta" autoHeight v-model="crt_prompt.系统提示词.value" :cursor-spacing="150"
 							:styles="dynamicStyle" placeholder="请输系统提示词" adjust-position  
 							confirm-type="done" @confirm="autoSave('系统提示词', crt_prompt.系统提示词.value)"></textarea>
 					</cybercafe-card>
@@ -47,8 +46,7 @@
 						v-if="id != '系统提示词' && id != '时间感知'" :cardTitle="id" icon="jianhao" 
 						@iconFun="reduceDes" :iconParam="{'id': id}">
 						<view class="hint text-right">{{item ? item.value.length : 0}} 字</view>
-						<textarea class="inner-ta" autoHeight v-model="item.value" 
-							maxlength="100" :cursor-spacing="150"
+						<textarea class="inner-ta" autoHeight v-model="item.value" :cursor-spacing="150"
 							:styles="dynamicStyle" placeholder="请输系统提示词" adjust-position  
 							confirm-type="done" @confirm="autoSave(id, item.value)"></textarea>
 					</cybercafe-card>

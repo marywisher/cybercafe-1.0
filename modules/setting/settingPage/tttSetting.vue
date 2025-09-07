@@ -22,7 +22,7 @@
 			<view class="ai-setting-label">最大token数</view>
 			<view class="ai-setting-right">
 				<slider :value="token_value" @change="tokenChange" min="0" :max="maxtoken"
-					 :activeColor="(disable_flag ? '#999' : '#E94E46')" :disabled="disable_flag" step="100" show-value />
+					 :activeColor="(disable_flag ? '#999' : '#E94E46')" :disabled="disable_flag" step="128" show-value />
 			</view>
 		</view>
 		<view class="hint">当前大模型支持最大token数为{{maxtoken}}</view>
@@ -77,8 +77,9 @@
 			...mapMutations('dialogue', ['getDiaData']),
 			init(){
 				this.temperature_value = this.temperature;
-				this.topp_value = this.top_p;
+				this.topp_value = this.topP;
 				this.maxtoken = this.maxToken ? this.maxToken : this.aiRange[this.ai].maxTokens;
+				this.token_value = this.tokenSetting;
 				if(this.token_value > this.maxtoken) this.token_value = this.maxtoken;
 				this.setSettingData({
 					'tokenSetting': this.token_value

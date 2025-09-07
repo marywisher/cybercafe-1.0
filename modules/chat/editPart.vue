@@ -55,9 +55,10 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode']),
+			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
 			...mapState('dialogue', ['cDisplayId', 'options']),
-			...mapState('setting', ['editContent', 'entityId', 'fontColor', 'fontSize']),
+			...mapState('setting', ['editContent', 'entityId', 'fontColor', 'fontSize',
+				'promptLength', 'tokenSetting']),
 			dynamicStyle: function(){
 				let style_obj = `font-size: ${this.fontSize}px;`;
 				if(this.side == 'left'){
@@ -65,18 +66,11 @@
 				}else{
 					style_obj += `color: ${this.fontColor[1]};`;
 				}
-				if(this.darkMode == 'light'){
-					style_obj += `backgroundColor: #fff;`;
-					//style_obj['color'] = '#333';
-				}else{
-					style_obj += `backgroundColor: #1f1f1f;`;
-					//style_obj['color'] = '#999';
-				}
 				return style_obj;
 			},
 		},
 		methods:{
-			...mapMutations('user', ['getUserData']),
+			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('dialogue', ['getDiaData']),
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			init(){
@@ -85,6 +79,17 @@
 			},
 			respeakFun(e){
 				if (this.refresh_disabled == false) {// && content.text === '重说'
+					if(this.promptLength > this.tokenSetting){
+						this.setUserData({
+							'modalData': {
+								content: "当前提示词字数已超限，请调整最大token数设置，或删减提示词",
+								cancelText: "晓得了"
+							},
+							'modalShow': true,
+							'modalPageId': 'chat'
+						});
+						return;
+					}
 					//console.log(this.ai);
 					uni.showLoading({
 						title: '内容由AI生成，仅供娱乐'
@@ -126,6 +131,7 @@
 	.edit-box{
 		width: 90%;
 		line-height: 46rpx;
+		backgroundColor: $uni-text-color-inverse;
 	}
 	.icon-part{
 		color: $uni-color-main;
@@ -137,6 +143,9 @@
 	@media (prefers-color-scheme: dark) {
 		.icon-part{
 			color: $uni-color-dark-main;
+		}
+		.edit-box{
+			backgroundColor: $uni-bg-dark-color-gray;
 		}
 	}
 </style>

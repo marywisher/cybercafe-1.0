@@ -27,6 +27,7 @@ export default {
 		temperature: 0.95,
 		tokenSetting: 4096, //用户设置的token，显示时不得大于该大模型的max_token
 		topP: 0.5,
+		promptLength: 0,//基础提示词长度
 	},
 	getters: {},
 	mutations: {
