@@ -2,7 +2,7 @@
 	<view>
 		<view class="character-bg" :style="dynamicImg"></view>
 		<view class="view-for-tap" @tap="showMoreImg"></view>
-		<pop-menu-vue></pop-menu-vue>
+		<pop-menu-vue :bgOpacity="bgOpacity" :img="character_image"></pop-menu-vue>
 		
 		<descriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"></descriptionPart>
 		<image-part ref="cImgPart" :originImg="character_image" :dark="darkMode" 
@@ -26,6 +26,7 @@
 			return {
 				character_image: configData.avatarImg,
 				character_id: 0,
+				bgOpacity: 0,
 				//character_key: '',//由character转过来不改，仅于线上提交后更新
 			}
 		},
@@ -84,6 +85,10 @@
 			this.$nextTick(() => {
 				this.$refs.cDP.init(this.character_id);
 			})
+		},
+		onPageScroll(e) {
+			// 根据滚动距离计算透明度，从 0 到 1
+			this.bgOpacity = Math.min(e.scrollTop / 300, 1);
 		},
 	}
 </script>
