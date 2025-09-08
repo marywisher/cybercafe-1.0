@@ -55,8 +55,8 @@
 		transform: rotate(180deg);
 	}
 	.character-header-img{
-		width: $uni-img-size-sm;
-		height: $uni-img-size-sm;
+		width: $uni-img-size-lg;
+		height: $uni-img-size-lg;
 		border-radius: 50%;
 	}
 	@media (prefers-color-scheme: dark) {

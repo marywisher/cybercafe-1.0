@@ -1,5 +1,8 @@
 <template>
 	<view>
+		<view class="login-header display-flex">
+			<view v-if="isLogin" class="iconfont icon-xiayibu" @tap="back"></view>
+		</view>
 		<cybercafe-button v-if="isLogin" class="logout-btn"
 			btnClass="btn-primary" btnName="安全退出" @tapBtn="logoutFun"></cybercafe-button>
 		<cybercafe-button v-else class="logout-btn"
@@ -66,6 +69,9 @@
 			},
 			loginFun(){
 				this.$refs.cpLogin.show();
+			},
+			back(){
+				uni.navigateBack();
 			}
 		},
 		onLoad(options) {
@@ -96,13 +102,21 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
+	.login-header{
+		height: 10.5vh;
+		padding: $uni-width-none $uni-spacing-lg;
+	}
+	.icon-xiayibu{
+		font-size: calc($uni-font-size-lg * 2);
+		transform: rotate(180deg);
+	}
 	.modal-view{
 		z-index: 999;
 		top: 20vh;
 	}
 	.logout-btn{
 		width: 50vw;
-		margin: 20vh auto;
+		margin: 30vh auto;
 	}
 </style>

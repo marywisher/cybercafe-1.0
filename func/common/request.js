@@ -59,14 +59,14 @@ export default {
 						uni.hideLoading();
 						//store.commit('user/resetUserData');
 						console.log(res.data.msg);
-						uni.navigateTo({
+						store.commit('user/setUserData', {'isLogin': false});
+						uni.reLaunch({
 							url: '../login/login?msg=' + res.data.msg
 						})
 					}else if(res.data.code == 300){
 						uni.hideLoading();
 						store.commit('user/setUserData', {'isLogin': false});
 						console.log('重新登录，来自：' + option);
-						console.log(res.msg);
 						uni.reLaunch({
 							url: '../login/login' + (res.msg ? '?msg=' + res.msg : '')
 						});

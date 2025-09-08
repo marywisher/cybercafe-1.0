@@ -13,7 +13,7 @@
 					<label>密码<span class="required">*</span></label>
 					<input type="password" v-model="pwd" placeholder="请输入密码" />
 				</view>
-				<view v-else>
+				<view v-show="form_flag == 'reset'">
 					<view class="display-flex display-line sp-between">
 						<label>新密码<span class="required">*</span></label>
 						<input type="password" v-model="pwd" placeholder="请输入新的密码" />
@@ -26,7 +26,7 @@
 						<input type="password" v-model="repeatpwd" placeholder="与密码一致" />
 					</view>
 				</view>
-				<view v-if="form_flag == 'login'" class="display-flex display-line sp-between">
+				<view v-show="form_flag == 'login'" class="display-flex display-line sp-between">
 					<view class="hint" @tap="openReset">忘记密码？</view>
 					<view>
 						<cybercafe-button btnClass="btn-default" :btnDisable="true"
@@ -37,14 +37,14 @@
 							btnName="登录"></cybercafe-button>
 					</view>
 				</view>
-				<view v-else class="display-flex display-line sp-between">
-					<view>
-						<cybercafe-button btnClass="btn-primary" @tapBtn="submit('resetForm')"
-							btnName="修改"></cybercafe-button>
-					</view>
+				<view v-show="form_flag == 'reset'" class="display-flex display-line sp-between">
 					<view>
 						<cybercafe-button btnClass="btn-default" @tapBtn="closeReset"
 							btnName="取消"></cybercafe-button>
+					</view>
+					<view>
+						<cybercafe-button btnClass="btn-primary" @tapBtn="submit('resetForm')"
+							btnName="修改"></cybercafe-button>
 					</view>
 				</view>
 				<view class="hint text-center info" @tap="gotoInfo">—— 食堂使用说明 ——</view>
@@ -69,7 +69,7 @@
 			},
 			showIcon: {
 				type: Boolean,
-				default: true
+				default: false
 			}
 		},
 		data() {
@@ -82,8 +82,7 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'isLogin', 'modalData', 'modalPageId',
-				'modalShow']),
+			...mapState('user', ['isLogin', 'modalData', 'modalPageId', 'modalShow']),
 		},
 		methods: {
 			...mapMutations('user', ['setUserData', 'getUserData']),
@@ -98,12 +97,11 @@
 			show(msg = ''){
 				this.$refs.loginView.openView();
 				
-				if(msg){
+				if(msg.length > 0){
 					this.setUserData({
 						'modalData': {
 							content: msg,
 							cancelText: '晓得了',
-							success: (res) => {},
 						},
 						'modalShow': true,
 						'modalPageId': 'login'
@@ -141,23 +139,18 @@
 							};
 							_self.setUserData(data);
 							
-							setTimeout(() => {
-								_self.setUserData({
-									'modalData': {
-										'title': '登录',
-										'content': '欢迎，' + res.result.name,
-										'cancelText': 'OK'
-									},
-									'modalShow': true,
-									'modalPageId': 'chat'
-								});
-							}, 2000);
+							_self.setUserData({
+								'modalData': {
+									'title': '登录',
+									'content': '欢迎，' + res.result.name,
+									'cancelText': 'OK'
+								},
+								'modalShow': true,
+								'modalPageId': 'chat'
+							});
 							uni.navigateTo({
 								url: '/pages/index/index'
 							})
-							/* uni.switchTab({
-								url: '/pages/index/index'
-							}) */
 						} else {
 							uni.showToast({
 								title: res.msg,
@@ -217,22 +210,6 @@
 					});
 				}
 			},
-			/* logoutConfirm() {
-				console.log('logout');
-				this.resetUserData();
-				let _self = this;
-				this.setUserData({
-					'modalData': {
-						title: '登出',
-						content: '安全退出',
-						cancelText: 'OK',
-						success: (res) => {},
-					},
-					'modalShow': true,
-					'modalPageId': 'login'
-				});
-				this.$emit('afterLogout');
-			}, */
 			gotoInfo(){
 				uni.navigateTo({
 					url: '../index/info?p=using'

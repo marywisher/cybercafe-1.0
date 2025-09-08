@@ -5,7 +5,7 @@
 		</view>
 		<view class="character-pop">
 			<cybercafe-view ref="popCharView" isAbsolute isScrollable closeAble viewTitle="角色设置">
-				<view class="character-line display-flex sp-between">
+				<view class="character-line display-flex sp-between display-line part-first">
 					<view>回复方式</view>
 					<view>
 						<switch :checked="replyMode == 'auto'" style="transform:scale(0.6)" color="#E94E46"
@@ -13,19 +13,19 @@
 						<label>{{replyMode == 'auto' ? '自动' : '点击'}}</label>
 					</view>
 				</view>
-				<view class="hint">至少确保一位角色在场上</view>
+				<view class="hint character-line">至少确保一位角色在场上</view>
 				<view v-for="(item, index) in character_list" :key="item.character_id"
-					class="character-line display-flex sp-between">
-					<view class="display-flex character-tag">
+					class="character-line display-flex sp-between display-line">
+					<view class="display-flex character-tag display-line">
 						<image mode="aspectFit" :src="tagImg(item.character_id)"></image>
 						<view class="character-name">{{ item.character_name }}</view>
+						<span v-if="item.character_name != '旁白'" class="iconfont icon-shezhi" @tap="gotoDetail(item.character_id)"></span>
 					</view>
 					<view class="character-right">
 						<switch :checked="item.detail_status == 1" style="transform:scale(0.6)" color="#E94E46"
 							 :disabled="item.detail_status == 1 && on_stage_num == 1"
 							@change="characterChange(item.character_id)"/>
 						<label :class="{'on-stage': item.detail_status == 1}">{{item.detail_status == 1 ? '已登场' : '已离场'}}</label>
-						<span v-if="item.character_name != '旁白'" class="iconfont icon-shezhi" @tap="gotoDetail(item.character_id)"></span>
 					</view>
 				</view>
 			</cybercafe-view>
@@ -139,6 +139,9 @@
 	}
 	.on-stage{
 		color: $uni-color-main;
+	}
+	.part-first{
+		margin-top: $uni-spacing-lg;
 	}
 	@media (prefers-color-scheme: dark) {
 		/* .character-tag{
