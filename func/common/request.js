@@ -105,8 +105,7 @@ export default {
 						'modalData':
 							{
 								content: response.msg,
-								cancelText: '晓得了',
-								success: function (res) {}
+								cancelText: '晓得了'
 							},
 						'modalShow': true,
 						'modalPageId': pageId
@@ -116,6 +115,18 @@ export default {
 						content: response.result,
 					}
 				});
+			}else if(res.data.code == 400){
+				store.commit('user/setUserData',
+					{
+						'refreshFlag': 'fail',
+						'modalData':
+							{
+								'content': res.data.msg,
+								'cancelText': '晓得了',
+							},
+						'modalShow': true,
+						'modalPageId': pageId
+					});
 			}else {
 				//console.error(response.msg);
 				uni.showToast({

@@ -2,8 +2,6 @@ import baseQuery from "../dbManager/baseQuery";
 import dialogueQuery from "../dbManager/dialogueQuery";
 import request from "../common/request";
 import store from "@/store";
-import common from "../common/common";
-import promptFun from "./promptFun";
 
 export default{
 	async getEntityId(entity_id = 0){
@@ -78,110 +76,6 @@ export default{
 			'cDisplayId': crt_character_id
 		});
 		//console.log(store.state.dialogue.crtCharacterId);
-	},
-	async getMessage(){
-		let messageList = await dialogueQuery.getMessageByEntityId();
-		//console.log(messageList);
-		if(messageList.length == 0) return;
-		let historyList = [];
-		let ai_id = messageList[0].ai_id;
-		messageList.reverse();
-		let message_id = messageList[0].message_id;
-		if(messageList.length > 0){
-			for (let i in messageList) {
-				let message = messageList[i];
-				historyList[i] = {
-					message_id: message.message_id,
-					character_id: message.character_id,
-					html: common.textToHtml(message.message_content, 
-						message.character_id == 0 ? 'right' : 'left', true),
-					text: message.message_content,
-					message_time: message.message_time
-				}
-			}
-			//console.log('historylist:' + JSON.stringify(historyList));
-			store.state.dialogue.historylist = store.state.dialogue.historylist ? 
-				historyList.concat(store.state.dialogue.historylist) : historyList;
-			//console.log(JSON.stringify(store.state.dialogue.historylist));
-			store.commit('dialogue/setDiaData', {
-				'historylist': store.state.dialogue.historylist
-			});
-			//console.log(store.state.dialogue.breakpointMessageId);
-			if(store.state.dialogue.breakpointMessageId == 0){
-				let lastHistory = historyList[historyList.length - 1];
-				let message_time = lastHistory ? lastHistory.message_time : 0;
-				//console.log(ai_id);
-				let option_list = await this.getResponseByAiId(ai_id);
-				if(option_list == false){
-					option_list = [{
-						html: common.textToHtml(lastHistory.text),
-						text: lastHistory.text,
-					}];
-				}
-				store.commit('dialogue/setDiaData', {
-					'messageTime': message_time,
-					'optionFirst': lastHistory.text,
-					'crtCharacterId': lastHistory.character_id,
-					'options': option_list
-				});
-			}
-			promptFun.preOperation();
-			//console.log(message_id);
-			store.commit('dialogue/setDiaData', {
-				'breakpointMessageId': message_id,
-				'refreshList': true
-			});
-		}
-	},
-	async getResponseByAiId(ai_id){
-		//console.log(ai_id);
-		if(ai_id != '0'){
-			let response_list = [];
-			let responseList = await dialogueQuery.getResponseByResponseIds(ai_id);
-			for(let j in responseList){
-				let content_arr = responseList[j].ai_content.split('|');
-				for(let i in content_arr){
-					//console.log(content_arr[i]);
-					response_list.push({
-						//ai_id: responseList[j].ai_response_id,
-						html: common.textToHtml(content_arr[i]),
-						text: content_arr[i],
-						usage: JSON.parse(responseList[j].api_return).usage,
-						model: responseList[j].ai_type,
-					});
-				}
-			}
-						
-			return response_list;
-		}else{
-			return false;
-		}
-	},
-	getChatHistory(lengthLimit) {
-		//预处理
-		let historyList = store.state.dialogue.historylist;
-		//let last_message = historyList.pop();
-		//console.log(historyList);
-		let history_text_length = 0;
-		let temp_history_list = [];
-		for (let i = historyList.length - 1; i >= 0; i --){
-			temp_history_list.unshift(historyList[i]);
-			history_text_length += historyList[i].text.length;
-			if(history_text_length > lengthLimit * 1.5) break;
-		} 
-		//console.log(history_text_length);
-		//console.log(store.state.dialogue.crtCharacterId);
-		let text_length = 0;
-		
-		//console.log(cdata);
-		let tmp_str = '';
-		for (let i in temp_history_list) {
-			tmp_str += (temp_history_list[i].character_id > 0 ? 
-				store.state.dialogue.characterlist[temp_history_list[i].character_id].character_name
-				: store.state.dialogue.me)
-				+ ':' + temp_history_list[i].text + ' ';
-		}
-		return tmp_str;
 	},
 	delEntity(pageId){
 		if(store.state.setting.entityId == 0) return;

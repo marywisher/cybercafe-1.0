@@ -51,7 +51,7 @@
 
 <script>
 	import aiSetting from '@/modules/setting/quickMenu/aiSetting';
-	import entityBaseInfo from '@/func/entity/entityBaseInfo';
+	import entityFun from '@/func/entity/entityFun';
 	import orderSetting from '@/modules/setting/quickMenu/orderSetting';
 	import {
 		mapMutations,
@@ -109,7 +109,7 @@
 				})
 			},
 			delEntity(){
-				entityBaseInfo.delEntity();
+				entityFun.delEntity();
 			},
 			changeEntity(){
 				this.$refs.rightMenuPop.closeView();

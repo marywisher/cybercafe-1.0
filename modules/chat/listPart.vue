@@ -74,7 +74,7 @@
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import baseQuery from '@/func/dbManager/baseQuery';
 	import common from '@/func/common/common';
-	import entityBaseInfo from '@/func/entity/entityBaseInfo';
+	import messageFun from '@/func/entity/messageFun';
 	import listMenu from '@/modules/chat/listMenu';
 	import editPart from '@/modules/chat/editPart';
 	import {
@@ -314,7 +314,7 @@
 				//this.hiding = false;
 				this.loading_text = '数据加载中...';
 				this.hideMenu();
-				await entityBaseInfo.getMessage();
+				await messageFun.getMessage();
 				if(this.historylist.length - old_length < 50){
 					this.loading_text = '无更多数据';
 					return;

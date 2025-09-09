@@ -90,12 +90,9 @@
 						});
 						return;
 					}
-					//console.log(this.ai);
 					uni.showLoading({
 						title: '内容由AI生成，仅供娱乐'
 					});
-					//console.log(this.option_count);
-					//let tmpChatData = this.chatlist;
 					request.chatRequest();
 				}
 			},

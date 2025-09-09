@@ -1,8 +1,9 @@
 import store from "@/store";
 import request from "@/func/common/request";
-import userBaseInfo from "@/func/user/userBaseInfo";
-import incubatorBaseFun from "@/func/incubator/incubatorBaseFun";
+import userFun from "@/func/user/userFun";
+import incubatorFun from "@/func/incubator/incubatorFun";
 import aiFun from "../setting/aiFun";
+import responseFun from "../entity/responseFun";
 
 export default {
 	async beforeInit() {
@@ -19,9 +20,12 @@ export default {
 		}else{
 			userBaseInfo.userInit();
 			//数据同步回填
-			incubatorBaseFun.feedback();
+			incubatorFun.feedback();
 			//console.log('init');
 			aiFun.getAiRange();
 		}
 	},
+	afterResponseFun(rel) {
+		responseFun.responseToOptions(rel);
+	}
 }

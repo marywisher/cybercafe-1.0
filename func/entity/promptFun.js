@@ -2,7 +2,7 @@
 import store from "@/store";
 import baseQuery from "../dbManager/baseQuery";
 import common from "../common/common";
-import entityBaseInfo from "./entityBaseInfo";
+import messageFun from "./messageFun";
 
 export default {
 	async loadTreeOrder(){
@@ -130,7 +130,7 @@ export default {
 		if(content_length > store.state.setting.tokenSetting){
 			return;
 		}
-		let history_str = entityBaseInfo.getChatHistory(store.state.setting.tokenSetting - content_length);
+		let history_str = messageFun.getChatHistory(store.state.setting.tokenSetting - content_length);
 		//console.log(history_str);
 		/* if(history_str == 0){
 			history_str = store.state.dialogue.characterlist[store.state.dialogue.crtCharacterId].character_name 

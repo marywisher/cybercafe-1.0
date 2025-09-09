@@ -1,5 +1,6 @@
 <template>
 	<view>
+		<view class="hint required text-center" v-html="hint_str"></view>
 		<cybercafe-view>
 			<cybercafe-segmented-control :list="prompt_list" :currentIndex="crt_index" @selected="changeView">
 				<view class="custom-prompt-part">
@@ -91,7 +92,8 @@
 				prompt_key: '',
 				prompt_value: '',
 				ta_show: false,
-				checked: [false, false, false, false, false]
+				checked: [false, false, false, false, false],
+				hint_str: "所输内容<br/><br/> · <b>不得</b>违反国家法律法规<br/> · <b>不得</b>违背社会公序良俗<br/> · <b>不得</b>诱导生成危害公共安全的内容<br/><br/>违者<b>冻结账号</b>"
 			}
 		},
 		onLoad() {

@@ -19,7 +19,7 @@
 						<input type="password" v-model="pwd" placeholder="请输入新的密码" />
 					</view>
 					<view class="display-flex login-line" style="justify-content: flex-end;">
-						<view class="hint">（至少8个字符，包含至少1个大写字母、1个小写字母和1个数字）</view>
+						<view class="hint pwd-hint">（至少8个字符，包含至少1个大写字母、1个小写字母和1个数字）</view>
 					</view>
 					<view class="display-flex display-line sp-between login-line">
 						<label>重复密码<span class="required">*</span></label>
@@ -223,7 +223,13 @@
 	.login-line{
 		margin-bottom: $uni-spacing-lg;
 	}
+	label{
+		width: 40vw;
+	}
+	.pwd-hint{
+		margin-top: $uni-spacing-lg;
+	}
 	.info{
-		margin-top:20rpx;
+		margin-top:$uni-spacing-lg;
 	}
 </style>

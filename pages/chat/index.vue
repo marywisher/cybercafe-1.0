@@ -32,11 +32,12 @@
 <script>
 	import characterPart from '@/modules/chat/characterPart';
 	import chatBg from '@/modules/chat/chatBg';
-	import entityBaseInfo from '@/func/entity/entityBaseInfo';
+	import entityFun from '@/func/entity/entityFun';
 	import listPart from '@/modules/chat/listPart';
 	import popMenu from '@/modules/chat/popMenu';
 	import titlePart from '@/modules/chat/titlePart';
 	import promptFun from '@/func/entity/promptFun';
+	import messageFun from '@/func/entity/messageFun';
 	import {
 		mapMutations,
 		mapState,
@@ -85,8 +86,8 @@
 				})
 				this.getUserData();
 				this.dark_mode = this.darkMode;
-				await entityBaseInfo.entityInit();
-				await entityBaseInfo.getMessage();
+				await entityFun.entityInit();
+				await messageFun.getMessage();
 			},
 			gotoSetting(){
 				uni.navigateTo({
