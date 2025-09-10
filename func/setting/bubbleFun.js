@@ -81,11 +81,11 @@ export default {
 	},
 	async loadPattern(reset = false) {
 		let pattern_data = await baseQuery.getDataByKey('cybercafe_bubble_pattern', {
-			pattern_id: store.state.bubble.patternIndex
+			pattern_id: store.state.setting.chatPattern
 		});
 		if(pattern_data.length == 0){//已删防空
-			store.commit('bubble/setBubbleData', {
-				'patternIndex': store.state.bubble.patternRange[0].pattern_id
+			store.commit('setting/setSettingData', {
+				'chatPattern': store.state.bubble.patternRange[0].pattern_id
 			})
 			this.loadPattern(true);
 			return;
@@ -131,8 +131,13 @@ export default {
 				'displayCss': store.state.bubble.patternCss
 			});
 		}
-		preview_css = store.state.bubble.cssPrev + store.state.bubble.displayCss.replace(new RegExp('.chat-line', 'g'),
-			'.sample .chat-line') + store.state.bubble.cssAfter;
+		let bubble_css = store.state.bubble.displayCss.replace(new RegExp('.chat-line', 'g'),
+				'.sample .chat-line');
+		if(bubble_css.substr(0, 7) == '<style>'){
+			preview_css = bubble_css;
+		}else{
+			preview_css = store.state.bubble.cssPrev + bubble_css + store.state.bubble.cssAfter;
+		}
 		store.commit('bubble/setBubbleData', {
 			'previewCss': preview_css
 		});

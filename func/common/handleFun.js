@@ -18,7 +18,7 @@ export default {
 				url: '../login/login'
 			})
 		}else{
-			userBaseInfo.userInit();
+			userFun.userInit();
 			//数据同步回填
 			incubatorFun.feedback();
 			//console.log('init');

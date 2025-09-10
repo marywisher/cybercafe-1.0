@@ -137,11 +137,7 @@
 				}
 			},
 			bubbleOpacity(newValue){
-				this.entity_css = this.chatCss.replace(new RegExp('{{bg-color1}}', 'g'), this.bubbleColor[0])
-					.replace(new RegExp('{{bg-color2}}', 'g'), this.bubbleColor[1])
-					.replace(new RegExp('{{color1}}', 'g'), this.fontColor[0])
-					.replace(new RegExp('{{color2}}', 'g'), this.fontColor[1])
-					.replace(new RegExp('{{bubbleOpacity}}', 'g'), newValue);
+				this.replaceParam(newValue);
 			},
 			scroll(newValue){
 				console.log(newValue);
@@ -150,6 +146,9 @@
 				this.$nextTick(() => {
 					_self.new_scroll = newValue;
 				})
+			},
+			chatPattern(newValue){
+				this.refreshPattern(newValue);
 			}
 		},
 		computed: {
@@ -226,19 +225,7 @@
 				this.history_list = this.historylist;
 				//console.log('option_first_text:' + JSON.stringify(this.option_first_text));
 				if(!this.lock_mode) this.$emit('afterUpdate');
-				//console.log(this.chatPattern);
-				let pattern_data = await baseQuery.getDataByKey('cybercafe_bubble_pattern', {pattern_id: this.chatPattern});
-				this.setDiaData({
-					'refreshList': false,
-					'chatCss': pattern_data[0].pattern_css,
-				}); 
-				//let poptions = JSON.parse(pattern_data[0].pattern_options);
-				this.entity_css = this.chatCss.replace(new RegExp('{{bg-color1}}', 'g'), this.bubbleColor[0])
-					.replace(new RegExp('{{bg-color2}}', 'g'), this.bubbleColor[1])
-					.replace(new RegExp('{{color1}}', 'g'), this.fontColor[0])
-					.replace(new RegExp('{{color2}}', 'g'), this.fontColor[1])
-					.replace(new RegExp('{{bubbleOpacity}}', 'g'), this.bubbleOpacity);
-				//console.log(this.entity_css);
+				this.refreshPattern(this.chatPattern);
 				uni.hideLoading();
 				if(this.history_list.length) {
 					setTimeout(() => {
@@ -350,6 +337,29 @@
 			editChange(param){
 				this.hideMenu();
 				this.edit_mode = param;
+			},
+			async refreshPattern(pattern_index){
+				//console.log(pattern_index);
+				let pattern_data = await baseQuery.getDataByKey('cybercafe_bubble_pattern', {pattern_id: pattern_index});
+				this.setDiaData({
+					'refreshList': false,
+				}); 
+				let pattern_css = pattern_data[0].pattern_css;
+				pattern_css = pattern_css.replace('<style><style>', '<style>').replace('</style></style>', '</style>');
+				this.setSettingData({
+					'chatCss': pattern_css,
+				}); 
+				//let poptions = JSON.parse(pattern_data[0].pattern_options);
+				this.replaceParam();
+				//console.log(this.entity_css);
+				this.$forceUpdate();
+			},
+			replaceParam(bubble_opacity = this.bubbleOpacity){
+				this.entity_css = this.chatCss.replace(new RegExp('{{bg-color1}}', 'g'), this.bubbleColor[0])
+					.replace(new RegExp('{{bg-color2}}', 'g'), this.bubbleColor[1])
+					.replace(new RegExp('{{color1}}', 'g'), this.fontColor[0])
+					.replace(new RegExp('{{color2}}', 'g'), this.fontColor[1])
+					.replace(new RegExp('{{bubbleOpacity}}', 'g'), bubble_opacity);
 			}
 		},
 		mounted(){

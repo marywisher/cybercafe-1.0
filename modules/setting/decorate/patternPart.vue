@@ -66,10 +66,12 @@
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 			...mapState('bubble', ['patternIndex', 'patternRange']),
+			...mapState('setting', ['chatPattern']),
 		},
 		methods: {
 			...mapMutations('user', ['setUserData']),
 			...mapMutations('bubble', ['getBubbleData', 'setBubbleData']),
+			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			openView(){
 				uni.$emit('patternGSSlider', false);
 				uni.$emit('globalDSSlider', false);
@@ -82,7 +84,9 @@
 				this.operate_id = id;
 			},
 			async changePattern(){
+				//console.log(this.operate_id);
 				this.setBubbleData({'patternIndex': this.operate_id});
+				this.setSettingData({'chatPattern': this.operate_id});
 				await bubbleFun.loadPattern(this.patternIndex, true);
 				this.closeView();
 				this.$refs.patternContainer.closeView();

@@ -113,5 +113,4 @@ export default{
 		//console.log(store.state.dialogue.optionFlag);
 		messageFun.saveMessage(aiId, content[0], operation);
 	},
-	
 }

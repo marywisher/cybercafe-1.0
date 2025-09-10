@@ -85,7 +85,7 @@ export default{
 		}
 		return tmp_str;
 	},
-	async saveMessage(ai_id, content, operation) {
+	/* async saveMessage(ai_id, content, operation) {
 		//存消息
 		//let content = response.choices[0].message.content;
 		//console.log('ai_id:' + JSON.stringify(ai_id));
@@ -133,5 +133,5 @@ export default{
 		});
 		//console.log(store.state.dialogue.historylist);
 		uni.hideLoading();
-	},
+	}, */
 }

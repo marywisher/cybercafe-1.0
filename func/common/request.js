@@ -70,6 +70,11 @@ export default {
 						uni.reLaunch({
 							url: '../login/login' + (res.msg ? '?msg=' + res.msg : '')
 						});
+					}else if(res.data.code == 400){
+						uni.showToast({
+							title: res.data.msg,
+							icon: "none"
+						})
 					}else{
 						resolve(res.data);
 					}
@@ -115,18 +120,6 @@ export default {
 						content: response.result,
 					}
 				});
-			}else if(res.data.code == 400){
-				store.commit('user/setUserData',
-					{
-						'refreshFlag': 'fail',
-						'modalData':
-							{
-								'content': res.data.msg,
-								'cancelText': '晓得了',
-							},
-						'modalShow': true,
-						'modalPageId': pageId
-					});
 			}else {
 				//console.error(response.msg);
 				uni.showToast({

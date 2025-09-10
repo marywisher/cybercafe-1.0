@@ -1,10 +1,8 @@
-import Vue from "vue";
 import common from "../common/common";
 import store from "@/store";
 import request from "@/func/common/request";
 import { VERSION } from "../common/constants";
 import baseQuery from "../dbManager/baseQuery";
-import setting from "../../store/modules/setting";
 
 export default {
 	userInit(){
@@ -87,7 +85,7 @@ export default {
 	async initSetting(){
 		let setting_result = await baseQuery.getDataByKey('cybercafe_setting', []);
 		for(let setting_key in setting_result){
-			//console.log(setting_result[setting_key].setting_key, setting_result[setting_key]);
+			console.log(setting_result[setting_key].setting_key, setting_result[setting_key]);
 			let setting_store = {};
 			setting_store[setting_result[setting_key].setting_key] = JSON.parse(setting_result[setting_key].setting_value);
 			store.commit('setting/setSettingStore', setting_store);
