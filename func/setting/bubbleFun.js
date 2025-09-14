@@ -131,8 +131,7 @@ export default {
 				'displayCss': store.state.bubble.patternCss
 			});
 		}
-		let bubble_css = store.state.bubble.displayCss.replace(new RegExp('.chat-line', 'g'),
-				'.sample .chat-line');
+		let bubble_css = store.state.bubble.displayCss.replace(new RegExp('.chat-line', 'g'), '.sample .chat-line');
 		if(bubble_css.substr(0, 7) == '<style>'){
 			preview_css = bubble_css;
 		}else{

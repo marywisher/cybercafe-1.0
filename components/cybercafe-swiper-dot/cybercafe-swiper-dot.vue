@@ -30,9 +30,14 @@
 			}
 		},
 		watch:{
-			swiperCurrent(newValue){
-				this.swiper_current = newValue;
-			}
+			swiperCurrent: {
+                handler(newValue, oldValue) {
+                    //console.log('New swiperCurrent:', newValue, 'Old:', oldValue);
+                    this.swiper_current = newValue;
+                },
+                immediate: true, // 立即执行一次
+                deep: true // 深度监听（可选）
+            }
 		},
 		computed: {
 			dynamicViewWidth(){

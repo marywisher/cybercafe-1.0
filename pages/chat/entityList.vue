@@ -31,6 +31,7 @@
 	import config from '@/config.json';
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import dialogueQuery from '@/func/dbManager/dialogueQuery';
+	import entityFun from '@/func/entity/entityFun';
 	import {
 		mapMutations,
 		mapState,
@@ -53,6 +54,7 @@
 			},
 			async gotoEntity(entity_id){
 				this.setSettingData({'entityId': entity_id});
+				entityFun.updateEntityData();
 				uni.navigateBack({
 				    delta: 1, // 返回上一级页面
 				    success: () => {

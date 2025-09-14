@@ -10,9 +10,11 @@ export default{
 				{'entity_id': entity_id}).then(res => {
 				//console.log(res.result);
 				if (res.code == 200) {
-					store.commit('setting/setSettingData', {
-						'entityId': res.result.entity_id
-					});
+					if(entity_id == 0){
+						store.commit('setting/setSettingData', {
+							'entityId': res.result.entity_id
+						});
+					}
 					if(!store.state.dialogue.entityMode){
 						store.commit('dialogue/setDiaData', {
 							'entityMode': res.result.mode
@@ -41,8 +43,10 @@ export default{
 			'historylist': [],
 			'characterlist': {}
 		});
+		//console.log(store.state.setting.entityId);
 		let entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
 			'entity_id': store.state.setting.entityId});
+		//console.log(entity_data.length)
 		if(entity_data.length == 0){
 			await this.getEntityId();
 			entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
@@ -137,4 +141,18 @@ export default{
 			'modalPageId': pageId
 		});
 	},
+	updateEntityData(){
+		request.post("entityController/changeEntity", 'entityList', {
+			entity_id: store.state.setting.entityId
+		}).then(res => {
+			if (res.code != 200) {
+				uni.showToast({
+					title: res.data.msg,
+					icon: "none"
+				})
+			}
+		}).catch(e => {
+			console.log(e);
+		});
+	}
 }

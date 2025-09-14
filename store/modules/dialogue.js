@@ -30,6 +30,7 @@ export default {
 		aiRange:{},//包括线上的名字和本地的名字
 		entityMode: 'chat',//novel chat
 		aiGroup:{},
+		customPrice: ''//自设模型价格说明
 	},
 	getters: {},
 	mutations: {

@@ -14,7 +14,7 @@
 	import common from '@/func/common/common';
 	import dialogueQuery from '@/func/dbManager/dialogueQuery';
 	import responseFun from '@/func/entity/responseFun';
-	import promptFun from '@/func/entity/promptFun';
+	//import promptFun from '@/func/entity/promptFun';
 	import {
 		mapMutations,
 		mapState,
@@ -111,7 +111,7 @@
 								'historylist': this.historylist,
 								'refreshList': true,
 							});
-							promptFun.preOperation();
+							//promptFun.preOperation();
 							break;
 						}
 					}
@@ -153,7 +153,7 @@
 						
 				let ai_id = message_data[0].ai_id;
 				responseFun.getResponseByAiId(ai_id);
-				promptFun.preOperation();		
+				//promptFun.preOperation();		
 				this.setDiaData({
 					'refreshList': true,
 				});

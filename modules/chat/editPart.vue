@@ -13,7 +13,7 @@
 		</view>
 		<view v-else class="display-flex display-line sp-between">
 			<view>
-				<cybercafe-swiper-dot v-if="option_list.length > 1" :list="option_list"
+				<cybercafe-swiper-dot ref="epSwiperDot" v-if="option_list.length > 1" :list="option_list"
 					@tapDot="clickItem" :swiperCurrent="swiper_current"></cybercafe-swiper-dot>
 			</view>
 			<view class="display-flex display-line icon-part">
@@ -29,6 +29,7 @@
 <script>
 	import common from '@/func/common/common';
 	import request from '@/func/common/request';
+	import promptFun from '@/func/entity/promptFun';
 	import {
 		mapMutations,
 		mapState,
@@ -49,36 +50,46 @@
 				type: Boolean,
 				default: false
 			},
-			side: {
-				type: String,
-				default: 'left'
+			crtIndex: {
+				type: Number | String,
+				default: 0
+			}
+		},
+		watch: {
+			refreshList: {
+				handler(newValue, oldValue) {
+				    //console.log(newValue);
+				    if(newValue){
+				    	this.init();
+				    }
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
 			}
 		},
 		computed: {
 			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
-			...mapState('dialogue', ['cDisplayId', 'options']),
+			...mapState('dialogue', ['cDisplayId', 'optionFirst', 'options', 'refreshList']),
 			...mapState('setting', ['editContent', 'entityId', 'fontColor', 'fontSize',
 				'promptLength', 'tokenSetting']),
 			dynamicStyle: function(){
-				let style_obj = `font-size: ${this.fontSize}px;`;
-				if(this.side == 'left'){
-					style_obj += `color: ${this.fontColor[0]};`;
-				}else{
-					style_obj += `color: ${this.fontColor[1]};`;
-				}
-				return style_obj;
+				return `font-size: ${this.fontSize}px;color: ${this.fontColor[0]};`;
 			},
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
-			...mapMutations('dialogue', ['getDiaData']),
+			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			init(){
+				//console.log(this.crtIndex);
 				this.option_list = this.options;
+				//console.log(this.option_list.length);
+				this.swiper_current = this.crtIndex;
 				//if(this.option_list.length == 0) this.refresh_disabled = true;
 			},
-			respeakFun(e){
+			async respeakFun(e){
 				if (this.refresh_disabled == false) {// && content.text === '重说'
+					await promptFun.preOperation(false);
 					if(this.promptLength > this.tokenSetting){
 						this.setUserData({
 							'modalData': {
@@ -94,6 +105,7 @@
 						title: '内容由AI生成，仅供娱乐'
 					});
 					request.chatRequest();
+					this.swiper_current = this.options.length;
 				}
 			},
 			autoSaveContent(e){
@@ -105,6 +117,9 @@
 			clickItem(e){
 				//console.log(e);
 				this.swiper_current = e;
+				this.setDiaData({
+					'optionFirst': this.options[this.swiper_current].text
+				});
 				this.$emit('swiperChange', this.swiper_current);
 			},
 			changeToEdit(){

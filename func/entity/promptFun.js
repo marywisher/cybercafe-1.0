@@ -55,7 +55,7 @@ export default {
 			enable: true
 		})
 	},
-	async preOperation(){
+	async preOperation(include_option = true){
 		let list = await this.loadTreeOrder();
 		//console.log(list);
 		let character_name = 'test';
@@ -76,7 +76,8 @@ export default {
 		let sys_prompt = '';
 		if(store.state.setting.customPrompt.length > 0){
 			sys_prompt = store.state.setting.customPrompt[store.state.setting.promptSelect].系统提示词;
-			sys_prompt = sys_prompt.replace('{{char}}', character_name).replace('{{user}}', store.state.dialogue.me);
+			sys_prompt = sys_prompt.replace(new RegExp('{{char}}', 'g'), character_name)
+				.replace(new RegExp('{{user}}', 'g'), store.state.dialogue.me);
 			request_data.messages[0] = {
 				'role': 'system',
 				'content': sys_prompt
@@ -100,6 +101,7 @@ export default {
 			if(list[i].title == '聊天记录'){//限定长度
 				content += ' 以下是聊天记录:```{replacing_message_content}```'
 			}else if(store.state.setting.customPrompt.length > 0 
+				&& store.state.setting.customPrompt.hasOwnProperty(store.state.setting.promptSelect)
 				&& store.state.setting.customPrompt[store.state.setting.promptSelect].hasOwnProperty(list[i].title)){
 				let crt_global_prompt = store.state.setting.customPrompt[store.state.setting.promptSelect];
 				if(list[i].title == '时间感知'){
@@ -107,7 +109,7 @@ export default {
 				}else if(crt_global_prompt.hasOwnProperty(list[i].title)){
 					content += ' ' + list[i].title + ':' + crt_global_prompt[list[i].title]
 				}
-			}else{
+			}else if(character_json.length > 0){
 				//console.log(character_json);
 				if(character_json){
 					if(character_json.基础信息.hasOwnProperty(list[i].title)){
@@ -120,7 +122,8 @@ export default {
 			}
 			//console.log(content);
 		}
-		content = content.replace('{{char}}', character_name).replace('{{user}}', store.state.dialogue.me);
+		content = content.replace(new RegExp('{{char}}', 'g'), character_name)
+			.replace(new RegExp('{{user}}', 'g'), store.state.dialogue.me);
 		let content_length = content.length + sys_prompt.length;
 		store.commit('setting/setSettingData',{
 			'promptLength': content_length
@@ -130,7 +133,7 @@ export default {
 		if(content_length > store.state.setting.tokenSetting){
 			return;
 		}
-		let history_str = messageFun.getChatHistory(store.state.setting.tokenSetting - content_length);
+		let history_str = messageFun.getChatHistory(store.state.setting.tokenSetting - content_length, include_option);
 		//console.log(history_str);
 		/* if(history_str == 0){
 			history_str = store.state.dialogue.characterlist[store.state.dialogue.crtCharacterId].character_name 

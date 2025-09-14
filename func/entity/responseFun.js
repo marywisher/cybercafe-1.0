@@ -2,6 +2,7 @@ import dialogueQuery from "../dbManager/dialogueQuery";
 import common from "../common/common";
 import store from "@/store";
 import messageFun from "./messageFun";
+import baseQuery from "../dbManager/baseQuery";
 
 export default{
 	async getResponseByAiId(ai_id){
@@ -30,7 +31,7 @@ export default{
 	},
 	responseToOptions(rel) {
 		//异步返回值处理
-		console.log(rel.value);
+		//console.log(rel.value);
 		try{
 			if(!rel.value.hasOwnProperty('content')){
 				throw '返回值结构不支持，请联系管理员';
@@ -62,10 +63,9 @@ export default{
 						usage: usage,
 						model: model,
 					});
-					console.log(JSON.stringify(optionList));
+					//console.log(JSON.stringify(optionList));
 					store.commit('dialogue/setDiaData', {
-						key: 'options',
-						data: optionList
+						'options': optionList
 					});
 				}
 				this.insertResponse(db_content, content, model);
@@ -88,9 +88,9 @@ export default{
 		}
 	},
 	async insertResponse(db_content, content, model){
-		let aiId = await dialogueQuery.insertDataByKey('cybercafe_ai_response', {
+		let aiId = await baseQuery.insertDataByKey('cybercafe_ai_response', {
 				'api_return': JSON.stringify(db_content),
-				'ai_content': content.join('|'),
+				'ai_content': content.toString(),
 				'api_created_at': common.getCurrentTimeStampStr(),
 				'entity_id': store.state.setting.entityId,
 				'ai_type': model
@@ -111,6 +111,6 @@ export default{
 			//console.log(operation);
 		}
 		//console.log(store.state.dialogue.optionFlag);
-		messageFun.saveMessage(aiId, content[0], operation);
+		messageFun.saveMessage(aiId, content[0], operation, store.state.dialogue.options.length == 1);
 	},
 }

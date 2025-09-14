@@ -7,12 +7,12 @@
 			:id="item.id" :crtView="item.id == ai" :selectView="select_id != ai && select_id == item.id"
 			:disabledView="!item.enabled" popViewStyle="position:relative;">
 			<view @tap="selectItem(item.id)">
-				<view class="display-flex sp-between">
+				<view class="display-flex sp-between display-line">
 					<view>{{item.nickName}}</view>
 					<view>{{item.price}}</view>
 				</view>
 				<view v-if="item.id != 200" class="hint">模型官方名称：{{item.name}}</view>
-				<view class="hint">{{item.description}}</view>
+				<view class="hint" :class="{'required': item.id == -1}">{{item.description}}</view>
 				<cybercafe-button btnClass="btn-primary" @tapBtn="showModal" btnName="切换"
 					btnStyle="position: absolute; bottom: 3px; right: 3px; z-index: 2;" 
 					v-if="select_id != ai && select_id == item.id"></cybercafe-button>

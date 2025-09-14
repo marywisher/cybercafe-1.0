@@ -2,21 +2,22 @@ import dialogueQuery from "../dbManager/dialogueQuery";
 import common from "../common/common";
 import store from "@/store";
 import responseFun from "./responseFun";
-import promptFun from "./promptFun";
+//import promptFun from "./promptFun";
+import baseQuery from "../dbManager/baseQuery";
 
 export default{
 	async getMessage(){
-		let messageList = await dialogueQuery.getMessageByEntityId();
-		//console.log(messageList);
-		if(messageList.length == 0) return;
-		let historyList = [];
-		let ai_id = messageList[0].ai_id;
-		messageList.reverse();
-		let message_id = messageList[0].message_id;
-		if(messageList.length > 0){
-			for (let i in messageList) {
-				let message = messageList[i];
-				historyList[i] = {
+		let message_list = await dialogueQuery.getMessageByEntityId();
+		//console.log(message_list);
+		if(message_list.length == 0) return;
+		let history_list = [];
+		let ai_id = message_list[0].ai_id;
+		message_list.reverse();
+		let message_id = message_list[0].message_id;
+		if(message_list.length > 0){
+			for (let i in message_list) {
+				let message = message_list[i];
+				history_list[i] = {
 					message_id: message.message_id,
 					character_id: message.character_id,
 					html: common.textToHtml(message.message_content, 
@@ -25,33 +26,33 @@ export default{
 					message_time: message.message_time
 				}
 			}
-			//console.log('historylist:' + JSON.stringify(historyList));
+			//console.log('historylist:' + JSON.stringify(history_list));
 			store.state.dialogue.historylist = store.state.dialogue.historylist ? 
-				historyList.concat(store.state.dialogue.historylist) : historyList;
+				history_list.concat(store.state.dialogue.historylist) : history_list;
 			//console.log(JSON.stringify(store.state.dialogue.historylist));
 			store.commit('dialogue/setDiaData', {
 				'historylist': store.state.dialogue.historylist
 			});
 			//console.log(store.state.dialogue.breakpointMessageId);
 			if(store.state.dialogue.breakpointMessageId == 0){
-				let lastHistory = historyList[historyList.length - 1];
-				let message_time = lastHistory ? lastHistory.message_time : 0;
-				//console.log(ai_id);
+				let last_history = history_list[history_list.length - 1];
+				let message_time = last_history ? last_history.message_time : 0;
+				//console.log(message_time);
 				let option_list = await responseFun.getResponseByAiId(ai_id);
 				if(option_list == false){
 					option_list = [{
-						html: common.textToHtml(lastHistory.text),
-						text: lastHistory.text,
+						html: common.textToHtml(last_history.text),
+						text: last_history.text,
 					}];
 				}
 				store.commit('dialogue/setDiaData', {
 					'messageTime': message_time,
-					'optionFirst': lastHistory.text,
-					'crtCharacterId': lastHistory.character_id,
+					'optionFirst': last_history.text,
+					'crtCharacterId': last_history.character_id,
 					'options': option_list
 				});
 			}
-			promptFun.preOperation();
+			//promptFun.preOperation();
 			//console.log(message_id);
 			store.commit('dialogue/setDiaData', {
 				'breakpointMessageId': message_id,
@@ -59,19 +60,21 @@ export default{
 			});
 		}
 	},
-	getChatHistory(lengthLimit) {
+	getChatHistory(lengthLimit, include_option = true) {
 		//预处理
-		let historyList = store.state.dialogue.historylist;
-		//let last_message = historyList.pop();
-		//console.log(historyList);
+		let history_list = store.state.dialogue.historylist;
+		let last_message = history_list[history_list.length - 1];
+		//console.log(history_list);
 		let history_text_length = 0;
+		if(include_option) history_text_length = last_message.text.length;
 		let temp_history_list = [];
-		for (let i = historyList.length - 1; i >= 0; i --){
-			temp_history_list.unshift(historyList[i]);
-			history_text_length += historyList[i].text.length;
+		for (let i = history_list.length - 1; i >= 0; i --){
+			temp_history_list.unshift(history_list[i]);
+			history_text_length += history_list[i].text.length;
 			if(history_text_length > lengthLimit * 1.5) break;
 		} 
-		//console.log(history_text_length);
+		if(include_option) temp_history_list.push(last_message);
+		//console.log(store.state.dialogue.historylist);
 		//console.log(store.state.dialogue.crtCharacterId);
 		let text_length = 0;
 		
@@ -85,12 +88,13 @@ export default{
 		}
 		return tmp_str;
 	},
-	/* async saveMessage(ai_id, content, operation) {
+	async saveMessage(ai_id, content, operation, need_refresh = true) {
 		//存消息
 		//let content = response.choices[0].message.content;
 		//console.log('ai_id:' + JSON.stringify(ai_id));
 		//console.log('message_time:' + store.state.dialogue.messageTime);
 		let message_id = await dialogueQuery.createMessage(ai_id, content, operation);
+		console.log(message_id);
 		if(message_id != 'update'){//新消息
 			//整理数据
 			let new_data = {
@@ -102,36 +106,36 @@ export default{
 					store.state.dialogue.crtCharacterId == 0 ? 'right' : 'left', true),
 			};
 	
-			let historyList = store.state.dialogue.historylist;
-			historyList.push(new_data);
+			let history_list = store.state.dialogue.historylist;
+			history_list.push(new_data);
 			store.commit('dialogue/setDiaData', {
-				'historylist': historyList,
+				'historylist': history_list,
 				'cdisplayid': store.state.dialogue.crtCharacterId,
-				'refreshList': true,
+				'refreshList': need_refresh,
 			});
 		}
 		uni.hideLoading();
 	},
-	updateMessage(operation) {
-		dialogueQuery.updateDataByKey('cybercafe_message', {
+	updateMessage(operation, need_refresh = true) {
+		baseQuery.updateDataByKey('cybercafe_message', {
 			'message_content': store.state.dialogue.optionFirst,
 			'operation_content': operation
 		},{
 			'message_time': store.state.dialogue.messageTime
 		});
 		//console.log('optionFirst:', store.state.dialogue.optionFirst);
-		let historyList = store.state.dialogue.historylist;
+		let history_list = store.state.dialogue.historylist;
 		let last_text = store.state.dialogue.optionFirst;
 		let last_html = common.textToHtml(last_text, 
-			historyList[historyList.length - 1].character_id == 0 ? 'right' : 'left', true);
+			history_list[history_list.length - 1].character_id == 0 ? 'right' : 'left', true);
 		//console.log(last_text);
-		historyList[historyList.length - 1].text = last_text;
-		historyList[historyList.length - 1].html = last_html;
+		history_list[history_list.length - 1].text = last_text;
+		history_list[history_list.length - 1].html = last_html;
 		store.commit('dialogue/setDiaData', {
-			'historylist': historyList,
-			'refreshList': true,
+			'historylist': history_list,
+			'refreshList': need_refresh,
 		});
 		//console.log(store.state.dialogue.historylist);
 		uni.hideLoading();
-	}, */
+	},
 }

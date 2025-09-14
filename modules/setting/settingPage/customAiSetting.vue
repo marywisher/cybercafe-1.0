@@ -1,6 +1,7 @@
 <template>
 	<view>
 		<cybercafe-card cardTitle="自设模型" :class="{'custom-card': ai == -1}">
+			<label class="hint required">{{customPrice}}</label>
 			<cybercafe-segmented-control :list="custom_model_list" :currentIndex="crt_index"
 				@selected="changeView">
 				<view class="custom-api-part">
@@ -98,7 +99,7 @@
 		},
 		computed:{
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'userGroup']),
-			...mapState('dialogue', ['ai', 'aiGroup', 'aiRange']),
+			...mapState('dialogue', ['ai', 'aiGroup', 'aiRange', 'customPrice']),
 			...mapState('setting', ['aiShowInMenu', 'customApi',
 				'maxToken', 'temperature', 'tokenSetting', 'topP']),
 		},

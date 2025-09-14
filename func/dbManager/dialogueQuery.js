@@ -84,5 +84,35 @@ export default{
 				reject(e);
 			});
 		});
-	}
+	},
+	createMessage(ai_id, content, operation) {
+		return new Promise((resolve, reject) => {
+			sqlite.selectSQL("select * from `cybercafe_message` where `message_time` = '" 
+				+ store.state.dialogue.messageTime + "'")
+			.then(message_data => {
+				//console.log(JSON.stringify(message_data));
+				if (message_data.length > 0) {
+					sqlite.executeSQL("update `cybercafe_message` set `ai_id` = '" + message_data[0].ai_id + "," +
+						ai_id + "' where `message_time` = '" + store.state.dialogue
+						.messageTime + "'", function(){
+						resolve('update');
+					});
+				} else {
+					sqlite.executeSQL(
+						"INSERT INTO `cybercafe_message`(`ai_id`, `message_content`, `message_time`, `prev_message_time`," +
+						" `character_id`, `entity_id`, operation_content ) VALUES ('" +
+						ai_id + "', '" + content + "', '" + store.state.dialogue.messageTime + "', '" + 
+						store.state.dialogue.prevMessageTime + "', " + store.state.dialogue.crtCharacterId +
+						", " + store.state.setting.entityId + ", '" + operation + "')")
+					.then(() => {
+						sqlite.selectSQL("select last_insert_rowid() as message_id;").then(message_res => {
+							if (message_res && message_res.length > 0) {
+								resolve(message_res[0].message_id);
+							}
+						});
+					});
+				}
+			});
+		});
+	},
 }

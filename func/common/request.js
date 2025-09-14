@@ -71,10 +71,12 @@ export default {
 							url: '../login/login' + (res.msg ? '?msg=' + res.msg : '')
 						});
 					}else if(res.data.code == 400){
-						uni.showToast({
-							title: res.data.msg,
-							icon: "none"
-						})
+						if(res.data.msg){
+							uni.showToast({
+								title: res.data.msg,
+								icon: "none"
+							})
+						}
 					}else{
 						resolve(res.data);
 					}
@@ -95,7 +97,7 @@ export default {
 		//let ai_type = data.type;
 		//console.log(data['id'], data['token']);
 		this.post(option, 'chat', data).then(response => {
-			console.log(response);
+			//console.log(response);
 			if(response.code == 200){
 				//console.log(ai_type);
 				handle.afterResponseFun({

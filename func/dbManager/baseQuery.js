@@ -98,6 +98,7 @@ export default {
 					resolve('inserted');
 				}
 			}).catch(e => {
+				console.error(e)
 				reject(e);
 			});
 		});

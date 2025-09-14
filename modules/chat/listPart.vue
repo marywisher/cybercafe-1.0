@@ -54,9 +54,10 @@
 								<view v-html="option_first_html" :showline="false" 
 								:style="dynamicFont(cDisplayId ? 'left' : 'right')"></view>
 							</view>
-							<editPart ref="chatEditPart" :edit="edit_mode" :side="cDisplayId ? 'left' : 'right'"
-								:style="dynamicChatBox" @editChange="editChange"
-								@swiperChange="swiperChange"></editPart>
+							<editPart ref="chatEditPart" :edit="edit_mode" v-if="cDisplayId > 0"
+								:style="dynamicChatBox" @swiperChange="swiperChange"
+								@editChange="editChange" :crtIndex="swiper_index > -1 ? swiper_index : 0"
+							></editPart>
 						</view>
 					</view>
 				</view>
@@ -111,6 +112,7 @@
 				showing: false,
 				loading_text: '点击加载更多数据',
 				edit_mode: false,
+				swiper_index: -1
 			}
 		},
 		components:{
@@ -120,7 +122,9 @@
 		watch: {
 			refreshList(newOption){
 				if(newOption){
-					this.init();
+					this.$nextTick(() => {
+						this.init();
+					})
 				} 
 			},
 			lockMode(newValue){
@@ -140,7 +144,7 @@
 				this.replaceParam(newValue);
 			},
 			scroll(newValue){
-				console.log(newValue);
+				//console.log(newValue);
 				this.new_scroll = 0;
 				let _self = this;
 				this.$nextTick(() => {
@@ -149,6 +153,10 @@
 			},
 			chatPattern(newValue){
 				this.refreshPattern(newValue);
+			},
+			optionFirst(newValue){
+				this.option_first_text = newValue;
+				this.option_first_html = common.textToHtml(newValue, this.cDisplayId ? 'left' : 'right', true);
 			}
 		},
 		computed: {
@@ -218,12 +226,18 @@
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			async init(){
-				this.getDiaData();
-				this.getUserData();
-				this.option_first_text = this.optionFirst;
-				this.option_first_html = common.textToHtml(this.optionFirst, this.cDisplayId ? 'left' : 'right', true);
+				//this.option_first_text = this.optionFirst;
+				//this.option_first_html = common.textToHtml(this.optionFirst, this.cDisplayId ? 'left' : 'right', true);
 				this.history_list = this.historylist;
-				//console.log('option_first_text:' + JSON.stringify(this.option_first_text));
+				//console.log('option_first_text:' + JSON.stringify(this.options));
+				this.swiper_index = -1;
+				for(let i = 0; i < this.options.length; i ++){
+					if(this.options[i].text == this.option_first_text){
+						this.swiper_index = i;
+						break;
+					}
+				}
+				//console.log(this.swiper_index);
 				if(!this.lock_mode) this.$emit('afterUpdate');
 				this.refreshPattern(this.chatPattern);
 				uni.hideLoading();
@@ -232,8 +246,11 @@
 						this.showing = true;
 					}, 2000);
 				}
-				
-				this.$refs.chatEditPart.init();
+				//console.log(this.options.length);
+				//console.log(this.edit_mode);
+				/* this.$nextTick(() =>{
+					this.$refs.chatEditPart.init();
+				}); */
 			},
 			async handleLongPress(event) {
 				//console.log(event.currentTarget);
@@ -332,7 +349,12 @@
 				})
 			},
 			swiperChange(crt_index){
-				this.option_first_html = common.textToHtml(this.options[crt_index].text, this.cDisplayId ? 'left' : 'right', true);
+				//this.option_first_text = this.options[crt_index].text;
+				//this.option_first_html = common.textToHtml(this.options[crt_index].text, this.cDisplayId ? 'left' : 'right', true);
+				let	operation = this.messageTime + ':option.select:'
+					+ (this.options.length > 0 ? this.options[crt_index].model : 'prologue');
+				messageFun.updateMessage(operation, false);
+				this.swiper_index = crt_index;
 			},
 			editChange(param){
 				this.hideMenu();

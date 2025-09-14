@@ -138,6 +138,7 @@ export default {
 						} 
 					}
 					//自设
+					let custom_price = res.result.customPrice[store.state.user.userGroup];
 					if(store.state.setting.customApi){
 						let custom_id = -1;
 						for(let j = 0; j < store.state.setting.customApi.length; j ++){
@@ -153,8 +154,8 @@ export default {
 								'name': store.state.setting.customApi[j].model,
 								'model': store.state.setting.customApi[j].model,
 								'nickName': '自设模型',
-								'price': '自行支付',
-								'description': '',
+								'price': custom_price.split(';').length == 2 ? custom_price.split(';')[0] : custom_price,
+								'description': custom_price.split(';').length == 2 ? custom_price.split(';')[1] : custom_price,
 								'domain': store.state.setting.customApi[j].domain,
 								'parsedUrl': store.state.setting.customApi[j].parsed_url,
 								'maxTokens': tmp_max_token,
@@ -163,13 +164,14 @@ export default {
 							}
 							ai_show_in_menu[custom_id - j] = true;
 						}
-					}					
+					}
 					
 					//console.log(store.state.dialogue.ai);
 					store.commit('dialogue/setDiaData', {
 						'aiRange': range_value,
 						'aiGroup': res.result.group,
 						'aiSelect': range_value[store.state.dialogue.ai].nickName,
+						'customPrice': custom_price
 					});
 					store.commit('setting/setSettingData', {
 						'aiShowInMenu': ai_show_in_menu

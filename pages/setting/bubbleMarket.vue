@@ -160,11 +160,11 @@
 								if(_self.search_keys.indexOf(res.result[i].pattern_key) > -1) return;
 								
 								let pattern_html_left = res.result[i].pattern_html
-									.replace('{{text}}', _self.sampleTextLeft)
-									.replace('{{side}}', 'left');
+									.replace(new RegExp('{{text}}', 'g'), _self.sampleTextLeft)
+									.replace(new RegExp('{{side}}', 'g'), 'left');
 								let pattern_html_right = res.result[i].pattern_html
-									.replace('{{text}}', _self.sampleTextRight)
-									.replace('{{side}}', 'right');
+									.replace(new RegExp('{{text}}', 'g'), _self.sampleTextRight)
+									.replace(new RegExp('{{side}}', 'g'), 'right');
 								_self.market_arr.push({
 									'pattern_id': res.result[i].pattern_id,
 									'pattern_key': res.result[i].pattern_key,

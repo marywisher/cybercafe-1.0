@@ -5,8 +5,8 @@ import { VERSION } from "../common/constants";
 import baseQuery from "../dbManager/baseQuery";
 
 export default {
-	userInit(){
-		this.initSetting();
+	async userInit(){
+		await this.initSetting();
 		
 		// 获取设备信息
 		uni.getSystemInfo({
@@ -85,9 +85,9 @@ export default {
 	async initSetting(){
 		let setting_result = await baseQuery.getDataByKey('cybercafe_setting', []);
 		for(let setting_key in setting_result){
-			console.log(setting_result[setting_key].setting_key, setting_result[setting_key]);
+			//console.log(setting_result[setting_key]['setting_key'], setting_result[setting_key]);
 			let setting_store = {};
-			setting_store[setting_result[setting_key].setting_key] = JSON.parse(setting_result[setting_key].setting_value);
+			setting_store[setting_result[setting_key]['setting_key']] = JSON.parse(setting_result[setting_key]['setting_value']);
 			store.commit('setting/setSettingStore', setting_store);
 		}
 	}
