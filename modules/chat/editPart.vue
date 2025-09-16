@@ -5,7 +5,7 @@
 				v-model="edit_text" class="edit-box" :styles="dynamicStyle"
 				trim="both" @input="autoSaveContent" @confirm="confirmFun"></textarea>
 			<view class="display-flex display-line sp-between icon-part">
-				<cybercafe-button btnClass="btn-default"
+				<cybercafe-button btnClass="btn-default" v-if="options.length > 0"
 					btnName="" class="iconfont icon-guanbi" @tapBtn="cancelFun"/>
 				<cybercafe-button btnClass="btn-default"
 					btnName="" class="iconfont icon-dagouwuquan" @tapBtn="confirmFun"/>
@@ -13,11 +13,11 @@
 		</view>
 		<view v-else class="display-flex display-line sp-between">
 			<view>
-				<cybercafe-swiper-dot ref="epSwiperDot" v-if="option_list.length > 1" :list="option_list"
+				<cybercafe-swiper-dot ref="epSwiperDot" v-if="option_list.length > 1 && swiper_current > -1" :list="option_list"
 					@tapDot="clickItem" :swiperCurrent="swiper_current"></cybercafe-swiper-dot>
 			</view>
 			<view class="display-flex display-line icon-part">
-				<cybercafe-button v-if="!refresh_disabled" btnClass="btn-default" 
+				<cybercafe-button v-if="!refresh_disabled && swiper_current > -1" btnClass="btn-default" 
 					btnName="" class="iconfont icon-shuaxin" @tapBtn="respeakFun"/>
 				<cybercafe-button btnClass="btn-default" btnName="" class="iconfont icon-dianping" 
 					@tapBtn="changeToEdit" />
@@ -53,6 +53,10 @@
 			crtIndex: {
 				type: Number | String,
 				default: 0
+			},
+			side: {
+				type: String,
+				default: 'left'
 			}
 		},
 		watch: {
@@ -68,12 +72,15 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
-			...mapState('dialogue', ['cDisplayId', 'optionFirst', 'options', 'refreshList']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('dialogue', ['optionFirst', 'options', 'refreshList']),
 			...mapState('setting', ['editContent', 'entityId', 'fontColor', 'fontSize',
 				'promptLength', 'tokenSetting']),
 			dynamicStyle: function(){
-				return `font-size: ${this.fontSize}px;color: ${this.fontColor[0]};`;
+				if(this.side == 'left'){
+					return `font-size: ${this.fontSize}px; color: ${this.fontColor[0]}`;
+				}
+				return `font-size: ${this.fontSize}px;color: ${this.fontColor[1]};`;
 			},
 		},
 		methods:{
@@ -109,7 +116,8 @@
 				}
 			},
 			autoSaveContent(e){
-				this.editContent[this.entityId] = e;
+				console.log(e);
+				this.editContent[this.entityId] = e.value;
 				this.setSettingData({
 					'editContent': this.editContent,
 				});
@@ -123,16 +131,37 @@
 				this.$emit('swiperChange', this.swiper_current);
 			},
 			changeToEdit(){
-				this.edit_text = this.options[this.swiper_current].text;
+				//console.log(this.crtIndex, this.swiper_current);
+				if (this.swiper_current == -1){
+					this.edit_text = this.optionFirst;
+				}else{
+					this.edit_text = this.options[this.swiper_current].text;
+				}
 				this.$emit('editChange', true);
 			},
 			cancelFun(){
+				//console.log(this.crtIndex, this.swiper_current);
+				if(this.crtIndex == -1){
+					this.swiper_current = 0;
+				}else{
+					this.swiper_current = this.crtIndex;
+				}
+				if(this.edit_text != this.options[this.swiper_current].text){
+					this.setDiaData({
+						'optionFirst': this.options[this.swiper_current].text
+					});
+				}
 				this.$emit('editChange', false);
 			},
 			confirmFun(){
 				//敏感检测
+				this.setDiaData({
+					'optionFirst': this.edit_text
+				});
 				/* this.setDiaData({key: 'optionFirst', data: newOptionFirst});
 				this.updateMessage(); */
+				this.swiper_current = -1;
+				this.$emit('swiperChange', -1);
 				this.$emit('editChange', false);
 			}
 		}

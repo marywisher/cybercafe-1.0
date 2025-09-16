@@ -54,9 +54,9 @@
 								<view v-html="option_first_html" :showline="false" 
 								:style="dynamicFont(cDisplayId ? 'left' : 'right')"></view>
 							</view>
-							<editPart ref="chatEditPart" :edit="edit_mode" v-if="cDisplayId > 0"
+							<editPart ref="chatEditPart" :edit="edit_mode" :side="cDisplayId ? 'left' : 'right'"
 								:style="dynamicChatBox" @swiperChange="swiperChange"
-								@editChange="editChange" :crtIndex="swiper_index > -1 ? swiper_index : 0"
+								@editChange="editChange" :crtIndex="swiper_index"
 							></editPart>
 						</view>
 					</view>
@@ -155,6 +155,7 @@
 				this.refreshPattern(newValue);
 			},
 			optionFirst(newValue){
+				//console.log(newValue);
 				this.option_first_text = newValue;
 				this.option_first_html = common.textToHtml(newValue, this.cDisplayId ? 'left' : 'right', true);
 			}
@@ -229,10 +230,12 @@
 				//this.option_first_text = this.optionFirst;
 				//this.option_first_html = common.textToHtml(this.optionFirst, this.cDisplayId ? 'left' : 'right', true);
 				this.history_list = this.historylist;
-				//console.log('option_first_text:' + JSON.stringify(this.options));
+				//console.log('option_first_text:' + this.optionFirst);
 				this.swiper_index = -1;
 				for(let i = 0; i < this.options.length; i ++){
+					//console.log(this.options[i].text);
 					if(this.options[i].text == this.option_first_text){
+						//console.log('匹配：', i)
 						this.swiper_index = i;
 						break;
 					}
@@ -248,9 +251,6 @@
 				}
 				//console.log(this.options.length);
 				//console.log(this.edit_mode);
-				/* this.$nextTick(() =>{
-					this.$refs.chatEditPart.init();
-				}); */
 			},
 			async handleLongPress(event) {
 				//console.log(event.currentTarget);
@@ -351,10 +351,12 @@
 			swiperChange(crt_index){
 				//this.option_first_text = this.options[crt_index].text;
 				//this.option_first_html = common.textToHtml(this.options[crt_index].text, this.cDisplayId ? 'left' : 'right', true);
+				if(crt_index > -1){
+					this.swiper_index = crt_index;
+				}
 				let	operation = this.messageTime + ':option.select:'
-					+ (this.options.length > 0 ? this.options[crt_index].model : 'prologue');
+					+ (this.options.length > 0 ? this.options[this.swiper_index].model : 'prologue') + (this.edit ? '-edit' : '');
 				messageFun.updateMessage(operation, false);
-				this.swiper_index = crt_index;
 			},
 			editChange(param){
 				this.hideMenu();

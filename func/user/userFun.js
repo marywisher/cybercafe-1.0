@@ -42,8 +42,9 @@ export default {
 					device: jsonData,
 					version: VERSION
 				}).then(res => {
+					console.log(res.code);
 					if (res.code == 200) {
-						//console.log(res.result);
+						console.log(res.result);
 						store.commit('user/setUserData', {
 							token: res.result.token,
 							userGroup: res.result.group,

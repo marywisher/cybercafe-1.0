@@ -1,6 +1,7 @@
 import handle from '@/func/common/handleFun';
 import store from '@/store';
 import config from '@/config.json';
+import userFun from '../user/userFun';
 
 const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 
@@ -64,12 +65,13 @@ export default {
 							url: '../login/login?msg=' + res.data.msg
 						})
 					}else if(res.data.code == 300){
-						uni.hideLoading();
+						/* uni.hideLoading();
 						store.commit('user/setUserData', {'isLogin': false});
 						console.log('重新登录，来自：' + option);
 						uni.reLaunch({
 							url: '../login/login' + (res.msg ? '?msg=' + res.msg : '')
-						});
+						}); */
+						userFun.userInit();
 					}else if(res.data.code == 400){
 						if(res.data.msg){
 							uni.showToast({
