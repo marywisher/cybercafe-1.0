@@ -18,10 +18,9 @@
 				@afterUpdate="afterUpdateList" :scroll="scroll"></listPart>
 			<view v-else>新用户可见</view>
 		</view>
-		<view class="chat-bottom content display-flex sp-between">
+		<view class="chat-bottom content display-flex sp-around">
 			<characterPart ref="chatCharPart"></characterPart>
-			<input class="chat-input" />
-			<view class="iconfont icon-fasong" @tap="sendMessage"></view>
+			<chatInput ref="chatInputPart" @autoSpeak="autoSpeakFun"></chatInput>
 			<!-- 底部 -->
 		</view>
 		<view v-if="show_to_btm_btn" class="fix-btm" @tap="clickToBtm">>></view>
@@ -36,8 +35,8 @@
 	import listPart from '@/modules/chat/listPart';
 	import popMenu from '@/modules/chat/popMenu';
 	import titlePart from '@/modules/chat/titlePart';
-	import promptFun from '@/func/entity/promptFun';
 	import messageFun from '@/func/entity/messageFun';
+	import chatInput from '@/modules/chat/chatInput.vue';
 	import {
 		mapMutations,
 		mapState,
@@ -59,7 +58,8 @@
 			chatBg,
 			listPart,
 			popMenu,
-			titlePart
+			titlePart,
+			chatInput
 		},
 		watch:{
 			modalShow(newValue){
@@ -88,6 +88,14 @@
 				this.dark_mode = this.darkMode;
 				await entityFun.entityInit();
 				await messageFun.getMessage();
+				
+				this.$nextTick(() =>{
+					this.$refs.chatCharPart.init();
+					//this.$refs.chatListPart.init();
+					this.$refs.chatRMenuPart.init();
+					this.$refs.chatTitlePart.init();
+					this.$refs.chatInputPart.init();
+				})
 			},
 			gotoSetting(){
 				uni.navigateTo({
@@ -97,7 +105,9 @@
 			afterUpdateList(){//非锁定状态时，自动下滑到底部
 				//console.log(this.in_pull_down_mode)
 				if(!this.in_pull_down_mode){
-					this.toBtm();
+					setTimeout(() => {
+						this.toBtm();
+					}, 500);
 					uni.hideLoading();
 				}else{
 					this.in_pull_down_mode = false;
@@ -112,6 +122,7 @@
 				}, 2000);
 			},
 			toBtm(){
+				//console.log('toBtm');
 				//this.scroll = this.upcount;
 				this.show_to_btm_btn = false;
 				this.$refs.chatListPart.toBtm();
@@ -122,12 +133,11 @@
 					this.$refs.chatListPart.handleLongPress(e);
 				}, 1000);
 			},
-			sendMessage(){
-				promptFun.preOperation();
-			},
+			autoSpeakFun(){
+				this.$refs.chatCharPart.speakFun();
+			}
 		},
 		onLoad() {
-			this.init();
 			uni.$on('refreshScroll', (pos_y, is_lock) => {
 				//console.log(pos_y);
 				this.upcount = Math.max(pos_y, this.upcount);
@@ -144,13 +154,7 @@
 					this.upcount += pos_y;
 				}
 			});
-			
-			this.$nextTick(() =>{
-				this.$refs.chatCharPart.init();
-				this.$refs.chatListPart.init();
-				this.$refs.chatRMenuPart.init();
-				this.$refs.chatTitlePart.init();
-			})
+			this.init();
 		},
 	}
 </script>

@@ -157,7 +157,7 @@
 			optionFirst(newValue){
 				//console.log(newValue);
 				this.option_first_text = newValue;
-				this.option_first_html = common.textToHtml(newValue, this.cDisplayId ? 'left' : 'right', true);
+				this.option_first_html = common.textToHtml(newValue, this.cDisplayId > 0 ? 'left' : 'right', true);
 			}
 		},
 		computed: {
@@ -227,8 +227,9 @@
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			async init(){
-				//this.option_first_text = this.optionFirst;
-				//this.option_first_html = common.textToHtml(this.optionFirst, this.cDisplayId ? 'left' : 'right', true);
+				this.option_first_text = this.optionFirst;
+				this.option_first_html = common.textToHtml(this.optionFirst, this.cDisplayId ? 'left' : 'right', true);
+				//console.log(this.cDisplayId, this.option_first_html);
 				this.history_list = this.historylist;
 				//console.log('option_first_text:' + this.optionFirst);
 				this.swiper_index = -1;
@@ -291,6 +292,7 @@
 				});				
 			},
 			toBtm(){
+				//console.log('toBtm');
 				let _self = this;
 				this.new_scroll = 0;
 				this.$nextTick(() => {
@@ -298,6 +300,7 @@
 					query.select('.btm').boundingClientRect(rect => {}).exec((s) => {
 						if(s[0]){
 							_self.old_scroll = Math.max(s[0].bottom, _self.old_scroll);
+							console.log(_self.old_scroll);
 							_self.$nextTick(function() {
 								_self.new_scroll = _self.old_scroll;
 							});

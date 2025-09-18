@@ -19,7 +19,8 @@
 	export default {
 		data() {
 			return {
-				slogan: 'CyberCafe'
+				slogan: 'CyberCafe',
+				loading_flag: false
 			}
 		},
 		watch:{
@@ -29,6 +30,13 @@
 					this.setUserData({
 						'modalShow': false,
 						'modalPageId': ''
+					})
+				}
+			},
+			loading_flag(newValue){
+				if(newValue){
+					uni.reLaunch({
+						url: '/pages/chat/index'
 					})
 				}
 			}
@@ -42,17 +50,12 @@
 		created() {
 			sqlite.initTable();
 			setTimeout(() =>{
-				handleFun.beforeInit();
+				this.loading_flag = handleFun.beforeInit();
 			}, 500);
 		},
 		onLoad(options) {
 			//每日随机一个tip options.msg
 			//console.log(options)
-			setTimeout(() => {
-				uni.reLaunch({
-					url: '/pages/chat/index'
-				})
-			}, 500)
 		}
 	}
 </script>

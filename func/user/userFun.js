@@ -3,6 +3,8 @@ import store from "@/store";
 import request from "@/func/common/request";
 import { VERSION } from "../common/constants";
 import baseQuery from "../dbManager/baseQuery";
+import incubatorFun from "@/func/incubator/incubatorFun";
+import aiFun from "@/func/setting/aiFun";
 
 export default {
 	async userInit(){
@@ -42,9 +44,9 @@ export default {
 					device: jsonData,
 					version: VERSION
 				}).then(res => {
-					console.log(res.code);
+					//console.log(res.code);
 					if (res.code == 200) {
-						console.log(res.result);
+						//console.log(res.result);
 						store.commit('user/setUserData', {
 							token: res.result.token,
 							userGroup: res.result.group,
@@ -71,6 +73,11 @@ export default {
 								});
 							});
 						}
+						
+						//数据同步回填
+						incubatorFun.feedback();
+						//console.log('init');
+						aiFun.getAiRange();
 					}else{
 						uni.showToast({
 							title: res.data.msg,

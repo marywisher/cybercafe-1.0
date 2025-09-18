@@ -34,7 +34,7 @@ export default{
 			if(store.state.dialogue.breakpointMessageId != 0){
 				query_str += " and message_id < " + store.state.dialogue.breakpointMessageId;
 			}
-			query_str += " order by message_time DESC limit 50;";
+			query_str += " order by message_id DESC limit 50;";
 			
 			sqlite.selectSQL(query_str).then(messageList => {
 				resolve(messageList);
@@ -114,5 +114,17 @@ export default{
 				}
 			});
 		});
+	},
+	deleteMessageByMessageId(selected_id){
+		//取出本条记录的时间戳
+		sqlite.selectSQL('select * from cybercafe_message where message_id = "' + selected_id + '";')
+			.then(message_data => {
+				let prev_time = message_data[0].prev_message_time;
+				let time_str = message_data[0].message_time;
+				sqlite.executeSQL('update cybercafe_message set prev_message_time = "' 
+					+ prev_time + '" where prev_message_time = "' + time_str + '";');
+				sqlite.executeSQL('delete from cybercafe_message where message_id = "' 
+					+ selected_id + '";');
+			});
 	},
 }

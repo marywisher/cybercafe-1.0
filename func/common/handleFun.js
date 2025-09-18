@@ -1,8 +1,6 @@
 import store from "@/store";
 import request from "@/func/common/request";
 import userFun from "@/func/user/userFun";
-import incubatorFun from "@/func/incubator/incubatorFun";
-import aiFun from "../setting/aiFun";
 import responseFun from "../entity/responseFun";
 
 export default {
@@ -19,10 +17,7 @@ export default {
 			})
 		}else{
 			await userFun.userInit();
-			//数据同步回填
-			incubatorFun.feedback();
-			//console.log('init');
-			aiFun.getAiRange();
+			return true;
 		}
 	},
 	afterResponseFun(rel) {

@@ -1,7 +1,7 @@
 <template>
 	<view>
-		<view class="character-tag" @tap="openFun">
-			<image :src="default_character_img" mode="aspectFit" ></image>
+		<view class="character-tag" @tap="speakFun" @longpress="openFun">
+			<image :src="crt_character_img" mode="aspectFit" ></image>
 		</view>
 		<view class="character-pop">
 			<cybercafe-view ref="popCharView" isAbsolute isScrollable closeAble viewTitle="角色设置">
@@ -37,6 +37,8 @@
 	import config from "@/config.json";
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import baseQuery from "@/func/dbManager/baseQuery";
+	import responseFun from "@/func/entity/responseFun";
+	import common from "@/func/common/common";
 	import {
 		mapMutations,
 		mapState,
@@ -50,10 +52,13 @@
 				character_list: {},
 				show_pop: false,
 				on_stage_num: 0,
+				crt_character_img: configData.voiceOver,
+				crt_character_id: 0,
 			}
 		},
 		computed:{
-			...mapState('dialogue', ['characterlist']),
+			...mapState('dialogue', ['characterlist', 'crtCharacterId', 'messageTime', 'optionFlag',
+				'options', 'prevMessageTime']),
 			...mapState('setting', ['entityId', 'replyMode']),
 			tagImg(){
 				return function(index){
@@ -67,6 +72,13 @@
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			init(){
 				this.$refs.popCharView.closeView();
+				//console.log(this.characterlist);
+				for(let i in this.characterlist){
+					if(i == 0) continue;
+					this.crt_character_img = this.characterlist[i].character_img;
+					this.crt_character_id = i;
+					break;
+				}
 			},
 			openFun(){
 				//console.log(this.characterlist)
@@ -104,6 +116,17 @@
 				this.setDiaData({'characterlist': cl});
 				//舞台数据更新
 				this.$forceUpdate();
+			},
+			speakFun(){
+				console.log('speaking');
+				this.setDiaData({
+					'crtCharacterId': this.crt_character_id,
+					'prevMessageTime': this.messageTime,
+					'messageTime': common.getCurrentTimeStampStr(),
+					'optionFlag': true,
+					'options': []
+				});
+				responseFun.chat();
 			}
 		},
 	}

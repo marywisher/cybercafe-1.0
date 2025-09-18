@@ -55,7 +55,7 @@ export default {
 			enable: true
 		})
 	},
-	async preOperation(include_option = true){
+	async preOperation(include_option = true, extra_content = ''){
 		let list = await this.loadTreeOrder();
 		//console.log(list);
 		let character_name = 'test';
@@ -124,16 +124,20 @@ export default {
 		}
 		content = content.replace(new RegExp('{{char}}', 'g'), character_name)
 			.replace(new RegExp('{{user}}', 'g'), store.state.dialogue.me);
-		let content_length = content.length + sys_prompt.length;
+		if(extra_content.length > 0)
+			extra_content = store.state.dialogue.me + ':' 
+				+ extra_content.replace(new RegExp('{{char}}', 'g'), character_name)
+				.replace(new RegExp('{{user}}', 'g'), store.state.dialogue.me);
+		let content_length = content.length + sys_prompt.length + extra_content.length;
 		store.commit('setting/setSettingData',{
 			'promptLength': content_length
 		});
-		console.log(store.state.setting.tokenSetting - content_length);
+		//console.log(store.state.setting.tokenSetting - content_length);
 		//字数超限提示
 		if(content_length > store.state.setting.tokenSetting){
 			return;
 		}
-		let history_str = messageFun.getChatHistory(store.state.setting.tokenSetting - content_length, include_option);
+		let history_str = messageFun.getChatHistory(store.state.setting.tokenSetting - content_length, include_option) + extra_content;
 		//console.log(history_str);
 		/* if(history_str == 0){
 			history_str = store.state.dialogue.characterlist[store.state.dialogue.crtCharacterId].character_name 

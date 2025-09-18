@@ -49,6 +49,7 @@ export default{
 					'messageTime': message_time,
 					'optionFirst': last_history.text,
 					'crtCharacterId': last_history.character_id,
+					'cDisplayId': last_history.character_id,
 					'options': option_list
 				});
 			}
@@ -88,13 +89,13 @@ export default{
 		}
 		return tmp_str;
 	},
-	async saveMessage(ai_id, content, operation, need_refresh = true) {
+	async saveMessage(ai_id, content, operation, need_refresh = true) {//新消息或重说，主控说
 		//存消息
 		//let content = response.choices[0].message.content;
 		//console.log('ai_id:' + JSON.stringify(ai_id));
-		//console.log('message_time:' + store.state.dialogue.messageTime);
+		//console.log('crtCharacterId:' + store.state.dialogue.crtCharacterId);
 		let message_id = await dialogueQuery.createMessage(ai_id, content, operation);
-		console.log(message_id);
+		//console.log(message_id);
 		if(message_id != 'update'){//新消息
 			//整理数据
 			let new_data = {
@@ -105,18 +106,24 @@ export default{
 				html: common.textToHtml(store.state.dialogue.optionFirst, 
 					store.state.dialogue.crtCharacterId == 0 ? 'right' : 'left', true),
 			};
-	
+			//console.log(new_data);
 			let history_list = store.state.dialogue.historylist;
 			history_list.push(new_data);
 			store.commit('dialogue/setDiaData', {
 				'historylist': history_list,
-				'cdisplayid': store.state.dialogue.crtCharacterId,
+				'cDisplayId': store.state.dialogue.crtCharacterId,
 				'refreshList': need_refresh,
+			});
+			//console.log(history_list);
+			let tmp_content = store.state.setting.editContent;
+			tmp_content[store.state.setting.entityId] = '';
+			store.commit('setting/setSettingData', {
+				'editContent': tmp_content
 			});
 		}
 		uni.hideLoading();
 	},
-	updateMessage(operation, need_refresh = true) {
+	updateMessage(operation, need_refresh = true) {//修改文本
 		baseQuery.updateDataByKey('cybercafe_message', {
 			'message_content': store.state.dialogue.optionFirst,
 			'operation_content': operation
@@ -134,6 +141,11 @@ export default{
 		store.commit('dialogue/setDiaData', {
 			'historylist': history_list,
 			'refreshList': need_refresh,
+		});
+		let tmp_content = store.state.setting.editContent;
+		tmp_content[store.state.setting.entityId] = '';
+		store.commit('setting/setSettingData', {
+			'editContent': tmp_content
 		});
 		//console.log(store.state.dialogue.historylist);
 		uni.hideLoading();

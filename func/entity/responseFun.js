@@ -3,6 +3,8 @@ import common from "../common/common";
 import store from "@/store";
 import messageFun from "./messageFun";
 import baseQuery from "../dbManager/baseQuery";
+import request from '@/func/common/request';
+import promptFun from '@/func/entity/promptFun';
 
 export default{
 	async getResponseByAiId(ai_id){
@@ -113,4 +115,22 @@ export default{
 		//console.log(store.state.dialogue.optionFlag);
 		messageFun.saveMessage(aiId, content[0], operation, store.state.dialogue.options.length == 1);
 	},
+	async chat(flag = true){
+		await promptFun.preOperation(flag);
+		if(store.state.setting.promptLength > store.state.setting.tokenSetting){
+			store.commit('user/setUserData', {
+				'modalData': {
+					'content': "当前提示词字数已超限，请调整最大token数设置，或删减提示词",
+					'cancelText': "晓得了"
+				},
+				'modalShow': true,
+				'modalPageId': 'chat'
+			});
+			return;
+		}
+		uni.showLoading({
+			title: '内容由AI生成，仅供娱乐'
+		});
+		request.chatRequest();
+	}
 }

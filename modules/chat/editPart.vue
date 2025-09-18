@@ -17,7 +17,7 @@
 					@tapDot="clickItem" :swiperCurrent="swiper_current"></cybercafe-swiper-dot>
 			</view>
 			<view class="display-flex display-line icon-part">
-				<cybercafe-button v-if="!refresh_disabled && swiper_current > -1" btnClass="btn-default" 
+				<cybercafe-button v-if="cDisplayId > 0 && swiper_current > -1" btnClass="btn-default" 
 					btnName="" class="iconfont icon-shuaxin" @tapBtn="respeakFun"/>
 				<cybercafe-button btnClass="btn-default" btnName="" class="iconfont icon-dianping" 
 					@tapBtn="changeToEdit" />
@@ -28,8 +28,7 @@
 
 <script>
 	import common from '@/func/common/common';
-	import request from '@/func/common/request';
-	import promptFun from '@/func/entity/promptFun';
+	import responseFun from '@/func/entity/responseFun';
 	import {
 		mapMutations,
 		mapState,
@@ -40,7 +39,6 @@
 		data(){
 			return{
 				swiper_current: 0,
-				refresh_disabled: false,//没有chatlist或Options时不可用true
 				edit_text: '',//等价于editContent[this.entity_id]
 				option_list: [],
 			}
@@ -73,9 +71,8 @@
 		},
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
-			...mapState('dialogue', ['optionFirst', 'options', 'refreshList']),
-			...mapState('setting', ['editContent', 'entityId', 'fontColor', 'fontSize',
-				'promptLength', 'tokenSetting']),
+			...mapState('dialogue', ['cDisplayId', 'optionFirst', 'options', 'refreshList']),
+			...mapState('setting', ['editContent', 'entityId', 'fontColor', 'fontSize']),
 			dynamicStyle: function(){
 				if(this.side == 'left'){
 					return `font-size: ${this.fontSize}px; color: ${this.fontColor[0]}`;
@@ -92,28 +89,10 @@
 				this.option_list = this.options;
 				//console.log(this.option_list.length);
 				this.swiper_current = this.crtIndex;
-				//if(this.option_list.length == 0) this.refresh_disabled = true;
 			},
 			async respeakFun(e){
-				if (this.refresh_disabled == false) {// && content.text === '重说'
-					await promptFun.preOperation(false);
-					if(this.promptLength > this.tokenSetting){
-						this.setUserData({
-							'modalData': {
-								content: "当前提示词字数已超限，请调整最大token数设置，或删减提示词",
-								cancelText: "晓得了"
-							},
-							'modalShow': true,
-							'modalPageId': 'chat'
-						});
-						return;
-					}
-					uni.showLoading({
-						title: '内容由AI生成，仅供娱乐'
-					});
-					request.chatRequest();
-					this.swiper_current = this.options.length;
-				}
+				await responseFun.chat(false);
+				this.swiper_current = this.options.length;
 			},
 			autoSaveContent(e){
 				console.log(e);
@@ -156,10 +135,9 @@
 			confirmFun(){
 				//敏感检测
 				this.setDiaData({
-					'optionFirst': this.edit_text
+					'optionFirst': this.edit_text,
+					'cDisplayId': 0
 				});
-				/* this.setDiaData({key: 'optionFirst', data: newOptionFirst});
-				this.updateMessage(); */
 				this.swiper_current = -1;
 				this.$emit('swiperChange', -1);
 				this.$emit('editChange', false);
