@@ -33,13 +33,6 @@
 					})
 				}
 			},
-			loading_flag(newValue){
-				if(newValue){
-					uni.reLaunch({
-						url: '/pages/chat/index'
-					})
-				}
-			}
 		},
 		computed:{
 			...mapState('user', ['isLogin', 'modalData', 'modalPageId', 'modalShow']),
@@ -47,16 +40,16 @@
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
 		},
-		created() {
+		onLoad() {
 			sqlite.initTable();
 			setTimeout(() =>{
-				this.loading_flag = handleFun.beforeInit();
+				handleFun.beforeInit();
 			}, 500);
 		},
-		onLoad(options) {
+		/* onLoad(options) {
 			//每日随机一个tip options.msg
 			//console.log(options)
-		}
+		}, */
 	}
 </script>
 

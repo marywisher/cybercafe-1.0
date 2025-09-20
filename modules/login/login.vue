@@ -55,6 +55,7 @@
 
 <script>
 	import request from '@/func/common/request';
+	import handleFun from '@/func/common/handleFun';
 	import {
 		mapMutations,
 		mapState,
@@ -148,9 +149,7 @@
 								'modalShow': true,
 								'modalPageId': 'chat'
 							});
-							uni.navigateTo({
-								url: '/pages/index/index'
-							})
+							handleFun.beforeInit();
 						} else {
 							uni.showToast({
 								title: res.msg,

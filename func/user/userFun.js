@@ -73,15 +73,21 @@ export default {
 								});
 							});
 						}
-						
 						//数据同步回填
 						incubatorFun.feedback();
 						//console.log('init');
 						aiFun.getAiRange();
+						
+						uni.reLaunch({
+							url: '/pages/chat/index'
+						})
 					}else{
 						uni.showToast({
 							title: res.data.msg,
 							icon: "none"
+						})
+						uni.navigateTo({
+							url: '../login/login'
 						})
 					}
 				}).catch(e =>{

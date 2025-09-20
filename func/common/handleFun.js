@@ -17,7 +17,6 @@ export default {
 			})
 		}else{
 			await userFun.userInit();
-			return true;
 		}
 	},
 	afterResponseFun(rel) {

@@ -42,6 +42,7 @@
 
 <script>
 	import request from '@/func/common/request';
+	import handleFun from '@/func/common/handleFun';
 	import {
 		mapMutations,
 		mapState,
@@ -182,9 +183,7 @@
 						/* uni.switchTab({
 							url: '/pages/index/index'
 						}) */
-						uni.navigateTo({
-							url: '/pages/index/index'
-						});
+						handleFun.beforeInit();
 					} else {
 						uni.showToast({
 							title: res.msg,
