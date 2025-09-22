@@ -1,7 +1,21 @@
 <template>
 	<view class="display-flex display-line sp-around input-container">
-		<input class="chat-input" v-model="chat_input" @input="autoSaveContent" />
+		<view v-show="input_mode == 'min'" class="input-box">
+			<input class="chat-input" v-model="chat_input" @input="autoSaveContent" />
+			<view class="iconfont icon-quanping" @tap="changeInputMode"></view>
+		</view>
 		<view class="iconfont icon-fasong" @tap="sendMessage"></view>
+		
+		<cybercafe-view v-show="input_mode == 'max'" ref="popup" @maskClick="changeInputMode" isAbsolute :closeAble="false"
+			popViewStyle="position: fixed; bottom: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none;">
+			<view class="textarea-box">
+				<textarea v-model="chat_input" :cursor-spacing="150"
+				 placeholder="请输入" adjust-position  class="chat-textarea"
+				 confirm-type="done" @input="autoSaveContent"></textarea>
+				<view class="iconfont icon-feiquanping" @tap="changeInputMode"></view>
+				<view class="iconfont icon-fasong" @tap="sendMessage"></view>
+			</view>
+		</cybercafe-view>
 	</view>
 </template>
 
@@ -20,11 +34,13 @@
 		data(){
 			return {
 				chat_input: '',
+				input_mode: 'min',//max
 			}
 		},
 		computed: {
 			...mapState('setting', ['editContent', 'entityId', 'replyMode']),
-			...mapState('dialogue', ['messageTime', 'optionFirst', 'prevMessageTime']),
+			...mapState('dialogue', ['crtCharacterId', 'messageTime', 'optionFlag', 'optionFirst', 
+				'options', 'prevMessageTime']),
 		},
 		methods: {
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
@@ -33,14 +49,13 @@
 				this.chat_input = this.editContent[this.entityId];
 			},
 			async sendMessage(){
+				this.input_mode = 'min';
 				//敏感词审核
 				this.setDiaData({
-					'optionFirst': this.chat_input.trim()
-				});
-				this.setDiaData({
+					'optionFirst': this.chat_input.trim(),
 					'crtCharacterId': 0,
 					'prevMessageTime': this.messageTime,
-					'messageTime': common.getCurrentTimeStampStr(),
+					'messageTime': common.getCurrentTimeStampStr(true),
 					'optionFlag': true,
 					'options': []
 				});
@@ -57,12 +72,65 @@
 					'editContent': this.editContent,
 				});
 			},
+			changeInputMode(){
+				if(this.input_mode == 'min'){
+					this.input_mode = 'max';
+				}else{
+					this.input_mode = 'min';
+				}
+				this.$emit('inputModeChange', this.input_mode);
+			}
 		}
 	}
 </script>
 
-<style>
+<style lang="scss">
 	.input-container{
 		width: 88vw;
+	}
+	.input-box{
+		position: relative;
+	}
+	.chat-input{
+		width: calc(100vw - 10 * $uni-spacing-lg);
+	}
+	.icon-fasong{
+		color: $uni-color-main;
+		font-size: $uni-font-size-lg;
+		line-height: calc(2 * $uni-font-size-lg);
+	}
+	.icon-quanping{
+		position: absolute;
+		right: $uni-spacing-lg;
+		bottom: $uni-spacing-lg;
+		color: $uni-color-main;
+	}
+	.chat-textarea{
+		width: 90vw;
+		height: 30vh;
+	}
+	.textarea-box{
+		background-color: $uni-bg-color-grey;
+		padding: $uni-spacing-lg;
+		position: relative;
+	}
+	.icon-feiquanping{
+		position: absolute;
+		right: $uni-spacing-lg;
+		top: calc(1.5 * $uni-spacing-lg);
+		color: $uni-color-main;
+	}
+	.textarea-box .icon-fasong{
+		position: absolute;
+		right: calc(1.5 * $uni-spacing-lg);
+		bottom: $uni-spacing-lg;
+	}
+	@media (prefers-color-scheme: dark) {
+		.icon-fasong, .icon-quanping, .icon-feiquanping{
+			color: $uni-color-dark-main;
+		}
+		.textarea-box{
+			background-color: $uni-bg-dark-color-gray;
+		}
 	}
 </style>

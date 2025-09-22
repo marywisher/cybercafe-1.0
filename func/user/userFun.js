@@ -65,7 +65,7 @@ export default {
 								store.commit('user/setUserData', {
 									'modalData': {
 										content: res.result.info,
-										cancelText: '明白了',
+										cancelText: 'OK',
 										success: function (res) {}
 									},
 									'modalShow': true,

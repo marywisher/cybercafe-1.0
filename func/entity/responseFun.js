@@ -79,7 +79,7 @@ export default{
 					'modalData':
 						{
 							content: err,
-							cancelText: '晓得了'
+							cancelText: 'OK'
 						},
 					'modalShow': true,
 					'modalPageId': 'chat'
@@ -121,7 +121,7 @@ export default{
 			store.commit('user/setUserData', {
 				'modalData': {
 					'content': "当前提示词字数已超限，请调整最大token数设置，或删减提示词",
-					'cancelText': "晓得了"
+					'cancelText': "OK"
 				},
 				'modalShow': true,
 				'modalPageId': 'chat'

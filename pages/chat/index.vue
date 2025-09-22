@@ -12,13 +12,13 @@
 				<view class="iconfont icon-shezhi" @tap="gotoSetting"></view>
 			</view>
 		</view>
-		<view class="chat-body content" @longpress="handleLongPress">
+		<view class="chat-body content" :class="{'max-view': input_mode == 'max'}" @longpress="handleLongPress">
 			<!-- 内容区 -->
 			<listPart v-if="entityId > 0" id="chatList" ref="chatListPart" :lockMode="in_pull_down_mode"
 				@afterUpdate="afterUpdateList" :scroll="scroll"></listPart>
 			<view v-else>新用户可见</view>
 		</view>
-		<view class="chat-bottom content display-flex sp-around">
+		<view v-if="entityId > 0" class="chat-bottom content display-flex sp-around">
 			<characterPart ref="chatCharPart"></characterPart>
 			<chatInput ref="chatInputPart" @autoSpeak="autoSpeakFun"></chatInput>
 			<!-- 底部 -->
@@ -51,6 +51,7 @@
 				scroll: 0,
 				dark_mode: 'light',
 				edit: false,
+				input_mode: 'min'
 			}
 		},
 		components: {
@@ -135,7 +136,7 @@
 			},
 			autoSpeakFun(){
 				this.$refs.chatCharPart.speakFun();
-			}
+			},
 		},
 		onLoad() {
 			uni.$on('refreshScroll', (pos_y, is_lock) => {
@@ -193,14 +194,6 @@
 		z-index: 2;
 		pointer-events: none;
 	}
-	.chat-input{
-		width: calc(100vw - 10 * $uni-spacing-lg);
-	}
-	.icon-fasong{
-		color: $uni-color-main;
-		font-size: $uni-font-size-lg;
-		line-height: calc(2 * $uni-font-size-lg);
-	}
 	.header-left, .header-right{
 		width: 20vw;
 	}
@@ -227,11 +220,12 @@
 		z-index: 999;
 		top: 20vh;
 	}
+	.max-view{
+		height: 30vh;
+		width: 100vw;
+	}
 	@media (prefers-color-scheme: dark) {
 		.chat-header{
-			color: $uni-color-dark-main;
-		}
-		.icon-fasong{
 			color: $uni-color-dark-main;
 		}
 		.fix-btm{

@@ -50,7 +50,7 @@ export default {
 								'modalData':
 									{
 										'content': res.data.msg,
-										'cancelText': '晓得了',
+										'cancelText': 'OK',
 									},
 								'modalShow': true,
 								'modalPageId': pageId
@@ -114,7 +114,7 @@ export default {
 						'modalData':
 							{
 								content: response.msg,
-								cancelText: '晓得了'
+								cancelText: 'OK'
 							},
 						'modalShow': true,
 						'modalPageId': pageId

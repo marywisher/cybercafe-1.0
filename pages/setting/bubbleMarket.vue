@@ -98,7 +98,7 @@
 					this.setUserData({
 						'modalData': {
 							content: '米粒数不足，无法下载，请联系群主充值',
-							cancelText: '晓得了',
+							cancelText: 'OK',
 							success: (res) => {},
 						},
 						'modalShow': true,

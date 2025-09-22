@@ -122,7 +122,7 @@
 				this.setDiaData({
 					'crtCharacterId': this.crt_character_id,
 					'prevMessageTime': this.messageTime,
-					'messageTime': common.getCurrentTimeStampStr(),
+					'messageTime': common.getCurrentTimeStampStr(true),
 					'optionFlag': true,
 					'options': []
 				});

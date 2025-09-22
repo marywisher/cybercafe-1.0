@@ -102,7 +102,7 @@
 					this.setUserData({
 						'modalData': {
 							content: msg,
-							cancelText: '晓得了',
+							cancelText: 'OK',
 						},
 						'modalShow': true,
 						'modalPageId': 'login'
@@ -190,7 +190,7 @@
 							_self.setUserData({
 								'modalData': {
 									content: res.result.msg,
-									cancelText: '明白了',
+									cancelText: 'OK',
 									success: (res) => {
 										if (res.cancel && res.result.msg == '密码已更新，请重新登录'){
 											_self.form_flag = 'login';

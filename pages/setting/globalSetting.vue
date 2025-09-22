@@ -1,5 +1,6 @@
 <template>
 	<view>
+		<userinfo ref="gsUserinfo"></userinfo>
 		<cybercafe-view>
 			<cybercafe-view>
 				<view class="display-flex sp-between display-line">
@@ -70,7 +71,8 @@
 				</view>
 			</cybercafe-view>
 			
-			<view>最新版本：{{latestVersion}}<br>当前版本：{{my_version}}</view>
+			<view class="gs-info">最新版本：{{latestVersion}}</view>
+			<view class="gs-info">当前版本：{{my_version}}</view>
 			<cybercafe-button v-show="latestVersion > my_version" btnClass="btn-primary" 
 				btnName="更新版本" @tapBtn="beforeUpdateVersion"></cybercafe-button>
 		</cybercafe-view>
@@ -80,6 +82,7 @@
 
 <script>
 	import baseQuery from '@/func/dbManager/baseQuery';
+	import userinfo from '@/modules/account/userinfo';
 	import {
 		mapMutations,
 		mapState,
@@ -91,6 +94,9 @@
 				light_label: '',
 				my_version: ''
 			}
+		},
+		components:{
+			userinfo
 		},
 		watch:{
 			modalShow(newValue){
@@ -106,8 +112,8 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'latestVersion', 'modalData', 'modalPageId',
-				'modalShow', 'userId']),
+			...mapState('user', ['aimId', 'darkMode', 'latestVersion', 'modalData', 
+				'modalPageId', 'modalShow', 'userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -150,7 +156,8 @@
 							}
 						},
 					},
-					'modalShow': true
+					'modalShow': true,
+					'modalPageId': 'globalSetting'
 				})
 			},
 			updateVersion(){//升级安装包
@@ -196,10 +203,12 @@
 			}
 		},
 		onLoad() {
-			this.getUserData();
 			/* if(this.darkMode != uni.getSystemInfoSync().hostTheme){//跟随系统
 				this.setUserData({darkMode: uni.getSystemInfoSync().hostTheme})
 			} */
+			this.setUserData({
+				'aimId': this.userId
+			})
 			if(this.darkMode == 'light'){
 				this.light_label = '开灯中';
 			}else{
@@ -207,6 +216,9 @@
 			}
 			//console.log(uni.getSystemInfoSync());
 			this.my_version = uni.getSystemInfoSync().appWgtVersion;
+			this.$nextTick(() => {
+				this.$refs.gsUserinfo.initPage();
+			});
 		}
 	}
 </script>
@@ -218,5 +230,8 @@
 	.modal-view{
 		z-index: 999;
 		top: 20vh;
+	}
+	.gs-info{
+		padding: $uni-spacing-lg;
 	}
 </style>
