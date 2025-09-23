@@ -64,7 +64,7 @@
 			},
 			copyToClipboard(){
 				//this.getDiaData();
-				console.log( this.selected_id)
+				//console.log( this.selected_id)
 				let text = '';
 				if(this.selected_id == 0){
 					text = this.selected_text;
@@ -98,7 +98,7 @@
 			},
 			deleteMessage(){
 				let _self = this;
-				console.log('用户点击确定' + this.selected_id);
+				//console.log('用户点击确定' + this.selected_id);
 				if(this.selected_id == 0){//option first
 					this.deleteOptionFirst();
 				}else{//history list

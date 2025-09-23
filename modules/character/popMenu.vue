@@ -3,9 +3,9 @@
 		<view class="character-header-bg" :style="{ opacity: bgOpacity }"></view>
 		<view class="display-flex sp-between display-line">
 			<view class="iconfont icon-xiayibu iconback menu-icon-left" @tap="back"></view>
-			<image class="character-header-img" :src="img" :style="{ opacity: bgOpacity }"></image>
 			<view class="iconfont icon-geren menu-icon-left"></view>
 		</view>
+		<image class="character-header-img" :src="img" :style="{ opacity: bgOpacity }"></image>
 	</view>
 </template>
 
@@ -51,6 +51,9 @@
 		padding: $uni-spacing-lg;
 		color: $uni-color-main;
 	}
+	.iconfont{
+		font-size: $uni-font-size-huge;
+	}
 	.iconback{
 		transform: rotate(180deg);
 	}
@@ -58,6 +61,10 @@
 		width: $uni-img-size-lg;
 		height: $uni-img-size-lg;
 		border-radius: 50%;
+		position: fixed;
+		top: calc(3 * $uni-spacing-lg);
+		margin-left: calc(-0.5 * $uni-img-size-lg);
+		left: 50vw;
 	}
 	@media (prefers-color-scheme: dark) {
 		.character-header-bg{

@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="character-tag" @tap="speakFun" @longpress="openFun">
+		<view class="character-tag" @tap="openFun" @longpress="speakFun">
 			<image :src="crt_character_img" mode="aspectFit" ></image>
 		</view>
 		<view class="character-pop">

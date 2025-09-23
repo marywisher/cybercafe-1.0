@@ -96,6 +96,24 @@
 				hint_str: "所输内容<br/><br/> · <b>不得</b>违反国家法律法规<br/> · <b>不得</b>违背社会公序良俗<br/> · <b>不得</b>诱导生成危害公共安全的内容<br/><br/>违者<b>冻结账号</b><br/><br/>统一使用<b>{{user}}</b>或<b>你</b>指代主控，<b>{{char}}</b>或<b>他/她</b>指代角色"
 			}
 		},
+		watch:{
+			modalShow: {
+				handler(newValue, oldValue) {
+				    //console.log(newValue);
+				    if(newValue && this.modalPageId == 'promptSetting'){
+				    	this.$nextTick(() => {
+				    		this.$refs.cModal.show(this.modalData);
+						});
+				    	this.setUserData({
+				    		'modalShow': false,
+				    		'modalPageId': ''
+				    	})
+				    }
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
+			}
+		},
 		onLoad() {
 			this.init();
 		},

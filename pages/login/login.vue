@@ -23,14 +23,21 @@
 	import register from '@/modules/login/register.vue';
 	export default{
 		watch:{
-			modalShow(newValue){
-				if(newValue && this.modalPageId == 'login'){
-					this.$refs.cModal.show(this.modalData);
-					this.setUserData({
-						'modalShow': false,
-						'modalPageId': ''
-					})
-				}
+			modalShow: {
+				handler(newValue, oldValue) {
+				    //console.log(newValue);
+				    if(newValue && this.modalPageId == 'login'){
+				    	this.$nextTick(() => {
+				    		this.$refs.cModal.show(this.modalData);
+						});
+				    	this.setUserData({
+				    		'modalShow': false,
+				    		'modalPageId': ''
+				    	})
+				    }
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
 			}
 		},
 		components: {

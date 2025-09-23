@@ -2,7 +2,7 @@
 	<view class="chat-main">
 		<chatBg></chatBg>
 		<water-mark v-if="userKey" class="watermark" :text1="userKey" :text2="userName" :darkMode="dark_mode"></water-mark>
-		<view class="chat-header content display-flex sp-between">
+		<view class="chat-header content display-flex display-line sp-between">
 			<!-- 顶部 -->
 			<view class="header-left">
 				<popMenu ref="chatRMenuPart"></popMenu>
@@ -18,7 +18,7 @@
 				@afterUpdate="afterUpdateList" :scroll="scroll"></listPart>
 			<view v-else>新用户可见</view>
 		</view>
-		<view v-if="entityId > 0" class="chat-bottom content display-flex sp-around">
+		<view v-if="entityId > 0" class="chat-bottom content display-flex display-line sp-around">
 			<characterPart ref="chatCharPart"></characterPart>
 			<chatInput ref="chatInputPart" @autoSpeak="autoSpeakFun"></chatInput>
 			<!-- 底部 -->
@@ -63,14 +63,21 @@
 			chatInput
 		},
 		watch:{
-			modalShow(newValue){
-				if(newValue && this.modalPageId == 'chat'){
-					this.$refs.cModal.show(this.modalData);
-					this.setUserData({
-						'modalShow': false,
-						'modalPageId': ''
-					})
-				}
+			modalShow: {
+				handler(newValue, oldValue) {
+				    //console.log(newValue);
+				    if(newValue && this.modalPageId == 'chat'){
+						this.$nextTick(() => {
+				    		this.$refs.cModal.show(this.modalData);
+						});
+				    	this.setUserData({
+				    		'modalShow': false,
+				    		'modalPageId': ''
+				    	})
+				    }
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
 			}
 		},
 		computed:{
