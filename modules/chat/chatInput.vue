@@ -1,21 +1,23 @@
 <template>
-	<view class="display-flex display-line sp-around input-container">
+	<view class="display-flex display-line sp-around input-container" :class="{'max-view': input_mode == 'max'}">
 		<view v-show="input_mode == 'min'" class="input-box">
-			<input class="chat-input" v-model="chat_input" @input="autoSaveContent" />
+			<input class="chat-input" v-model="chat_input" @input="autoSaveContent"
+				placeholder="回复由AI生成，仅供娱乐"/>
 			<view class="iconfont icon-quanping" @tap="changeInputMode"></view>
 		</view>
-		<view class="iconfont icon-fasong" @tap="sendMessage"></view>
+		<view v-show="input_mode == 'min'" class="iconfont icon-fasong" @tap="sendMessage"></view>
 		
-		<cybercafe-view v-show="input_mode == 'max'" ref="popup" @maskClick="changeInputMode" isAbsolute :closeAble="false"
-			popViewStyle="position: fixed; bottom: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none;">
+		<view v-show="input_mode == 'max'" ref="popup">
 			<view class="textarea-box">
 				<textarea v-model="chat_input" :cursor-spacing="150"
-				 placeholder="请输入" adjust-position  class="chat-textarea"
+				 placeholder="回复由AI生成，仅供娱乐" adjust-position  class="chat-textarea"
 				 confirm-type="done" @input="autoSaveContent"></textarea>
+			</view>
+			<view class="textarea-btn display-flex display-line sp-around">
 				<view class="iconfont icon-feiquanping" @tap="changeInputMode"></view>
 				<view class="iconfont icon-fasong" @tap="sendMessage"></view>
 			</view>
-		</cybercafe-view>
+		</view>
 	</view>
 </template>
 
@@ -34,36 +36,61 @@
 		data(){
 			return {
 				chat_input: '',
-				input_mode: 'min',//max
+				input_mode: 'min',//max min
 			}
 		},
 		computed: {
 			...mapState('setting', ['editContent', 'entityId', 'replyMode']),
 			...mapState('dialogue', ['crtCharacterId', 'messageTime', 'optionFlag', 'optionFirst', 
 				'options', 'prevMessageTime']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 		},
 		methods: {
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
+			...mapMutations('user', ['getUserData', 'setUserData']),
 			init(){
 				this.chat_input = this.editContent[this.entityId];
 			},
 			async sendMessage(){
 				this.input_mode = 'min';
-				//敏感词审核
-				this.setDiaData({
-					'optionFirst': this.chat_input.trim(),
-					'crtCharacterId': 0,
-					'prevMessageTime': this.messageTime,
-					'messageTime': common.getCurrentTimeStampStr(true),
-					'optionFlag': true,
-					'options': []
-				});
-				await messageFun.saveMessage(0, this.optionFirst, this.messageTime + ':option.writing');
-				if(this.replyMode == 'auto') {
-					this.$emit('autoSpeak');
+				//敏感审核
+				let response_feedback = await responseFun.toolRequest('sensitive', this.chat_input.trim(), 'chat');
+				if(response_feedback == 200){
+					this.setDiaData({
+						'optionFirst': this.chat_input.trim(),
+						'crtCharacterId': 0,
+						'prevMessageTime': this.messageTime,
+						'messageTime': common.getCurrentTimeStampStr(true),
+						'optionFlag': true,
+						'options': []
+					});
+					await messageFun.saveMessage(0, this.optionFirst, this.messageTime + ':option.writing');
+					if(this.replyMode == 'auto') {
+						this.$emit('autoSpeak');
+					}
+					this.chat_input = '';
+				}else if(response_feedback == 302){
+					this.setUserData({
+						'modalData': {
+							title: "温馨提示",
+							content: "请修改填写内容再试",
+							cancelText: "OK",
+						},
+						'modalShow': true,
+						'modalPageId': 'chat'
+					})
+				}else{
+					this.setUserData({
+						'modalData': {
+							title: "温馨提示",
+							content: "请联系管理员修复问题",
+							cancelText: "OK",
+						},
+						'modalShow': true,
+						'modalPageId': 'chat'
+					})
 				}
-				this.chat_input = '';
 			},
 			autoSaveContent(e){
 				//console.log(e);
@@ -88,6 +115,9 @@
 	.input-container{
 		width: 88vw;
 	}
+	.input-container.max-view{
+		width: 100vw;
+	}
 	.input-box{
 		position: relative;
 	}
@@ -107,30 +137,21 @@
 	}
 	.chat-textarea{
 		width: 90vw;
-		height: 30vh;
+		height: calc(30vh - 1.5 * $uni-font-size-lg);
 	}
 	.textarea-box{
-		background-color: $uni-bg-color-grey;
 		padding: $uni-spacing-lg;
-		position: relative;
 	}
-	.icon-feiquanping{
-		position: absolute;
-		right: $uni-spacing-lg;
-		top: calc(1.5 * $uni-spacing-lg);
+	.textarea-btn{
+		width: 30vw;
+		float: right;
+	}
+	.icon-feiquanping, .textarea-box .icon-fasong{
 		color: $uni-color-main;
-	}
-	.textarea-box .icon-fasong{
-		position: absolute;
-		right: calc(1.5 * $uni-spacing-lg);
-		bottom: $uni-spacing-lg;
 	}
 	@media (prefers-color-scheme: dark) {
 		.icon-fasong, .icon-quanping, .icon-feiquanping{
 			color: $uni-color-dark-main;
-		}
-		.textarea-box{
-			background-color: $uni-bg-dark-color-gray;
 		}
 	}
 </style>

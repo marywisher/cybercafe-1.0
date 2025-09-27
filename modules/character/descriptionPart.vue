@@ -115,8 +115,8 @@
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import common from '@/func/common/common';
 	import baseQuery from '@/func/dbManager/baseQuery';
-	
 	import request from '@/func/common/request';
+	import responseFun from '@/func/entity/responseFun';
 	//import relationHandle from '@/func/relation/relationHandle';
 	import {
 		mapMutations,
@@ -287,12 +287,36 @@
 					if('character_name' == kind){
 						updateArr[kind] = value;
 					} 
-					let feedback = await baseQuery.updateDataByKey('cybercafe_character', updateArr, whereArr);
-					if(feedback == 'inserted' || feedback == 'updated'){
-						//保存
-						uni.showToast({
-							title: '数据已保存',
-							icon: 'none'
+					let response_feedback = await responseFun.toolRequest('sensitive',
+						value, 'character');
+					if(response_feedback == 200){
+						let feedback = await baseQuery.updateDataByKey('cybercafe_character', updateArr, whereArr);
+						if(feedback == 'inserted' || feedback == 'updated'){
+							//保存
+							uni.showToast({
+								title: '数据已保存',
+								icon: 'none'
+							})
+						}
+					}else if(response_feedback == 302){
+						this.setUserData({
+							'modalData': {
+								title: "温馨提示",
+								content: "请修改填写内容再试",
+								cancelText: "OK",
+							},
+							'modalShow': true,
+							'modalPageId': 'character'
+						})
+					}else{
+						this.setUserData({
+							'modalData': {
+								title: "温馨提示",
+								content: "请联系管理员修复问题",
+								cancelText: "OK",
+							},
+							'modalShow': true,
+							'modalPageId': 'character'
 						})
 					}
 				}
@@ -315,9 +339,9 @@
 				//console.log(this.gender_cn);
 				this.autoSave('character_gender', this.gender_cn);
 			},
-			addDes(key){
+			async addDes(key){
 				//console.log(this[key + '_key'], this[key + '_value']);
-				this[key + '_value'] = this[key + '_value'].trim();
+				this[key + '_key'] = this[key + '_key'].trim();
 				this[key + '_value'] = this[key + '_value'].trim();
 				if(this[key + '_key'].length > 0 && this[key + '_value'].length > 0){
 					this[key + '_description'][this[key + '_key']] = this[key + '_value'];

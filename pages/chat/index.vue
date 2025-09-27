@@ -1,8 +1,9 @@
 <template>
 	<view class="chat-main">
 		<chatBg></chatBg>
-		<water-mark v-if="userKey" class="watermark" :text1="userKey" :text2="userName" :darkMode="dark_mode"></water-mark>
-		<view class="chat-header content display-flex display-line sp-between">
+		<water-mark v-if="userKey" class="watermark" :text1="userKey" 
+			:text2="userName" :darkMode="dark_mode"></water-mark>
+		<cybercafe-header :bgOpacity="1" class="chat-header">
 			<!-- 顶部 -->
 			<view class="header-left">
 				<popMenu ref="chatRMenuPart"></popMenu>
@@ -11,19 +12,22 @@
 			<view class="header-right display-flex">
 				<view class="iconfont icon-shezhi" @tap="gotoSetting"></view>
 			</view>
-		</view>
-		<view class="chat-body content" :class="{'max-view': input_mode == 'max'}" @longpress="handleLongPress">
+		</cybercafe-header>
+		<view class="chat-body content" @longpress="handleLongPress"
+			@touchstart="handleTouchStart" @touchend="handleTouchEnd">
 			<!-- 内容区 -->
-			<listPart v-if="entityId > 0" id="chatList" ref="chatListPart" :lockMode="in_pull_down_mode"
-				@afterUpdate="afterUpdateList" :scroll="scroll"></listPart>
-			<view v-else>新用户可见</view>
+			<listPart v-if="entityId > 0" ref="chatListPart" :lockMode="in_pull_down_mode"
+				:viewMode="input_mode" @afterUpdate="afterUpdateList" :scroll="scroll"></listPart>
+			<view v-else></view><!--新用户可见-->
+			<view class="btm"></view>
 		</view>
 		<view v-if="entityId > 0" class="chat-bottom content display-flex display-line sp-around">
-			<characterPart ref="chatCharPart"></characterPart>
-			<chatInput ref="chatInputPart" @autoSpeak="autoSpeakFun"></chatInput>
+			<characterPart v-show="input_mode == 'min'" ref="chatCharPart"></characterPart>
+			<chatInput ref="chatInputPart" @autoSpeak="autoSpeakFun" @inputModeChange="changeBtmPart"></chatInput>
 			<!-- 底部 -->
 		</view>
-		<view v-if="show_to_btm_btn" class="fix-btm" @tap="clickToBtm">>></view>
+		<view v-if="show_to_btm_btn" class="fix-btm" 
+			:class="{'heigher-btn': input_mode == 'max'}" @tap="clickToBtm">>></view>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
@@ -51,7 +55,8 @@
 				scroll: 0,
 				dark_mode: 'light',
 				edit: false,
-				input_mode: 'min'
+				input_mode: 'min',
+				client_y: 0
 			}
 		},
 		components: {
@@ -125,15 +130,23 @@
 				//console.log('clickbtm');
 				this.in_pull_down_mode = true;
 				this.toBtm();
-				setTimeout(() => {
-					this.in_pull_down_mode = false;
-				}, 2000);
 			},
 			toBtm(){
 				//console.log('toBtm');
-				//this.scroll = this.upcount;
-				this.show_to_btm_btn = false;
-				this.$refs.chatListPart.toBtm();
+				let _self = this;
+				this.$nextTick(() => {
+					uni.pageScrollTo({
+						selector: '.btm',
+						duration: 300,
+						success: () => {
+							//console.log('scrollToBtm');
+							_self.show_to_btm_btn = false;
+							_self.in_pull_down_mode = false;
+							_self.upcount = 0;
+							//console.log(_self.maxHeight)
+						},
+					})
+				});
 			},
 			handleLongPress(e){
 				//console.log(e);
@@ -144,9 +157,35 @@
 			autoSpeakFun(){
 				this.$refs.chatCharPart.speakFun();
 			},
+			changeBtmPart(mode){
+				this.input_mode = mode;
+			},
+			handleTouchStart(e){
+				//console.log(e);
+				this.client_y = e.touches[0].clientY;
+			},
+			handleTouchEnd(e){
+				//console.log(e);
+				//console.log(this.client_y, e.changedTouches[0].clientY);
+				//this.unlockScroll();
+				if(e.changedTouches[0].clientY - this.client_y > 50){
+					//console.log('上滑');
+					this.upcount += 1;
+					if(this.upcount >= 3){
+						this.show_to_btm_btn = true;
+					}else{
+						this.show_to_btm_btn = false;
+					}
+				}else if(e.changedTouches[0].clientY - this.client_y < -50){
+					this.show_to_btm_btn = false;
+					this.upcount -= 1;
+				}
+				this.client_y = e.changedTouches[0].clientY;
+				//console.log(this.show_to_btm_btn);
+			}
 		},
 		onLoad() {
-			uni.$on('refreshScroll', (pos_y, is_lock) => {
+			/* uni.$on('refreshScroll', (pos_y, is_lock) => {
 				//console.log(pos_y);
 				this.upcount = Math.max(pos_y, this.upcount);
 				if(!is_lock){
@@ -161,38 +200,29 @@
 					//console.log(pos_y);
 					this.upcount += pos_y;
 				}
-			});
+			}); */
 			this.init();
 		},
 	}
 </script>
 
 <style lang="scss">
-	.chat-main{
-		position: fixed;
-		width: 100vw;
-		height: 100vh;
-	}
 	.chat-header{
-		position: absolute;
-		top: 5vh;
-		left: 0;
-		width: calc(100vw - 2 * $uni-spacing-base);
-		color: $uni-color-main;
+		z-index: 3;
 	}
 	.chat-body{
-		position: absolute;
-		top: 8vh;
-		left: 0;
+		margin: 8vh auto;
 		width: calc(100vw - 2 * $uni-spacing-base);
-		height: calc(90vh - 2 * $uni-font-size-lg);
 	}
 	.chat-bottom{
-		position: absolute;
+		position: fixed;
 		bottom: 0;
 		left: 0;
 		width: calc(100vw - 2 * $uni-spacing-base);
+		padding-top: $uni-spacing-base;
 		padding-bottom: $uni-spacing-base;
+		background-color: $uni-bg-color-grey;
+		box-shadow: $uni-width-none calc(-1 * $uni-spacing-mini) $uni-spacing-lg $uni-text-color-grey;
 	}
 	.watermark{
 		position: fixed;
@@ -207,14 +237,11 @@
 	.header-right{
 		justify-content: flex-end;
 	}
-	.chat-header .iconfont{
-		font-size: $uni-font-size-huge;
-	}
 	.fix-btm{
 		position: fixed;
 		right: 0;
 		bottom: 20vh;
-		border-radius: 0 0 $uni-border-radius-base $uni-border-radius-base;
+		border-radius: $uni-width-none $uni-width-none $uni-border-radius-base $uni-border-radius-base;
 		//border:$uni-border-base solid $uni-text-color;
 		background-color: $uni-color-main;//$uni-text-color-inverse;
 		color: $uni-bg-color-grey;
@@ -227,17 +254,17 @@
 		z-index: 999;
 		top: 20vh;
 	}
-	.max-view{
-		height: 30vh;
-		width: 100vw;
+	.heigher-btn{
+		bottom: 50vh;
 	}
 	@media (prefers-color-scheme: dark) {
-		.chat-header{
-			color: $uni-color-dark-main;
-		}
 		.fix-btm{
 			background-color: $uni-color-dark-main;
 			color: $uni-bg-dark-color-gray;
+		}
+		.chat-bottom{
+			background-color: $uni-bg-dark-color-gray;
+			box-shadow: $uni-width-none calc(-1 * $uni-spacing-mini) $uni-spacing-lg $uni-bg-color-mask;
 		}
 	}
 </style>

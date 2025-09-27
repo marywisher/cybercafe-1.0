@@ -1,70 +1,67 @@
 <template>
 	<view>
-		<scroll-view class="scroll-view" scroll-y="true" scroll-with-animation :scroll-top="new_scroll"
-			@scroll="scrolling">
-			<view class="hint loading-view text-center" v-show="showing" @tap="moreMessage">{{loading_text}}</view>
-			<view :class="'message' + item.message_id" v-for="(item, index) in history_list" :key="index" 
-					v-show="index < history_list.length - 1">
-				<view :id="item.message_id" @tap="hideMenu" @longpress="handleLongPress">
-					<view v-if="entityMode == 'novel'" class="novel-line" 
-						:class="{ 'novel-subject': !item.character_id, 'deep-cell': index % 2 }" 
-						:style="dynamicNovelStyle(item.character_id)">
-						<view class="novel-box">
+		<view class="header-part"></view>
+		<view class="hint loading-view text-center" @tap="moreMessage">{{loading_text}}</view>
+		<view :class="'message' + item.message_id" v-for="(item, index) in history_list" :key="index" 
+				v-show="index < history_list.length - 1">
+			<view :id="item.message_id" @tap="hideMenu" @longpress="handleLongPress">
+				<view v-if="entityMode == 'novel'" class="novel-line" 
+					:class="{ 'novel-subject': !item.character_id, 'deep-cell': index % 2 }" 
+					:style="dynamicNovelStyle(item.character_id)">
+					<view class="novel-box">
+						<view v-html="item.html" :style="dynamicFont(item.character_id ? 'left' : 'right')" :showline="false"></view>
+					</view>
+				</view>
+				<view class="display-flex chat-line" :class="{'right' : !item.character_id, 'left': item.character_id}">
+					<view class="chat-img-box" :style="dynamicImgStyle">
+						<image v-if="item.character_id > 0" 
+							:src="dynamicsImg('list-left:', item.character_id)" 
+							:style="dynamicImgStyle" @tap="gotoDetail(item.character_id)"></image>
+						<image v-if="item.character_id == 0"
+							:src="dynamicsImg('list-right:', item.character_id)" 
+							:style="dynamicImgStyle"></image>
+					</view>
+					<view class="chat-box" :style="dynamicChatBox">
+						<view class="chat-item">
 							<view v-html="item.html" :style="dynamicFont(item.character_id ? 'left' : 'right')" :showline="false"></view>
 						</view>
 					</view>
-					<view class="display-flex chat-line" :class="{'right' : !item.character_id, 'left': item.character_id}">
-						<view class="chat-img-box" :style="dynamicImgStyle">
-							<image v-if="item.character_id > 0" 
-								:src="dynamicsImg('list-left:', item.character_id)" 
-								:style="dynamicImgStyle" @tap="gotoDetail(item.character_id)"></image>
-							<image v-if="item.character_id == 0"
-								:src="dynamicsImg('list-right:', item.character_id)" 
-								:style="dynamicImgStyle"></image>
-						</view>
-						<view class="chat-box" :style="dynamicChatBox">
-							<view class="chat-item">
-								<view v-html="item.html" :style="dynamicFont(item.character_id ? 'left' : 'right')" :showline="false"></view>
-							</view>
-						</view>
-					</view>
 				</view>
 			</view>
-			
-			<view class="btm" v-if="history_list.length > 0">
-				<view id="0" @longpress="handleLongPress">
-					<view v-if="entityMode == 'novel'" class="novel-line" 
-						:class="{ 'deep-cell': (history_list.length - 1) % 2 }" 
-						:style="dynamicNovelStyle(cDisplayId)">
-						<view class="novel-box">
-							<view v-html="option_first_html" :style="dynamicFont(cDisplayId ? 'left' : 'right')" :showline="false"></view>
-						</view>
-					</view>
-					<view v-else class="display-flex chat-line" :class="{'right' : !cDisplayId, 'left': cDisplayId}">
-						<view class="chat-img-box" :style="dynamicImgStyle">
-							<image v-if="cDisplayId > 0" 
-								:src="dynamicsImg('crt-left:', cDisplayId)" 
-								:style="dynamicImgStyle" @tap="gotoDetail(cDisplayId)"></image>
-							<image v-if="cDisplayId == 0"
-								:src="dynamicsImg('crt_right:', cDisplayId)" 
-								:style="dynamicImgStyle"></image>
-						</view>
-						<view class="chat-box" :style="dynamicChatBox">
-							<view v-if="!edit_mode" class="chat-item">
-								<view v-html="option_first_html" :showline="false" 
-								:style="dynamicFont(cDisplayId ? 'left' : 'right')"></view>
-							</view>
-							<editPart ref="chatEditPart" :edit="edit_mode" :side="cDisplayId ? 'left' : 'right'"
-								:style="dynamicChatBox" @swiperChange="swiperChange"
-								@editChange="editChange" :crtIndex="swiper_index"
-							></editPart>
-						</view>
-					</view>
-				</view>
-			</view>
-		</scroll-view>
+		</view>
 		
-		<view :style="dynamicsHeight" v-html="entity_css"></view>
+		<view v-if="history_list.length > 0">
+			<view id="0" @longpress="handleLongPress">
+				<view v-if="entityMode == 'novel'" class="novel-line" 
+					:class="{ 'deep-cell': (history_list.length - 1) % 2 }" 
+					:style="dynamicNovelStyle(cDisplayId)">
+					<view class="novel-box">
+						<view v-html="option_first_html" :style="dynamicFont(cDisplayId ? 'left' : 'right')" :showline="false"></view>
+					</view>
+				</view>
+				<view v-else class="display-flex chat-line" :class="{'right' : !cDisplayId, 'left': cDisplayId}">
+					<view class="chat-img-box" :style="dynamicImgStyle">
+						<image v-if="cDisplayId > 0" 
+							:src="dynamicsImg('crt-left:', cDisplayId)" 
+							:style="dynamicImgStyle" @tap="gotoDetail(cDisplayId)"></image>
+						<image v-if="cDisplayId == 0"
+							:src="dynamicsImg('crt_right:', cDisplayId)" 
+							:style="dynamicImgStyle"></image>
+					</view>
+					<view class="chat-box" :style="dynamicChatBox">
+						<view v-if="!edit_mode" class="chat-item">
+							<view v-html="option_first_html" :showline="false" 
+							:style="dynamicFont(cDisplayId ? 'left' : 'right')"></view>
+						</view>
+						<editPart ref="chatEditPart" :edit="edit_mode" :side="cDisplayId ? 'left' : 'right'"
+							:style="dynamicChatBox" @swiperChange="swiperChange"
+							@editChange="editChange" :crtIndex="swiper_index"
+						></editPart>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view :class="{'input-mode': viewMode == 'min', 'textarea-mode': viewMode == 'max'}" v-html="entity_css"></view>
 		
 		<listMenu ref="customMenu" @menu-click="handleMenuClick"></listMenu>
 	</view>
@@ -93,6 +90,10 @@
 			scroll: {
 				type: Number,
 				default: 0
+			},
+			viewMode: {
+				type: String,
+				default: 'min' //max 输入框模式：min list最长 max list最短
 			}
 		},
 		data() {
@@ -108,9 +109,8 @@
 				new_scroll: 0,
 				
 				lock_mode: false,
-				hiding: false,
-				showing: false,
-				loading_text: '点击加载更多数据',
+				origin_text: '点击加载更多历史记录',
+				loading_text: '',
 				edit_mode: false,
 				swiper_index: -1
 			}
@@ -135,10 +135,8 @@
 					})
 				}
 			},
-			openEdit(newValue){
-				if(newValue == true){
-					this.$emit('afterUpdate');
-				}
+			viewMode(newValue){
+				this.$forceUpdate();
 			},
 			bubbleOpacity(newValue){
 				this.replaceParam(newValue);
@@ -162,12 +160,11 @@
 		},
 		computed: {
 			...mapState('user', ['darkMode']),
-			...mapState('dialogue', ['cDisplayId', 'characterlist', 'crtCharacterId', 
-				'entityMode', 'historylist', 
-				'openEdit', 'optionFirst', 'options', 'refreshList']),
+			...mapState('dialogue', ['cDisplayId', 'characterlist',  'entityMode', 'historylist', 
+				'optionFirst', 'options', 'refreshList']),
 			...mapState('setting', ['bubbleAlign', 'bubbleColor', 'bubbleOpacity', 
-				'chatCss', 'chatPattern', 'editContent', 'entityId', 
-				'fontColor', 'fontSize', 'imgWidth', 'imgRadius',]),
+				'chatCss', 'chatPattern', 
+				'fontColor', 'fontSize', 'imgWidth', 'imgRadius']),
 			dynamicNovelStyle() {
 				return function(character_id) {
 					//console.log(this.characterlist, character_id);
@@ -202,9 +199,6 @@
 						return this.characterlist[character_id].character_img;
 					}
 				}
-			},
-			dynamicsHeight(){
-				return (this.openEdit ? `height: 500rpx;` : `height: 70rpx;`);
 			},
 			dynamicFont() {
 				return function(side) {
@@ -245,9 +239,9 @@
 				if(!this.lock_mode) this.$emit('afterUpdate');
 				this.refreshPattern(this.chatPattern);
 				uni.hideLoading();
-				if(this.history_list.length) {
+				if(this.history_list.length >= 50) {
 					setTimeout(() => {
-						this.showing = true;
+						this.loading_text = this.origin_text;
 					}, 2000);
 				}
 				//console.log(this.options.length);
@@ -258,7 +252,7 @@
 				//console.log(this.lockMode);
 				//this.handleContextMenu(event);
 				//this.reset(); // 重置状态
-				if(!this.lockMode && !this.openEdit && event.currentTarget.id){
+				if(!this.lockMode && event.currentTarget.id){
 					//console.log('menu');
 					const { pageX, pageY } = event.touches[0];
 					let menu_items = [
@@ -291,41 +285,20 @@
 					this.$refs.customMenu.hideMenu();
 				});				
 			},
-			toBtm(){
-				//console.log('toBtm');
-				let _self = this;
-				this.new_scroll = 0;
-				this.$nextTick(() => {
-					const query = uni.createSelectorQuery().in(_self);
-					query.select('.btm').boundingClientRect(rect => {}).exec((s) => {
-						if(s[0]){
-							_self.old_scroll = Math.max(s[0].bottom, _self.old_scroll);
-							console.log(_self.old_scroll);
-							_self.$nextTick(function() {
-								_self.new_scroll = _self.old_scroll;
-							});
-						}
-					})
-				});
-			},
-			scrolling(e){
-				this.hideMenu();
-				uni.$emit('refreshScroll', e.detail.scrollTop, this.lock_mode);
-			},
 			async moreMessage(){
-				if(this.loading_text != '点击加载更多数据')return;
+				if(this.loading_text != this.origin_text)return;
 				let old_top_id = this.history_list[0].message_id;
 				let old_length = this.historylist.length;
 				this.lock_mode = true;
-				//this.showing = true;
-				//this.hiding = false;
 				this.loading_text = '数据加载中...';
 				this.hideMenu();
 				await messageFun.getMessage();
 				if(this.historylist.length - old_length < 50){
 					this.loading_text = '无更多数据';
 					return;
-				} 
+				}else{
+					this.loading_text = this.origin_text;
+				}
 				let _self = this;
 				this.new_scroll = 0;
 				this.$nextTick(() => {
@@ -340,11 +313,9 @@
 					})
 				});
 				setTimeout(() => {
-					//this.hiding = true;
-					//this.showing = false;
 					this.lock_mode = false;
-					this.loading_text = '点击加载更多数据';
-				}, 2000);
+					this.loading_text = this.origin_text;
+				}, 1000);
 			},
 			gotoDetail(character_id){
 				uni.navigateTo({
@@ -402,12 +373,12 @@
 
 <style lang="scss">
 	.loading-view{
-		height: 3vh;
+		height: 2vh;
 		color: $uni-color-main;
 	}
-	.scroll-view{
+	/* .scroll-view{
 		height: calc(90vh - 2 * $uni-font-size-lg);
-	}
+	} */
 	.novel-line, .chat-line .chat-box{
 		font-size: 28rpx;
 		font-weight: 500;
@@ -440,11 +411,14 @@
 	.chat-line.right .chat-img-box{
 		margin-left: 10px;
 	}
-	.ani-show{
-		animation: showView 0.5s forwards;
+	.header-part{
+		height: 3vh;
 	}
-	.ani-hide{
-		animation: hideView 0.5s forwards;
+	.input-mode{
+		height: 90rpx;
+	}
+	.textarea-mode{
+		height: 500rpx;
 	}
 	@media (prefers-color-scheme: dark) {
 		.loading-view{
@@ -457,13 +431,5 @@
 		.deep-cell{
 			background-color: rgba(51,51,51,0.7);
 		}
-	}
-	@keyframes showView {
-		from { height: 0; }
-		to { height: 5vh; }
-	}
-	@keyframes hideView {
-		from { height: 5vh; }
-		to { height: 0; }
 	}
 </style>

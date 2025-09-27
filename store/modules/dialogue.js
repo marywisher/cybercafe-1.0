@@ -17,7 +17,6 @@ export default {
 		optionFlag: false, //用于optionFirst的刷新，及“消息提示”显示
 		optionFirst: '', //最后一条记录
 		editMode: false, //弹出编辑模块后，是否显示编辑框，只在3处更改状态
-		openEdit: false, //是否弹出编辑模块
 		blankMode: false, //是否纯手写模式
 		resetFlag: false, //是否编辑框初始化
 		refreshList: false, //刷新chat列表

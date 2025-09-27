@@ -132,15 +132,37 @@
 				}
 				this.$emit('editChange', false);
 			},
-			confirmFun(){
-				//敏感检测
-				this.setDiaData({
-					'optionFirst': this.edit_text,
-					'cDisplayId': 0
-				});
-				this.swiper_current = -1;
-				this.$emit('swiperChange', -1);
-				this.$emit('editChange', false);
+			async confirmFun(){
+				let response_feedback = await responseFun.toolRequest('sensitive', this.edit_text.trim(), 'chat');
+				if(response_feedback == 200){
+					this.setDiaData({
+						'optionFirst': this.edit_text.trim(),
+						'cDisplayId': 0
+					});
+					this.swiper_current = -1;
+					this.$emit('swiperChange', -1);
+					this.$emit('editChange', false);
+				}else if(response_feedback == 302){
+					this.setUserData({
+						'modalData': {
+							title: "温馨提示",
+							content: "请修改填写内容再试",
+							cancelText: "OK",
+						},
+						'modalShow': true,
+						'modalPageId': 'chat'
+					})
+				}else{
+					this.setUserData({
+						'modalData': {
+							title: "温馨提示",
+							content: "请联系管理员修复问题",
+							cancelText: "OK",
+						},
+						'modalShow': true,
+						'modalPageId': 'chat'
+					})
+				}
 			}
 		}
 	}

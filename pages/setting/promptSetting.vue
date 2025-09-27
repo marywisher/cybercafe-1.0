@@ -73,6 +73,7 @@
 </template>
 
 <script>
+	import responseFun from '@/func/entity/responseFun';
 	import {
 		mapMutations,
 		mapState,
@@ -119,7 +120,7 @@
 		},
 		computed:{
 			...mapState('setting', ['customPrompt', 'promptSelect']),
-			...mapState('user', ['darkMode', 'modalData', 'userGroup']),
+			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow', 'userGroup']),
 			dynamicStyle(){
 				return this.darkMode == 'light' ? {backgroundColor: '#fff', color: '#333'} : 
 					{backgroundColor: '#1f1f1f', color: '#999'};
@@ -197,16 +198,40 @@
 					})
 				}
 			},
-			addPrompt(){
+			async addPrompt(){
 				//console.log(this.prompt_key, this.prompt_value);
-				this.prompt_value = this.prompt_value.trim();
+				this.prompt_key = this.prompt_key.trim();
 				this.prompt_value = this.prompt_value.trim();
 				if(this.prompt_key.length > 0 && this.prompt_value.length > 0){
 					//this[key + '_description'][this.prompt_key] = this.prompt_value;
-					this.autoSave(this.prompt_key, this.prompt_value);
-					this.ta_show = false;
-					this.prompt_key = '';
-					this.prompt_value = '';
+					let response_feedback = await responseFun.toolRequest('sensitive', 
+						this.prompt_value, 'promptSetting');
+					if(response_feedback == 200){
+						this.autoSave(this.prompt_key, this.prompt_value);
+						this.ta_show = false;
+						this.prompt_key = '';
+						this.prompt_value = '';
+					}else if(response_feedback == 302){
+						this.setUserData({
+							'modalData': {
+								title: "温馨提示",
+								content: "请修改填写内容再试",
+								cancelText: "OK",
+							},
+							'modalShow': true,
+							'modalPageId': 'promptSetting'
+						})
+					}else{
+						this.setUserData({
+							'modalData': {
+								title: "温馨提示",
+								content: "请联系管理员修复问题",
+								cancelText: "OK",
+							},
+							'modalShow': true,
+							'modalPageId': 'promptSetting'
+						})
+					}
 				}
 			},
 			reduceDes(param){
@@ -225,8 +250,9 @@
 							}
 						},
 					},
+					'modalShow': true,
+					'modalPageId': 'promptSetting'
 				})
-				this.$refs.cModal.show(this.modalData);
 				//console.log(this.modalShow);
 				this.$forceUpdate();
 			},

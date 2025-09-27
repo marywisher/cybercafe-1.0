@@ -132,5 +132,34 @@ export default{
 			title: '内容由AI生成，仅供娱乐'
 		});
 		request.chatRequest();
-	}
+	},
+	async toolRequest(task, data, page_id){
+		let _self = this;
+		return new Promise((resolve, reject) => {
+			try{
+				request.post('aiController/tool', page_id, {
+					'key': store.state.user.userKey,
+					'task': task,
+					'time': common.getCurrentTimeStampStr(),
+					'messages': data,
+				}).then(res => {
+					console.log(res.result);
+					if(res.code == 200){
+						let return_code = res.result.choices[0].message.content;
+						resolve(return_code);
+					}else {
+						//console.error(res.msg);
+						uni.showToast({
+							title: res.msg,
+							icon: "none"
+						})
+						reject(res.msg);
+					}
+				});
+			}catch(err){
+				console.log(err);
+				reject('检测工具问题，请修改后再试' + err);
+			}
+		});
+	},
 }
