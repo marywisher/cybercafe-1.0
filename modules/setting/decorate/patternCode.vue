@@ -8,7 +8,7 @@
 				<view>{{htmlPrev}}</view>
 				<textarea autoHeight v-model="pattern_html" :maxlength="-1"
 					placeholder="气泡单元HTML" :cursor-spacing="150"
-					@blur="setPattern"></textarea>
+					@blur="setPattern" confirm-hold></textarea>
 				<view>{{htmlAfter}}</view>
 				<label class="hint">{{html_hint}}</label>
 			</cybercafe-view>
@@ -18,7 +18,7 @@
 				<view>{{cssPrev}}</view>
 				<textarea autoHeight v-model="pattern_css" :maxlength="-1"
 					placeholder="气泡单元css" :cursor-spacing="150"
-					@blur="setPattern"></textarea>
+					@blur="setPattern" confirm-hold></textarea>
 				<view>{{cssAfter}}</view>
 			</cybercafe-view>
 		</view>

@@ -1,10 +1,10 @@
 <template>
 	<view class="header-container">
-		<view class="header-bg" :style="{ opacity: bgOpacity }"></view>
+		<view class="header-bg" :style="dynamicBgOpacity"></view>
 		<view class="display-flex sp-between display-line">
 			<slot></slot>
 		</view>
-		<image class="header-img" :src="img" :style="{ opacity: bgOpacity }"></image>
+		<image class="header-img" :src="img" :style="dynamicImgOpacity"></image>
 	</view>
 </template>
 
@@ -19,7 +19,19 @@
 			img: {
 				type: String,
 				default: ''
+			},
+			imgOpacity:{
+				type: Number,
+				default: 0
 			}
+		},
+		computed:{
+			dynamicBgOpacity(){
+				return `opacity: ${this.bgOpacity};`;
+			},
+			dynamicImgOpacity(){
+				return `opacity: ${this.imgOpacity};`;
+			},
 		}
 	}
 </script>

@@ -93,8 +93,9 @@ export default{
 				//console.log(JSON.stringify(message_data));
 				if (message_data.length > 0) {
 					sqlite.executeSQL("update `cybercafe_message` set `ai_id` = '" + message_data[0].ai_id + "," +
-						ai_id + "' where `message_time` = '" + store.state.dialogue
-						.messageTime + "'", function(){
+						ai_id + "', `message_content` = '" + content + "', operation_content = '" + operation
+						+ "' where `message_time` = '" + store.state.dialogue.messageTime + "'")
+					.then(() => {
 						resolve('update');
 					});
 				} else {

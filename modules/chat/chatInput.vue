@@ -9,9 +9,9 @@
 		
 		<view v-show="input_mode == 'max'" ref="popup">
 			<view class="textarea-box">
-				<textarea v-model="chat_input" :cursor-spacing="150"
+				<textarea v-model="chat_input" :cursor-spacing="150" :maxlength="-1"
 				 placeholder="回复由AI生成，仅供娱乐" adjust-position  class="chat-textarea"
-				 confirm-type="done" @input="autoSaveContent"></textarea>
+				 confirm-hold @input="autoSaveContent"></textarea>
 			</view>
 			<view class="textarea-btn display-flex display-line sp-around">
 				<view class="iconfont icon-feiquanping" @tap="changeInputMode"></view>
@@ -54,6 +54,7 @@
 			},
 			async sendMessage(){
 				this.input_mode = 'min';
+				this.$emit('inputModeChange', this.input_mode);
 				//敏感审核
 				let response_feedback = await responseFun.toolRequest('sensitive', this.chat_input.trim(), 'chat');
 				if(response_feedback == 200){
@@ -67,24 +68,17 @@
 					});
 					await messageFun.saveMessage(0, this.optionFirst, this.messageTime + ':option.writing');
 					if(this.replyMode == 'auto') {
-						this.$emit('autoSpeak');
+						setTimeout(() => {
+							this.$emit('autoSpeak');
+						}, 500);
 					}
 					this.chat_input = '';
-				}else if(response_feedback == 302){
-					this.setUserData({
-						'modalData': {
-							title: "温馨提示",
-							content: "请修改填写内容再试",
-							cancelText: "OK",
-						},
-						'modalShow': true,
-						'modalPageId': 'chat'
-					})
 				}else{
 					this.setUserData({
 						'modalData': {
 							title: "温馨提示",
-							content: "请联系管理员修复问题",
+							content: response_feedback,
+							confirmText: '',
 							cancelText: "OK",
 						},
 						'modalShow': true,
@@ -122,7 +116,9 @@
 		position: relative;
 	}
 	.chat-input{
-		width: calc(100vw - 10 * $uni-spacing-lg);
+		width: calc(100vw - 15 * $uni-spacing-lg);
+		padding-right: calc(3 * $uni-spacing-lg);
+		border: $uni-border-base solid $uni-text-color-grey;
 	}
 	.icon-fasong{
 		color: $uni-color-main;
@@ -138,9 +134,10 @@
 	.chat-textarea{
 		width: 90vw;
 		height: calc(30vh - 1.5 * $uni-font-size-lg);
+		border: $uni-border-base solid $uni-text-color-grey;
 	}
 	.textarea-box{
-		padding: $uni-spacing-lg;
+		padding: $uni-spacing-lg $uni-spacing-lg $uni-width-none;
 	}
 	.textarea-btn{
 		width: 30vw;

@@ -7,10 +7,10 @@
 				<view><label class="required">*</label>昵称 </view>
 				<view class="hint" style="margin-left: 10rpx;">{{character_name.length}} / 16字</view>
 			</view>
-			<input v-model="character_name" maxlength="16" :styles="dynamicStyle" 
+			<input v-model="character_name" maxlength="16" class="bg-color" 
 			confirm-type="done" @confirm="autoSave('character_name', character_name)"></input>
 			<view>性别</view>
-			<picker class="genderPick" @change="genderChange" :value="character_gender" :range="gender">
+			<picker class="gender-pick" @change="genderChange" :value="character_gender" :range="gender">
 				<view>{{gender[character_gender]}}</view>
 			</picker>
 		</view>
@@ -20,8 +20,9 @@
 				<view class="hint">{{short_description.length}} / 100字， 用于角色列表展示</view>
 			</view>
 			<textarea autoHeight v-model="short_description" maxlength="100" :cursor-spacing="150"
-			 :styles="dynamicStyle" placeholder="请输入角色简介" adjust-position  
-			 confirm-type="done" @confirm="autoSave('basic', short_description)"></textarea>
+			 class="bg-color" placeholder="请输入角色简介" adjust-position  
+			 :placeholder-style="placeholderStyle" confirm-hold
+			 @blur="autoSave('basic', short_description)"></textarea>
 		</view>
 		<view class="hint character-line" v-html="hint"></view>
 		<cybercafe-card cardTitle="补充说明">
@@ -32,23 +33,26 @@
 					<view class="iconfont icon-jianhao" @tap="reduceDes('basic', basic_index)"></view>
 				</view>
 				<view>
-					<textarea class="inner-ta" autoHeight :cursor-spacing="150" v-model="basic_description[basic_index]"
-					 :styles="dynamicStyle" :placeholder="'请输入角色' + basic_index" adjust-position
-					 ref="basic1" confirm-type="done"
-					 @confirm="autoSave('basic', basic_description[basic_index])"></textarea>
+					<textarea class="inner-ta bg-color" autoHeight :cursor-spacing="150" 
+					 v-model="basic_description[basic_index]" :maxlength="-1"
+					 :placeholder="'请输入角色' + basic_index" adjust-position
+					 ref="basic1" :placeholder-style="placeholderStyle" confirm-hold
+					 @blur="autoSave('basic', basic_description[basic_index])"></textarea>
 				</view>
 			</cybercafe-view>
 			<cybercafe-view>
 				<view class="display-flex sp-between display-line">
-					<view><input v-model="basic_key" placeholder="请输入角色补充项" 
+					<view><input v-model="basic_key" placeholder="请输入角色补充项" class="bg-color" 
+						:placeholder-style="placeholderStyle"
 						confirm-type="done"  @confirm="toggleTaFun('basic', 'show')"/></view>
 					<view v-if="basic_ta_show == false" class="iconfont icon-jiahao" @tap="toggleTaFun('basic', 'show')"></view>
 					<view v-else class="iconfont icon-jianhao" @tap="toggleTaFun('basic', 'hide')"></view>
 				</view>
 				<view v-if="basic_ta_show">
-					<textarea class="inner-ta" autoHeight :cursor-spacing="150" v-model="basic_value"
-					 :styles="dynamicStyle" :placeholder="'请输入角色' + basic_key" adjust-position  
-					 confirm-type="done" @confirm="addDes('basic')"></textarea>
+					<textarea class="inner-ta bg-color" autoHeight :cursor-spacing="150" v-model="basic_value"
+					 :placeholder="'请输入角色' + basic_key" adjust-position :maxlength="-1" 
+					 :placeholder-style="placeholderStyle" confirm-hold
+					 @blur="addDes('basic')"></textarea>
 				</view>
 			</cybercafe-view>
 		</cybercafe-card>
@@ -57,9 +61,10 @@
 			<view class="display-flex display-line sp-between">故事背景
 				<view class="hint">{{full_description.length}} 字</view>
 			</view>
-			<textarea autoHeight v-model="full_description" :cursor-spacing="150"
-				 :styles="dynamicStyle" placeholder="请输入故事介绍" adjust-position 
-				 confirm-type="done" @confirm="autoSave('extend', full_description)"></textarea>
+			<textarea autoHeight v-model="full_description" :cursor-spacing="150" :maxlength="-1"
+				 class="bg-color" placeholder="请输入故事介绍" adjust-position 
+				 :placeholder-style="placeholderStyle" confirm-hold
+				 @blur="autoSave('extend', full_description)"></textarea>
 		</view>
 		<cybercafe-card cardTitle="其它设定">
 			<cybercafe-view v-for="(item2, extend_index) in extend_description" :key="extend_index">
@@ -69,23 +74,26 @@
 					<view class="iconfont icon-jianhao" @tap="reduceDes('extend', extend_index)"></view>
 				</view>
 				<view>
-					<textarea class="inner-ta" autoHeight :cursor-spacing="150" v-model="extend_description[extend_index]"
-					 :styles="dynamicStyle" :placeholder="'请输入角色' + extend_index" adjust-position
-					 ref="extend1" confirm-type="done"
-					 @confirm="autoSave('extend', extend_description[extend_index])"></textarea>
+					<textarea class="inner-ta bg-color" autoHeight :cursor-spacing="150" 
+					 v-model="extend_description[extend_index]" :maxlength="-1"
+					 :placeholder="'请输入角色' + extend_index" adjust-position
+					 ref="extend1" :placeholder-style="placeholderStyle" confirm-hold
+					 @blur="autoSave('extend', extend_description[extend_index])"></textarea>
 				</view>
 			</cybercafe-view>
 			<cybercafe-view>
 				<view class="display-flex sp-between display-line">
-					<view><input v-model="extend_key" placeholder="请输入角色限定项" 
+					<view><input v-model="extend_key" placeholder="请输入角色限定项" class="bg-color"  
+						:placeholder-style="placeholderStyle"
 						confirm-type="done"  @confirm="toggleTaFun('extend', 'show')" /></view>
 					<view v-if="extend_ta_show == false" class="iconfont icon-jiahao" @tap="toggleTaFun('extend', 'show')"></view>
 					<view v-else class="iconfont icon-jianhao" @tap="toggleTaFun('extend', 'hide')"></view>
 				</view>
 				<view v-if="extend_ta_show">
-					<textarea class="inner-ta" autoHeight :cursor-spacing="150" v-model="extend_value"
-					 :styles="dynamicStyle" :placeholder="'请输入角色' + extend_key" adjust-position  
-					 confirm-type="done" @confirm="addDes('extend')"></textarea>
+					<textarea class="inner-ta bg-color" autoHeight :cursor-spacing="150" v-model="extend_value"
+					 :placeholder="'请输入角色' + extend_key" adjust-position :maxlength="-1"
+					 :placeholder-style="placeholderStyle" confirm-hold
+					 @blur="addDes('extend')"></textarea>
 				</view>
 			</cybercafe-view>
 		</cybercafe-card>
@@ -95,16 +103,18 @@
 			<view class="display-flex display-line sp-between">前情提要 
 				<view class="hint">{{character_story.length}} 字</view>
 			</view>
-			<textarea autoHeight v-model="character_story" :cursor-spacing="150"
-				 :styles="dynamicStyle" placeholder="请输入前情提要" adjust-position 
+			<textarea autoHeight v-model="character_story" :cursor-spacing="150" :maxlength="-1"
+				 class="bg-color" placeholder="请输入前情提要" adjust-position 
+				 :placeholder-style="placeholderStyle"
 				 @blur="autoSave('character_story', character_story)"></textarea>
 		</view>
 		<view class="character-line">
 			<view class="display-flex display-line sp-between">开场白 
 				<view class="hint">{{character_prologue.length}} 字</view>
 			</view>
-			<textarea autoHeight v-model="character_prologue" :cursor-spacing="150"
-				 :styles="dynamicStyle" placeholder="请输入开场白" adjust-position 
+			<textarea autoHeight v-model="character_prologue" :cursor-spacing="150" :maxlength="-1"
+				 class="bg-color" placeholder="请输入开场白" adjust-position 
+				 :placeholder-style="placeholderStyle"
 				 @blur="autoSave('character_prologue', character_prologue)"></textarea>
 		</view>
 	</cybercafe-view>
@@ -158,19 +168,16 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'lastTimestampSubmit', 'modalData', 'modalPageId',
-				'modalShow', 'powerLevel', 'userKey']),
-			dynamicStyle(){
-				return this.darkMode == 'light' ? {backgroundColor: '#fff', color: '#333'} : 
-					{backgroundColor: '#1f1f1f', color: '#999'};
+			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
+			placeholderStyle(){
+				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
 			}
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			async init(character_id){
+				//console.log(character_id);
 				this.character_id = character_id;
-				this.getUserData();
-				
 				let character_data = await baseQuery.getDataByKey('cybercafe_character', {character_id: this.character_id});
 				//console.log(character_data);
 				//if(!character_data) return;
@@ -250,6 +257,7 @@
 						'modalData': {
 							title: "温馨提醒",
 							content: hint_name + "不能为空",
+							confirmText: '',
 							cancelText: "OK",
 							success: (res) => {},
 						},
@@ -298,21 +306,12 @@
 								icon: 'none'
 							})
 						}
-					}else if(response_feedback == 302){
-						this.setUserData({
-							'modalData': {
-								title: "温馨提示",
-								content: "请修改填写内容再试",
-								cancelText: "OK",
-							},
-							'modalShow': true,
-							'modalPageId': 'character'
-						})
 					}else{
 						this.setUserData({
 							'modalData': {
 								title: "温馨提示",
-								content: "请联系管理员修复问题",
+								content: response_feedback,
+								confirmText: '',
 								cancelText: "OK",
 							},
 							'modalShow': true,
@@ -392,7 +391,11 @@
 	textarea{
 		line-height: calc(2 * $uni-font-size-lg);
 	}
-	.genderPick{
+	.bg-color{
+		backgroundColor: $uni-bg-color;
+		color: $uni-text-color;
+	}
+	.gender-pick{
 		padding: $uni-spacing-base $uni-spacing-lg;
 		border: $uni-border-base solid $uni-border-color;
 		border-radius: $uni-border-radius-base;
@@ -421,8 +424,15 @@
 		margin-bottom: $uni-spacing-base;
 	}
 	@media (prefers-color-scheme: dark) {
+		.bg-color{
+			backgroundColor: $uni-bg-dark-color-gray;
+			color: $uni-text-color-grey;
+		}
 		.icon-jiahao{
 			color: $uni-color-dark-main;
+		}
+		.gender-pick{
+			color: $uni-text-color-grey;
 		}
 	}
 </style>

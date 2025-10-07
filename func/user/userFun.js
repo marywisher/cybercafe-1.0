@@ -65,6 +65,7 @@ export default {
 								store.commit('user/setUserData', {
 									'modalData': {
 										content: res.result.info,
+										confirmText: '',
 										cancelText: 'OK',
 										success: function (res) {}
 									},

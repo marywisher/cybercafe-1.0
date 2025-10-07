@@ -2,7 +2,6 @@ import dialogueQuery from "../dbManager/dialogueQuery";
 import common from "../common/common";
 import store from "@/store";
 import responseFun from "./responseFun";
-//import promptFun from "./promptFun";
 import baseQuery from "../dbManager/baseQuery";
 
 export default{
@@ -47,13 +46,12 @@ export default{
 				}
 				store.commit('dialogue/setDiaData', {
 					'messageTime': message_time,
-					'optionFirst': last_history.text,
 					'crtCharacterId': last_history.character_id,
 					'cDisplayId': last_history.character_id,
+					'optionFirst': last_history.text,
 					'options': option_list
 				});
 			}
-			//promptFun.preOperation();
 			//console.log(message_id);
 			store.commit('dialogue/setDiaData', {
 				'breakpointMessageId': message_id,
@@ -64,7 +62,7 @@ export default{
 	getChatHistory(lengthLimit, include_option = true) {
 		//预处理
 		let history_list = store.state.dialogue.historylist;
-		let last_message = history_list[history_list.length - 1];
+		let last_message = history_list[history_list.length - 1];//.pop();
 		//console.log(history_list);
 		let history_text_length = 0;
 		if(include_option) history_text_length = last_message.text.length;
@@ -74,7 +72,7 @@ export default{
 			history_text_length += history_list[i].text.length;
 			if(history_text_length > lengthLimit * 1.5) break;
 		} 
-		if(include_option) temp_history_list.push(last_message);
+		if(!include_option) temp_history_list.pop();
 		//console.log(store.state.dialogue.historylist);
 		//console.log(store.state.dialogue.crtCharacterId);
 		let text_length = 0;
@@ -87,50 +85,62 @@ export default{
 				: store.state.dialogue.me)
 				+ ':' + temp_history_list[i].text + ' ';
 		}
+		//store.state.dialogue.history_list.push(last_message);
+		//console.log(store.state.dialogue.historylist);
 		return tmp_str;
 	},
-	async saveMessage(ai_id, content, operation, need_refresh = true) {//新消息或重说，主控说
+	async saveMessage(ai_id, content, operation) {//新消息或重说，主控说
 		//存消息
 		//let content = response.choices[0].message.content;
 		//console.log('ai_id:' + JSON.stringify(ai_id));
 		//console.log('crtCharacterId:' + store.state.dialogue.crtCharacterId);
 		let message_id = await dialogueQuery.createMessage(ai_id, content, operation);
 		//console.log(message_id);
-		if(message_id != 'update'){//新消息
+		let history_list = store.state.dialogue.historylist;
+		if(message_id == 'update'){//重说
+			let last_data = history_list[history_list.length - 1];
+			last_data['text'] = content;
+			last_data['html'] = common.textToHtml(content, 
+				store.state.dialogue.crtCharacterId == 0 ? 'right' : 'left', true);
+			history_list[history_list.length - 1] = last_data;
+		}else{//新消息
 			//整理数据
 			let new_data = {
 				message_id: message_id,
 				message_time: store.state.dialogue.messageTime,
 				character_id: store.state.dialogue.crtCharacterId,
-				text: store.state.dialogue.optionFirst,
-				html: common.textToHtml(store.state.dialogue.optionFirst, 
+				text: content,
+				html: common.textToHtml(content, 
 					store.state.dialogue.crtCharacterId == 0 ? 'right' : 'left', true),
 			};
 			//console.log(new_data);
-			let history_list = store.state.dialogue.historylist;
 			history_list.push(new_data);
 			store.commit('dialogue/setDiaData', {
-				'historylist': history_list,
 				'cDisplayId': store.state.dialogue.crtCharacterId,
-				'refreshList': need_refresh,
 			});
 			//console.log(history_list);
-			let tmp_content = store.state.setting.editContent;
-			tmp_content[store.state.setting.entityId] = '';
-			store.commit('setting/setSettingData', {
-				'editContent': tmp_content
-			});
 		}
+		store.commit('dialogue/setDiaData', {
+			'historylist': history_list,
+			'optionFirst': content,
+			'refreshList': true,
+		});
+		//console.log(store.state.dialogue.optionFirst);
+		let tmp_content = store.state.setting.editContent;
+		tmp_content[store.state.setting.entityId] = '';
+		store.commit('setting/setSettingData', {
+			'editContent': tmp_content
+		});
 		uni.hideLoading();
 	},
-	updateMessage(operation, need_refresh = true) {//修改文本
+	updateMessage(operation) {//修改文本
 		baseQuery.updateDataByKey('cybercafe_message', {
 			'message_content': store.state.dialogue.optionFirst,
 			'operation_content': operation
 		},{
 			'message_time': store.state.dialogue.messageTime
 		});
-		//console.log('optionFirst:', store.state.dialogue.optionFirst);
+		console.log('optionFirst:', store.state.dialogue.optionFirst);
 		let history_list = store.state.dialogue.historylist;
 		let last_text = store.state.dialogue.optionFirst;
 		let last_html = common.textToHtml(last_text, 
@@ -140,7 +150,7 @@ export default{
 		history_list[history_list.length - 1].html = last_html;
 		store.commit('dialogue/setDiaData', {
 			'historylist': history_list,
-			'refreshList': need_refresh,
+			'refreshList': true,
 		});
 		let tmp_content = store.state.setting.editContent;
 		tmp_content[store.state.setting.entityId] = '';

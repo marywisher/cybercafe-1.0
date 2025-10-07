@@ -42,21 +42,19 @@
 			}
 		},
 		computed:{
-			...mapState('user', ['isLogin', 'modalData', 'modalPageId', 'modalShow']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
 		},
 		onLoad() {
 			sqlite.initTable();
+			//每日随机一个tip options.msg
+			//console.log(options)
 			setTimeout(() =>{
 				handleFun.beforeInit();
 			}, 500);
 		},
-		/* onLoad(options) {
-			//每日随机一个tip options.msg
-			//console.log(options)
-		}, */
 	}
 </script>
 

@@ -79,6 +79,7 @@ export default{
 					'modalData':
 						{
 							content: err,
+							confirmText: '',
 							cancelText: 'OK'
 						},
 					'modalShow': true,
@@ -101,26 +102,27 @@ export default{
 		let operation = '';
 		if (store.state.dialogue.optionFlag == true) {
 			store.commit('dialogue/setDiaData', {
-				'optionFirst': content[0],
+				//'optionFirst': content[0],
 				'optionFlag': false
 			});
-				
-			operation = store.state.dialogue.messageTime + ':character.select:'
-				+ (store.state.dialogue.crtCharacterId > 0 ? 
-					store.state.dialogue.characterlist[store.state.dialogue.crtCharacterId].character_name :
-					store.state.dialogue.me) 
-				+ ':' + model;
-			//console.log(operation);
 		}
+		operation = store.state.dialogue.messageTime + ':character.select:'
+			+ (store.state.dialogue.crtCharacterId > 0 ? 
+				store.state.dialogue.characterlist[store.state.dialogue.crtCharacterId].character_name :
+				store.state.dialogue.me) 
+			+ ':' + model;
+		//console.log(operation);
 		//console.log(store.state.dialogue.optionFlag);
-		messageFun.saveMessage(aiId, content[0], operation, store.state.dialogue.options.length == 1);
+		messageFun.saveMessage(aiId, content[0], operation);
 	},
 	async chat(flag = true){
 		await promptFun.preOperation(flag);
+		//console.log(store.state.setting.promptLength);
 		if(store.state.setting.promptLength > store.state.setting.tokenSetting){
 			store.commit('user/setUserData', {
 				'modalData': {
-					'content': "当前提示词字数已超限，请调整最大token数设置，或删减提示词",
+					'content': "当前提示词字数已超限，请调整最大token数设置，或删减提示词、设子",
+					'confirmText': '',
 					'cancelText': "OK"
 				},
 				'modalShow': true,

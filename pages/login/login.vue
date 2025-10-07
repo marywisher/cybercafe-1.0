@@ -88,6 +88,7 @@
 					'modalData': {
 						title: '温馨提示',
 						content: options.msg,
+						confirmText: '',
 						cancelText: 'OK'
 					},
 					'modalShow': true,

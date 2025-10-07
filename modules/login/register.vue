@@ -6,7 +6,8 @@
 				<label class="hint required">* 为必填项</label><br>
 				<view class="display-flex display-line sp-between register-line">
 					<label>邮箱<span class="required">*</span></label>
-					<input v-model="username"  focus placeholder="请输入注册邮箱" @input="checkEmail" />
+					<input v-model="username"  focus placeholder="请输入注册邮箱" @input="checkEmail"
+						 :placeholder-style="placeholderStyle"/>
 				</view>
 				<view class="display-flex display-line sp-between register-line">
 					<label>验证码<span class="required">*</span></label>
@@ -18,7 +19,8 @@
 				</view>
 				<view class="display-flex display-line sp-between">
 					<label>邀请码</label>
-					<input v-model="invite_code" maxlength="8" placeholder="请填写邀请码" @input="setInviteCode" />
+					<input v-model="invite_code" maxlength="8" placeholder="请填写邀请码" @input="setInviteCode"
+						 :placeholder-style="placeholderStyle"/>
 				</view>
 				<view class="display-flex register-line" style="justify-content: flex-end;">
 					<view class="hint">（注册成功送1w米粒，填写邀请码再送1w米粒）</view>
@@ -61,8 +63,11 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'isLogin', 'modalData', 'modalPageId',
+			...mapState('user', ['darkMode', 'isLogin', 'modalData', 'modalPageId', 
 				'modalShow']),
+			placeholderStyle(){
+				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
+			}
 		},
 		methods: {
 			...mapMutations('user', ['setUserData', 'getUserData']),
@@ -175,6 +180,8 @@
 						_self.setUserData({
 							'modalData': {
 								content: '欢迎，' + res.result.name,
+								confirmText: '',
+								cancelText: 'OK',
 								success: (res) => {}
 							},
 							'modalShow': true,

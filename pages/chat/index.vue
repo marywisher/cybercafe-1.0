@@ -3,29 +3,17 @@
 		<chatBg></chatBg>
 		<water-mark v-if="userKey" class="watermark" :text1="userKey" 
 			:text2="userName" :darkMode="dark_mode"></water-mark>
-		<cybercafe-header :bgOpacity="1" class="chat-header">
-			<!-- 顶部 -->
-			<view class="header-left">
-				<popMenu ref="chatRMenuPart"></popMenu>
-			</view>
-			<titlePart ref="chatTitlePart" class="header-center"></titlePart>
-			<view class="header-right display-flex">
-				<view class="iconfont icon-shezhi" @tap="gotoSetting"></view>
-			</view>
-		</cybercafe-header>
-		<view class="chat-body content" @longpress="handleLongPress"
+		<chatHeader ref="chatHeaderPart"></chatHeader>
+		<view class="chat-body content" @longpress="handleLongPress" @touchmove="handleMove"
 			@touchstart="handleTouchStart" @touchend="handleTouchEnd">
 			<!-- 内容区 -->
 			<listPart v-if="entityId > 0" ref="chatListPart" :lockMode="in_pull_down_mode"
 				:viewMode="input_mode" @afterUpdate="afterUpdateList" :scroll="scroll"></listPart>
-			<view v-else></view><!--新用户可见-->
+			<newUserPart v-else ref="chatNewUserPart"></newUserPart><!-- 新用户可见-->
 			<view class="btm"></view>
 		</view>
-		<view v-if="entityId > 0" class="chat-bottom content display-flex display-line sp-around">
-			<characterPart v-show="input_mode == 'min'" ref="chatCharPart"></characterPart>
-			<chatInput ref="chatInputPart" @autoSpeak="autoSpeakFun" @inputModeChange="changeBtmPart"></chatInput>
-			<!-- 底部 -->
-		</view>
+		<chatBottom v-if="entityId > 0" :inputMode="input_mode" ref="chatBottomPart"
+			@chageInputMode="chageInputMode"></chatBottom>
 		<view v-if="show_to_btm_btn" class="fix-btm" 
 			:class="{'heigher-btn': input_mode == 'max'}" @tap="clickToBtm">>></view>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
@@ -33,14 +21,13 @@
 </template>
 
 <script>
-	import characterPart from '@/modules/chat/characterPart';
 	import chatBg from '@/modules/chat/chatBg';
 	import entityFun from '@/func/entity/entityFun';
 	import listPart from '@/modules/chat/listPart';
-	import popMenu from '@/modules/chat/popMenu';
-	import titlePart from '@/modules/chat/titlePart';
 	import messageFun from '@/func/entity/messageFun';
-	import chatInput from '@/modules/chat/chatInput.vue';
+	import newUserPart from '@/modules/chat/newUserPart';
+	import chatHeader from '@/modules/chat/chatHeader';
+	import chatBottom from '@/modules/chat/chatBottom.vue';
 	import {
 		mapMutations,
 		mapState,
@@ -60,12 +47,11 @@
 			}
 		},
 		components: {
-			characterPart,
 			chatBg,
 			listPart,
-			popMenu,
-			titlePart,
-			chatInput
+			newUserPart,
+			chatHeader,
+			chatBottom
 		},
 		watch:{
 			modalShow: {
@@ -89,10 +75,12 @@
 			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow',
 				'userKey', 'userName']),
 			...mapState('setting', ['entityId']),
+			...mapState('dialogue', ['historylist'])
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
+			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			async init(){
 				uni.showLoading({
 					title: '加载中...'
@@ -103,16 +91,11 @@
 				await messageFun.getMessage();
 				
 				this.$nextTick(() =>{
-					this.$refs.chatCharPart.init();
-					//this.$refs.chatListPart.init();
-					this.$refs.chatRMenuPart.init();
-					this.$refs.chatTitlePart.init();
-					this.$refs.chatInputPart.init();
-				})
-			},
-			gotoSetting(){
-				uni.navigateTo({
-					url: '/pages/setting/globalSetting'
+					this.$refs.chatHeaderPart.init();
+					console.log(this.entityId);
+					if(this.historylist.length == 0) this.$refs.chatNewUserPart.init();
+					else this.$refs.chatBottomPart.init();
+					//this.$refs.chatNewUserPart.init();
 				})
 			},
 			afterUpdateList(){//非锁定状态时，自动下滑到底部
@@ -154,11 +137,10 @@
 					this.$refs.chatListPart.handleLongPress(e);
 				}, 1000);
 			},
-			autoSpeakFun(){
-				this.$refs.chatCharPart.speakFun();
-			},
-			changeBtmPart(mode){
+			chageInputMode(mode){
+				//console.log(mode);
 				this.input_mode = mode;
+				this.toBtm();
 			},
 			handleTouchStart(e){
 				//console.log(e);
@@ -168,6 +150,7 @@
 				//console.log(e);
 				//console.log(this.client_y, e.changedTouches[0].clientY);
 				//this.unlockScroll();
+				this.in_pull_down_mode = false;
 				if(e.changedTouches[0].clientY - this.client_y > 50){
 					//console.log('上滑');
 					this.upcount += 1;
@@ -182,47 +165,21 @@
 				}
 				this.client_y = e.changedTouches[0].clientY;
 				//console.log(this.show_to_btm_btn);
-			}
+			},
+			handleMove(){
+				this.in_pull_down_mode = true;
+			},
 		},
 		onLoad() {
-			/* uni.$on('refreshScroll', (pos_y, is_lock) => {
-				//console.log(pos_y);
-				this.upcount = Math.max(pos_y, this.upcount);
-				if(!is_lock){
-					//console.log(this.upcount); 
-					if(this.upcount - pos_y > 1000 && !this.in_pull_down_mode){
-						this.show_to_btm_btn = true;
-					}else{
-						this.show_to_btm_btn = false;
-					}
-				}else{
-					//console.log(this.upcount);
-					//console.log(pos_y);
-					this.upcount += pos_y;
-				}
-			}); */
 			this.init();
 		},
 	}
 </script>
 
 <style lang="scss">
-	.chat-header{
-		z-index: 3;
-	}
 	.chat-body{
 		margin: 8vh auto;
 		width: calc(100vw - 2 * $uni-spacing-base);
-	}
-	.chat-bottom{
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		width: calc(100vw - 2 * $uni-spacing-base);
-		padding-top: $uni-spacing-base;
-		padding-bottom: $uni-spacing-base;
-		background-color: $uni-bg-color-grey;
-		box-shadow: $uni-width-none calc(-1 * $uni-spacing-mini) $uni-spacing-lg $uni-text-color-grey;
 	}
 	.watermark{
 		position: fixed;
@@ -230,12 +187,6 @@
 		left: -5vw;
 		z-index: 2;
 		pointer-events: none;
-	}
-	.header-left, .header-right{
-		width: 20vw;
-	}
-	.header-right{
-		justify-content: flex-end;
 	}
 	.fix-btm{
 		position: fixed;
@@ -261,10 +212,6 @@
 		.fix-btm{
 			background-color: $uni-color-dark-main;
 			color: $uni-bg-dark-color-gray;
-		}
-		.chat-bottom{
-			background-color: $uni-bg-dark-color-gray;
-			box-shadow: $uni-width-none calc(-1 * $uni-spacing-mini) $uni-spacing-lg $uni-bg-color-mask;
 		}
 	}
 </style>

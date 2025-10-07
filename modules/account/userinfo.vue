@@ -22,14 +22,14 @@
 					</view>
 				</view>
 			</view>
-			<view class="display-flex display-line" v-if="aimId == userId">
+			<view class="display-flex display-line account-detail" v-if="aimId == userId">
 				剩余米粒数： {{request_count}} 
 				<cybercafe-button class="reward-detail" btnName="明细" @tapBtn="showRewardDetail"></cybercafe-button>
 				<!-- <view class="reward-detail" @tap="showRewardDetail"></view> -->
 				<!-- <adPart ref="acAP" @afterFinish="getRequestCount"></adPart> -->
 			</view>
 			<view v-if="aimId == userId && userGroup == 2"
-				 class="display-flex display-line" :class="group_alarm ? 'required' : ''">
+				 class="display-flex display-line account-detail" :class="group_alarm ? 'required' : ''">
 				月卡有效期至：{{expiration}} 0时
 			</view>
 		</cybercafe-card>
@@ -192,7 +192,7 @@
 			},
 			showRewardDetail(){
 				uni.navigateTo({
-					url: '/pages/hello/rewardDetail'
+					url: '/pages/setting/rewardDetail'
 				})
 			},
 			uploadAvatar(tempFilePath){
@@ -257,6 +257,9 @@
 	.account-info{
 		flex: 1;
 	}
+	.account-info, .account-detail{
+		color: $uni-text-color;
+	}
 	.account-title{
 		font-weight: bold;
 		font-size: $uni-font-size-huge;
@@ -273,9 +276,9 @@
 	}
 	
 	@media (prefers-color-scheme: dark) {
-		/* .uni-card{
-			background-color: #1f1f1f;
-		} */
+		.account-info, .account-detail{
+			color: $uni-text-color-grey;
+		}
 		/* .reward-detail{
 			background-color: #1f1f1f;
 			color: #999;

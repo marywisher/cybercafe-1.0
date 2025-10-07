@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view @tap="hideMenu">
 		<view class="header-part"></view>
 		<view class="hint loading-view text-center" @tap="moreMessage">{{loading_text}}</view>
 		<view :class="'message' + item.message_id" v-for="(item, index) in history_list" :key="index" 
@@ -152,11 +152,18 @@
 			chatPattern(newValue){
 				this.refreshPattern(newValue);
 			},
-			optionFirst(newValue){
-				//console.log(newValue);
-				this.option_first_text = newValue;
-				this.option_first_html = common.textToHtml(newValue, this.cDisplayId > 0 ? 'left' : 'right', true);
-			}
+			/* optionFirst:{
+				handler(newValue, oldValue) {
+				    //console.log(newValue);
+				    this.option_first_text = newValue;
+				    this.option_first_html = common.textToHtml(newValue, this.cDisplayId > 0 ? 'left' : 'right', true);
+				    this.$emit('afterUpdate');
+				    //console.log(this.cDisplayId);
+				    //console.log(this.swiper_index);
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
+			} */
 		},
 		computed: {
 			...mapState('user', ['darkMode']),
@@ -271,7 +278,7 @@
 						}
 					}
 					
-					this.$refs.customMenu.showMenu(this.menu_x * 0.32, pageY - 120, menu_items, event.currentTarget.id, this.option_first_text);
+					this.$refs.customMenu.showMenu(this.menu_x * 0.32, pageY - 40, menu_items, event.currentTarget.id, this.option_first_text);
 				}
 			},
 			handleMenuClick(item, id) {
@@ -318,11 +325,13 @@
 				}, 1000);
 			},
 			gotoDetail(character_id){
+				this.hideMenu();
 				uni.navigateTo({
 					url: '/pages/chat/character?id=' + character_id
 				})
 			},
 			swiperChange(crt_index){
+				this.hideMenu();
 				//this.option_first_text = this.options[crt_index].text;
 				//this.option_first_html = common.textToHtml(this.options[crt_index].text, this.cDisplayId ? 'left' : 'right', true);
 				if(crt_index > -1){
@@ -330,7 +339,7 @@
 				}
 				let	operation = this.messageTime + ':option.select:'
 					+ (this.options.length > 0 ? this.options[this.swiper_index].model : 'prologue') + (this.edit ? '-edit' : '');
-				messageFun.updateMessage(operation, false);
+				messageFun.updateMessage(operation);
 			},
 			editChange(param){
 				this.hideMenu();
@@ -418,7 +427,7 @@
 		height: 90rpx;
 	}
 	.textarea-mode{
-		height: 500rpx;
+		height: 520rpx;
 	}
 	@media (prefers-color-scheme: dark) {
 		.loading-view{

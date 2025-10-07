@@ -115,6 +115,7 @@
 								'modalData': {
 									title: '温馨提示',
 									content: res.result.msg,
+									confirmText: '',
 									cancelText: "OK",
 								},
 								'modalShow': true,

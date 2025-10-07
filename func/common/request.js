@@ -50,6 +50,7 @@ export default {
 								'modalData':
 									{
 										'content': res.data.msg,
+										'confirmText': '',
 										'cancelText': 'OK',
 									},
 								'modalShow': true,
@@ -73,11 +74,21 @@ export default {
 						}); */
 						userFun.userInit();
 					}else if(res.data.code == 400){
+						uni.hideLoading();
 						if(res.data.msg){
-							uni.showToast({
-								title: res.data.msg,
-								icon: "none"
-							})
+							store.commit('user/setUserData',
+								{
+									'refreshFlag': 'fail',
+									'modalData':
+										{
+											'content': res.data.msg,
+											'confirmText': '',
+											'cancelText': 'OK',
+										},
+									'modalShow': true,
+									'modalPageId': pageId
+								});
+							return;
 						}
 					}else{
 						resolve(res.data);
@@ -85,11 +96,19 @@ export default {
 				},
 				fail: err => {
 					uni.hideLoading();
-					uni.showToast({
-						title: err.msg,
-						icon: "none"
-					})
-					throw new Error('网络问题，请稍后再试:' + JSON.stringify(err));
+					store.commit('user/setUserData',
+						{
+							'refreshFlag': 'fail',
+							'modalData':
+								{
+									'content': err.msg,
+									'confirmText': '',
+									'cancelText': 'OK',
+								},
+							'modalShow': true,
+							'modalPageId': pageId
+						});
+					return;
 				}
 			});
 		});
@@ -114,6 +133,7 @@ export default {
 						'modalData':
 							{
 								content: response.msg,
+								confirmText: '',
 								cancelText: 'OK'
 							},
 						'modalShow': true,

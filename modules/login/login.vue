@@ -7,23 +7,27 @@
 			<view class="content">
 				<view class="display-flex display-line sp-between login-line">
 					<label>账号<span class="required">*</span></label>
-					<input v-model="account" focus placeholder="请输入注册邮箱" />
+					<input v-model="account" focus placeholder="请输入注册邮箱"
+						 :placeholder-style="placeholderStyle"/>
 				</view>
 				<view class="display-flex display-line sp-between login-line" v-if="form_flag == 'login'">
 					<label>密码<span class="required">*</span></label>
-					<input type="password" v-model="pwd" placeholder="请输入密码" />
+					<input type="password" v-model="pwd" placeholder="请输入密码"
+						 :placeholder-style="placeholderStyle"/>
 				</view>
 				<view v-show="form_flag == 'reset'">
 					<view class="display-flex display-line sp-between">
 						<label>新密码<span class="required">*</span></label>
-						<input type="password" v-model="pwd" placeholder="请输入新的密码" />
+						<input type="password" v-model="pwd" placeholder="请输入新的密码"
+							 :placeholder-style="placeholderStyle"/>
 					</view>
 					<view class="display-flex login-line" style="justify-content: flex-end;">
 						<view class="hint pwd-hint">（至少8个字符，包含至少1个大写字母、1个小写字母和1个数字）</view>
 					</view>
 					<view class="display-flex display-line sp-between login-line">
 						<label>重复密码<span class="required">*</span></label>
-						<input type="password" v-model="repeatpwd" placeholder="与密码一致" />
+						<input type="password" v-model="repeatpwd" placeholder="与密码一致"
+							 :placeholder-style="placeholderStyle"/>
 					</view>
 				</view>
 				<view v-show="form_flag == 'login'" class="display-flex display-line sp-between">
@@ -55,7 +59,7 @@
 
 <script>
 	import request from '@/func/common/request';
-	import handleFun from '@/func/common/handleFun';
+	import userFun from '@/func/user/userFun';
 	import {
 		mapMutations,
 		mapState,
@@ -83,7 +87,11 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['isLogin', 'modalData', 'modalPageId', 'modalShow']),
+			...mapState('user', ['darkMode', 'isLogin', 'modalData', 'modalPageId', 
+				'modalShow']),
+			placeholderStyle(){
+				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
+			}
 		},
 		methods: {
 			...mapMutations('user', ['setUserData', 'getUserData']),
@@ -102,6 +110,7 @@
 					this.setUserData({
 						'modalData': {
 							content: msg,
+							confirmText: '',
 							cancelText: 'OK',
 						},
 						'modalShow': true,
@@ -144,12 +153,13 @@
 								'modalData': {
 									'title': '登录',
 									'content': '欢迎，' + res.result.name,
+									'confirmText': '',
 									'cancelText': 'OK'
 								},
 								'modalShow': true,
 								'modalPageId': 'chat'
 							});
-							handleFun.beforeInit();
+							userFun.userInit();
 						} else {
 							uni.showToast({
 								title: res.msg,
@@ -190,6 +200,7 @@
 							_self.setUserData({
 								'modalData': {
 									content: res.result.msg,
+									confirmText: '',
 									cancelText: 'OK',
 									success: (res) => {
 										if (res.cancel && res.result.msg == '密码已更新，请重新登录'){

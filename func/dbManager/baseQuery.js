@@ -260,8 +260,8 @@ export default {
 					'modalData': {
 						title: '温馨提示',
 						content: '下载完成请重启',
-						cancelText: 'OK',
-						success: function (res) {}
+						confirmText: '',
+						cancelText: 'OK'
 					},
 					'modalShow': true,
 					'modalPageId': 'globalSetting'

@@ -63,15 +63,6 @@
 				})
 				//this.$forceUpdate();
 				let _self = this;
-				/* uni.$on('openModal', () => {
-					_self.$nextTick(() => {
-						_self.$refs.cModal.show(_self.modalData);
-						_self.setUserData({
-							'modalShow': false,
-							'modalPageId': ''
-						})
-					})
-				}) */
 				uni.$on('toggleTTT', (param) => {
 					_self.tttSettingShow = param;
 				})

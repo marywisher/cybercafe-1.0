@@ -9,7 +9,7 @@
 				'disabled-view': disabledView
 			}" 
 			:style="popViewStyle">
-			<view class="view-top">
+			<view class="view-top" :class="{'view-absolute-top': isAbsolute}">
 				<view class="title text-center" :class="{'title-red': titleRed}">{{viewTitle}}</view>
 				<view v-if="isAbsolute && closeAble && closeType > 0" class="iconfont icon-guanbi" @tap="closeView"
 					:class="{'close-center-btm': closeType == 2, 'close-right-top': closeType == 1}"/>
@@ -117,6 +117,9 @@
 	}
 	.view-top{
 		position: relative;
+	}
+	.view-absolute-top{
+		padding-bottom: $uni-spacing-base;
 	}
 	.title{
 		padding-left: $uni-spacing-lg;

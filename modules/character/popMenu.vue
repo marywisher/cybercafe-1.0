@@ -1,5 +1,5 @@
 <template>
-	<cybercafe-header :bgOpacity="bgOpacity" :img="img">
+	<cybercafe-header :bgOpacity="bgOpacity" :img="img" :imgOpacity="imgOpacity">
 		<view class="iconfont icon-xiayibu iconback menu-icon-left" @tap="back"></view>
 		<view class="iconfont icon-geren menu-icon-left"></view>
 	</cybercafe-header>
@@ -16,6 +16,10 @@
 			img: {
 				type: String,
 				default: ''
+			},
+			imgOpacity:{
+				type: Number,
+				default: 0
 			}
 		},
 		methods: {

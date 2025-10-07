@@ -30,7 +30,7 @@
 			};
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 			...mapState('dialogue', ['historylist']),
 		},
 		methods: {
@@ -83,7 +83,7 @@
 				let _self = this;
 				this.setUserData({
 					'modalData': {
-						title: "本条消息删除后，不可找回",
+						content: "本条消息删除后，不可找回",
 						cancelText: "再想想",
 						confirmText: "坚持删除",
 						success: (res) => {
@@ -141,6 +141,8 @@
 				let message_id = last_message.message_id;
 				let message_data = await baseQuery.getDataByKey('cybercafe_message', {'message_id': message_id});
 				let prev_message_time = message_data[0].prev_message_time;
+				let ai_id = message_data[0].ai_id;
+				let option_list = await responseFun.getResponseByAiId(ai_id);
 				this.setDiaData({
 					'messageTime': message_time,
 					'crtCharacterId': character_id,
@@ -148,11 +150,10 @@
 					'historylist': this.historylist,
 					'resetFlag': true,
 					'optionFirst': last_message.text,
-					'prevMessageTime': prev_message_time
+					'prevMessageTime': prev_message_time,
+					'options': option_list
 				});
 						
-				let ai_id = message_data[0].ai_id;
-				responseFun.getResponseByAiId(ai_id);
 				//promptFun.preOperation();		
 				this.setDiaData({
 					'refreshList': true,

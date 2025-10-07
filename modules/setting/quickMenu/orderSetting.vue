@@ -37,11 +37,9 @@
 		},
 		computed:{
 			...mapState('setting', ['customPrompt', 'entityId', 'globalTreeOrder', 'promptSelect']),
-			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'userGroup']),
 		},
 		methods:{
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
-			...mapMutations('user', ['getUserData', 'setUserData']),
 			async init(){
 				this.list = await promptFun.loadTreeOrder();
 				

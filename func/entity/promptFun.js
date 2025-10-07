@@ -70,7 +70,7 @@ export default {
 			"time": store.state.dialogue.messageTime,
 			"character_name": character_name,
 		};
-		request_data.messages = [];
+		request_data.messages = '';
 		//默认系统提示词
 		//console.log(store.state.setting.customPrompt)
 		let sys_prompt = '';
@@ -78,10 +78,7 @@ export default {
 			sys_prompt = store.state.setting.customPrompt[store.state.setting.promptSelect].系统提示词;
 			sys_prompt = sys_prompt.replace(new RegExp('{{char}}', 'g'), character_name)
 				.replace(new RegExp('{{user}}', 'g'), store.state.dialogue.me);
-			request_data.messages[0] = {
-				'role': 'system',
-				'content': sys_prompt
-			}
+			request_data.messages = sys_prompt;
 		}
 		let content = '';
 		let character_json = {};
@@ -146,10 +143,7 @@ export default {
 		content = content.replace('{replacing_message_content}', history_str);
 		content_length = content.length;
 		//console.log(content_length);
-		request_data.messages.push({
-			'role': 'user',
-			'content': content
-		})
+		request_data.messages += ' ' + content;
 		//console.log(request_data);
 		store.commit('dialogue/setDiaData', {
 			'chatlist': request_data,

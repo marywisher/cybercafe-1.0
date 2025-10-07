@@ -45,7 +45,7 @@
 				ctx.rotate(-20 * Math.PI / 180);
 				ctx.font = '16px Arial';
 				
-				if(this.darkMode == 'light') ctx.fillStyle = 'rgba(220, 220, 220, 0.3)';
+				if(this.darkMode == 'light') ctx.fillStyle = 'rgba(230, 230, 230, 0.3)';
 				else ctx.fillStyle = 'rgba(25, 25, 25, 0.3)';
 				ctx.textAlign = 'left';
 				ctx.textBaseline = 'middle';

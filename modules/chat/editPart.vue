@@ -3,7 +3,7 @@
 		<view v-if="edit">
 			<textarea adjust-position autoHeight :cursor-spacing="150"
 				v-model="edit_text" class="edit-box" :styles="dynamicStyle"
-				trim="both" @input="autoSaveContent" @confirm="confirmFun"></textarea>
+				trim="both" @input="autoSaveContent" confirm-hold></textarea>
 			<view class="display-flex display-line sp-between icon-part">
 				<cybercafe-button btnClass="btn-default" v-if="options.length > 0"
 					btnName="" class="iconfont icon-guanbi" @tapBtn="cancelFun"/>
@@ -12,7 +12,7 @@
 			</view>
 		</view>
 		<view v-else class="display-flex display-line sp-between">
-			<view>
+			<view class="dot-part">
 				<cybercafe-swiper-dot ref="epSwiperDot" v-if="option_list.length > 1 && swiper_current > -1" :list="option_list"
 					@tapDot="clickItem" :swiperCurrent="swiper_current"></cybercafe-swiper-dot>
 			</view>
@@ -58,12 +58,11 @@
 			}
 		},
 		watch: {
-			refreshList: {
+			crtIndex: {
 				handler(newValue, oldValue) {
-				    //console.log(newValue);
-				    if(newValue){
-				    	this.init();
-				    }
+				    console.log(newValue);
+					console.log(this.cDisplayId);
+				    this.init();
 				},
 				immediate: true, // 立即执行一次
 				deep: true // 深度监听（可选）
@@ -71,14 +70,14 @@
 		},
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
-			...mapState('dialogue', ['cDisplayId', 'optionFirst', 'options', 'refreshList']),
+			...mapState('dialogue', ['cDisplayId', 'optionFirst', 'options']),
 			...mapState('setting', ['editContent', 'entityId', 'fontColor', 'fontSize']),
 			dynamicStyle: function(){
 				if(this.side == 'left'){
 					return `font-size: ${this.fontSize}px; color: ${this.fontColor[0]}`;
 				}
 				return `font-size: ${this.fontSize}px;color: ${this.fontColor[1]};`;
-			},
+			}
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -92,7 +91,7 @@
 			},
 			async respeakFun(e){
 				await responseFun.chat(false);
-				this.swiper_current = this.options.length;
+				//this.swiper_current = this.options.length;
 			},
 			autoSaveContent(e){
 				console.log(e);
@@ -137,26 +136,16 @@
 				if(response_feedback == 200){
 					this.setDiaData({
 						'optionFirst': this.edit_text.trim(),
-						'cDisplayId': 0
 					});
 					this.swiper_current = -1;
 					this.$emit('swiperChange', -1);
 					this.$emit('editChange', false);
-				}else if(response_feedback == 302){
-					this.setUserData({
-						'modalData': {
-							title: "温馨提示",
-							content: "请修改填写内容再试",
-							cancelText: "OK",
-						},
-						'modalShow': true,
-						'modalPageId': 'chat'
-					})
 				}else{
 					this.setUserData({
 						'modalData': {
 							title: "温馨提示",
-							content: "请联系管理员修复问题",
+							content: response_feedback,
+							confirmText: '',
 							cancelText: "OK",
 						},
 						'modalShow': true,
@@ -173,6 +162,10 @@
 		width: 90%;
 		line-height: 46rpx;
 		backgroundColor: $uni-text-color-inverse;
+	}
+	.dot-part{
+		overflow-x: scroll;
+		margin-right: $uni-spacing-lg;
 	}
 	.icon-part{
 		color: $uni-color-main;

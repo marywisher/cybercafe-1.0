@@ -7,8 +7,9 @@
 					<cybercafe-card cardTitle="系统提示词">
 						<view class="hint text-right">{{crt_prompt && crt_prompt.系统提示词.value ? crt_prompt.系统提示词.value.length : 0}} 字</view>
 						<textarea class="inner-ta" autoHeight v-model="crt_prompt.系统提示词.value" :cursor-spacing="150"
-							:styles="dynamicStyle" placeholder="请输系统提示词" adjust-position  
-							confirm-type="done" @confirm="autoSave('系统提示词', crt_prompt.系统提示词.value)"></textarea>
+							:styles="dynamicStyle" placeholder="请输系统提示词" adjust-position :maxlength="-1"
+							confirm-hold @blur="autoSave('系统提示词', crt_prompt.系统提示词.value)"
+							:placeholder-style="placeholderStyle"></textarea>
 					</cybercafe-card>
 					<cybercafe-card cardTitle="时间感知">
 						<checkbox-group @change="timeChange">
@@ -48,20 +49,23 @@
 						@iconFun="reduceDes" :iconParam="{'id': id}">
 						<view class="hint text-right">{{item ? item.value.length : 0}} 字</view>
 						<textarea class="inner-ta" autoHeight v-model="item.value" :cursor-spacing="150"
-							:styles="dynamicStyle" placeholder="请输系统提示词" adjust-position  
-							confirm-type="done" @confirm="autoSave(id, item.value)"></textarea>
+							:styles="dynamicStyle" placeholder="请输系统提示词" adjust-position :maxlength="-1"
+							confirm-hold @blur="autoSave(id, item.value)"
+							:placeholder-style="placeholderStyle"></textarea>
 					</cybercafe-card>
 					<cybercafe-view>
 						<view class="display-flex sp-between display-line">
 							<view><input v-model="prompt_key" placeholder="请输入提示词项名" 
-								confirm-type="done"  @confirm="toggleTaFun('show')"/></view>
+								confirm-type="done"  @confirm="toggleTaFun('show')"
+								:placeholder-style="placeholderStyle"/></view>
 							<view v-if="ta_show == false" class="iconfont icon-jiahao" @tap="toggleTaFun('show')"></view>
 							<view v-else class="iconfont icon-jianhao" @tap="toggleTaFun('hide')"></view>
 						</view>
 						<view v-if="ta_show">
 							<textarea class="inner-ta" autoHeight :cursor-spacing="150" v-model="prompt_value"
 							 :styles="dynamicStyle" :placeholder="'请输入' + prompt_key + '内容'" adjust-position  
-							 confirm-type="done" @confirm="addPrompt"></textarea>
+							 confirm-hold @blur="addPrompt" :maxlength="-1" 
+							 :placeholder-style="placeholderStyle"></textarea>
 						</view>
 					</cybercafe-view>
 				</view>
@@ -130,6 +134,9 @@
 			},
 			dynamicCkColor(){
 				return this.darkMode == 'light' ? '#E94E46' : '#C43830';
+			},
+			placeholderStyle(){
+				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
 			}
 		},
 		methods:{
@@ -216,6 +223,7 @@
 							'modalData': {
 								title: "温馨提示",
 								content: "请修改填写内容再试",
+								confirmText: '',
 								cancelText: "OK",
 							},
 							'modalShow': true,
@@ -226,6 +234,7 @@
 							'modalData': {
 								title: "温馨提示",
 								content: "请联系管理员修复问题",
+								confirmText: '',
 								cancelText: "OK",
 							},
 							'modalShow': true,
