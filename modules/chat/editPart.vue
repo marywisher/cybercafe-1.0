@@ -60,8 +60,8 @@
 		watch: {
 			crtIndex: {
 				handler(newValue, oldValue) {
-				    console.log(newValue);
-					console.log(this.cDisplayId);
+				    //console.log(newValue);
+					//console.log(this.cDisplayId);
 				    this.init();
 				},
 				immediate: true, // 立即执行一次
