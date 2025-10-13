@@ -26,6 +26,14 @@ export default {
 					title: '切换成功',
 					icon: "success"
 				});
+				
+				let maxtoken = ai_range.maxTokens;
+				let token_value = store.state.setting.tokenSetting;
+				if(token_value > maxtoken) token_value = maxtoken;
+				store.commit('setting/setSettingData', {
+					'maxToken': maxtoken,
+					'tokenSetting': token_value
+				});
 			}
 		}).catch(e => {
 			uni.showToast({

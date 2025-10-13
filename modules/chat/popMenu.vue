@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view>
+		<view class="chat-header">
 			<view class="iconfont icon-xitongcaidan" @tap="openMenuFun"></view>
 		</view>
 		<cybercafe-menu ref="rightMenuPop" class="pop-menu display-flex sp-between"
@@ -26,7 +26,7 @@
 				</view>
 			</view>
 			<view class="display-flex pop-menu-line">
-				<view class="display-flex display-line">
+				<view class="display-flex display-line" @tap="gotoEntitySetting">
 					<view class="iconfont icon-shezhi menu-icon-left"></view>
 					<view class="text-center menu-text">本容器设置</view>
 				</view>
@@ -97,24 +97,24 @@
 				this.$refs[param + 'SettingView'].openView();
 			},
 			gotoAiSetting(){
-				this.$refs.rightMenuPop.closeView();
-				uni.navigateTo({
-					url: '/pages/setting/aiSetting'
-				})
+				this.routerFun('/pages/setting/aiSetting');
 			},
 			gotoPromptSetting(){
-				this.$refs.rightMenuPop.closeView();
-				uni.navigateTo({
-					url: '/pages/setting/promptSetting'
-				})
+				this.routerFun('/pages/setting/promptSetting');
+			},
+			gotoEntitySetting(){
+				this.routerFun('/pages/chat/setting');
 			},
 			delEntity(){
 				entityFun.delEntity();
 			},
 			changeEntity(){
+				this.routerFun('/pages/chat/entityList');
+			},
+			routerFun(param){
 				this.$refs.rightMenuPop.closeView();
 				uni.navigateTo({
-					url: '/pages/chat/entityList'
+					url: param
 				})
 			}
 		}
@@ -165,12 +165,16 @@
 	}
 	.pop-menu-line .menu-text{
 		width: 30vw;
+		margin: $uni-width-none $uni-spacing-lg;
 	}
 	.required .iconfont{
 		color: $uni-color-error !important;
 	}
 	.icon-shangxiajiantou{
 		transform: rotate(90deg);
+	}
+	.chat-header .iconfont{
+		font-size: calc(2 * $uni-font-size-sm);
 	}
 	@media (prefers-color-scheme: dark) {
 		.cybercafe-main-menu .iconfont{

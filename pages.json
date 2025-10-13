@@ -27,6 +27,12 @@
 				"navigationBarTitleText": "容器列表"
 			}
 		},
+		{
+			"path": "pages/chat/setting",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
 		/* {
 			"path": "pages/chat/incubator",
 			"style": {

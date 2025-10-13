@@ -60,14 +60,14 @@
 		margin: 0 auto;
 	}	
 	.swiper-dot-item{
-		width: $uni-spacing-lg;
-		height: $uni-spacing-lg;
-		border-radius: $uni-border-radius-huge;
+		width: calc(4 * $uni-spacing-sm);
+		height: calc(4 * $uni-spacing-sm);
+		border-radius: calc(2 * $uni-spacing-sm);
 		background-color: $uni-color-secondary;
-		margin-right: $uni-spacing-lg;
+		margin-right: calc(3 * $uni-spacing-sm);
 	}
 	.swiper-dot-active{
-		width: calc(3 * $uni-spacing-lg);
+		width: calc(12 * $uni-spacing-sm);
 		background-color: $uni-color-main;
 	}
 	@media (prefers-color-scheme: dark) {

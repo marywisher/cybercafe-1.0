@@ -2,7 +2,7 @@
 	<view>
 		<view class="character-bg" :style="dynamicImg"></view>
 		<view class="view-for-tap" @tap="showMoreImg"></view>
-		<pop-menu-vue :bgOpacity="bg_opacity" :img="character_image" :imgOpacity="avatar_opacity"></pop-menu-vue>
+		<characterHeader :bgOpacity="bg_opacity" :img="character_image" :imgOpacity="avatar_opacity"></characterHeader>
 		
 		<descriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"></descriptionPart>
 		<image-part ref="cImgPart" :originImg="character_image" :dark="darkMode" 
@@ -15,7 +15,7 @@
 	import config from '@/config.json';
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import descriptionPart from '@/modules/character/descriptionPart';
-	import popMenuVue from '@/modules/character/popMenu';
+	import characterHeader from '@/modules/character/characterHeader';
 	import {
 		mapMutations,
 		mapState,
@@ -33,7 +33,7 @@
 		},
 		components:{
 			descriptionPart,
-			popMenuVue
+			characterHeader
 		},
 		watch:{
 			modalShow: {
@@ -66,7 +66,6 @@
 			showMoreImg(){
 				//console.log('show gallery');
 				this.$refs.cImgPart.openBox(this.character_id.toString());
-				this.$refs.cMenu.closeView();
 			},
 			async afterSelectImg(e){
 				this.character_image = e;

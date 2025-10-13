@@ -52,14 +52,14 @@
 		line-height: $uni-font-size-huge;
 	}
 	.title-label{
-		font-size: $uni-font-size-sm;
+		font-size: $uni-font-size-base;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		max-width: 50vw;
 	}
 	.icon-dianping{
-		font-size: $uni-font-size-sm !important;
+		font-size: $uni-font-size-base !important;
 		color: $uni-color-main;
 	}
 	@media (prefers-color-scheme: dark) {

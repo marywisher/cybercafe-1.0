@@ -7,7 +7,7 @@
 
 <script>
 	export default{
-		name: 'popMenu',
+		name: 'characterHeader',
 		props: {
 			bgOpacity: {
 				type: Number,
@@ -31,6 +31,9 @@
 </script>
 
 <style lang="scss">
+	.iconfont{
+		font-size: calc(2 * $uni-font-size-sm);
+	}
 	.iconback{
 		transform: rotate(180deg);
 	}

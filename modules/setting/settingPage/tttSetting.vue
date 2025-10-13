@@ -55,17 +55,15 @@
 		watch:{
 			ai(newValue){
 				//console.log(newValue);
-				this.maxtoken = this.aiRange[this.ai].maxTokens
-				//console.log(this.maxtoken);
-				if(this.token_value > this.maxtoken) this.token_value = this.maxtoken
-				this.setSettingData({
-					'maxToken': this.maxtoken,
-					'tokenSetting': this.token_value
-				})
+				this.maxtoken = this.maxToken;
+				this.token_value = this.tokenSetting;
 			},
 			enable(newValue){
 				//console.log(newValue);
 				this.disable_flag = !newValue;
+			},
+			maxToken(newValue){
+				this.maxtoken = newValue;
 			}
 		},
 		computed:{

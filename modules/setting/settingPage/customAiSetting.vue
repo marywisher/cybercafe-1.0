@@ -32,8 +32,8 @@
 					<view class="display-flex sp-between display-line">
 						<view class="ai-setting-label">api key</view>
 						<view class="ai-setting-right">
-							<view v-show="crt_api.api_key != ''" class="custom-select" @tap="keyChange">{{crt_api.api_key}}</view>
-							<view v-show="crt_api.api_key == ''" class="display-flex ai-setting-btn">
+							<view v-show="crt_api.apiKey != ''" class="custom-select" @tap="keyChange">{{crt_api.apiKey}}</view>
+							<view v-show="crt_api.apiKey == ''" class="display-flex ai-setting-btn">
 								<cybercafe-button btnClass="btn-primary"
 									btnName="黏贴密钥" @tapBtn="keyChange"></cybercafe-button>
 							</view>
@@ -41,7 +41,7 @@
 					</view>
 					<view class="display-flex sp-between display-line">
 						<view class="display-flex ai-setting-btn">
-							<cybercafe-button btnClass="btn-default" :btnDisable="!crt_api.api_key || ai == (-1 - crt_index)" 
+							<cybercafe-button btnClass="btn-default" :btnDisable="!crt_api.apiKey || ai == (-1 - crt_index)" 
 								btnName="设为默认模型"  @tapBtn="setAI"></cybercafe-button>
 						</view>
 						<view v-if="crt_api.connected" class="hint required text-center">{{crt_api.connect_text}}</view>
@@ -112,7 +112,7 @@
 					'domain': '',
 					'parsed_url': '',
 					'model': '',
-					'api_key': '',
+					'apiKey': '',
 					'connected': false,
 					'connect_text': '通讯失败，请检查重试',
 					'uncheckable': true
@@ -177,33 +177,37 @@
 				this.$forceUpdate();
 			},
 			selectItem(item){
-				//console.log(this.crt_index);
-				if(!this.custom_api[this.crt_index].api_key.trim() 
-					|| !this.custom_api[this.crt_index].domain 
-					|| !this.custom_api[this.crt_index].model) 
-						this.custom_api[this.crt_index].uncheckable = true;
-				this.custom_api[this.crt_index].connected = false;
+				console.log(this.crt_index);
+				console.log(item);
+				let crt_api = this.custom_api[this.crt_index];
+				console.log(crt_api);
+				if(!crt_api.apiKey.trim() 
+					|| !crt_api.domain 
+					|| !crt_api.model) 
+						crt_api.uncheckable = true;
+				crt_api.connected = false;
 				this.select_id = item.id;
-				this.custom_api[this.crt_index].domain = item.domain;
-				this.custom_api[this.crt_index].parsed_url = item.parsedUrl;
-				this.custom_api[this.crt_index].model = item.model;
+				crt_api.domain = item.domain;
+				crt_api.parsed_url = item.parsedUrl;
+				crt_api.model = item.model;
 
 				this.$refs.modelList.closeView();
-				if(this.custom_api[this.crt_index].api_key.trim() 
-					&& this.custom_api[this.crt_index].domain 
-					&& this.custom_api[this.crt_index].model) 
-						this.custom_api[this.crt_index].uncheckable = false;
+				if(crt_api.apiKey.trim() 
+					&& crt_api.domain 
+					&& crt_api.model) 
+						crt_api.uncheckable = false;
 			},
 			keyChange(){
-				if(!this.custom_api[this.crt_index].api_key.trim() 
-					|| !this.custom_api[this.crt_index].domain 
-					|| !this.custom_api[this.crt_index].model) 
-						this.custom_api[this.crt_index].uncheckable = true;
-				this.custom_api[this.crt_index].connected = false;
+				let crt_api = this.custom_api[this.crt_index];
+				if(!crt_api.apiKey.trim() 
+					|| !crt_api.domain 
+					|| !crt_api.model) 
+						crt_api.uncheckable = true;
+				crt_api.connected = false;
 				let _self = this;
 				uni.getClipboardData({
 					success: function (res) {
-						_self.custom_api[_self.crt_index].api_key = res.data;
+						_self.custom_api[_self.crt_index].apiKey = res.data;
 						if(res.data.trim() 
 							&& _self.custom_api[_self.crt_index].domain 
 							&& _self.custom_api[_self.crt_index].model) 
@@ -229,11 +233,12 @@
 				this.crt_api = this.custom_api[this.crt_index];
 			},
 			checkConnect(){
+				let crt_api = this.custom_api[this.crt_index];
 				let data = {
-					'domain': this.custom_api[this.crt_index].domain,
-					'parsed_url': this.custom_api[this.crt_index].parsed_url,
-					'apiKey': this.custom_api[this.crt_index].api_key,
-					'model': this.custom_api[this.crt_index].model
+					'domain': crt_api.domain,
+					'parsed_url': crt_api.parsed_url,
+					'apiKey': crt_api.apiKey,
+					'model': crt_api.model
 				}
 				let _self = this;
 				uni.showLoading();
@@ -243,8 +248,18 @@
 					if (res.code == 200) {
 						_self.custom_api[_self.crt_index].connected = true;
 						if(res.result.error){
-							if(res.result.error.message) _self.custom_api[_self.crt_index].connect_text = res.result.error.message;
-							else _self.custom_api[_self.crt_index].connect_text = '通讯失败，请检查重试';
+							if(res.result.error.message){
+								_self.setUserData({
+									'modalData': {
+										content: res.result.error.message,
+										cancelText: "OK",
+										confirmText: "",
+									},
+									'modalShow': true,
+									'modalPageId': 'aiSetting'
+								});
+							}
+							_self.custom_api[_self.crt_index].connect_text = '通讯失败，请检查重试';
 						}else{
 							_self.custom_api[_self.crt_index].connect_text = '通讯成功';
 							_self.customApi[_self.crt_index] = data;
@@ -254,10 +269,15 @@
 						}
 						_self.$forceUpdate()
 					}else{
-						uni.showToast({
-							title: res.msg,
-							icon: 'none'
-						})
+						_self.setUserData({
+							'modalData': {
+								content: res.msg,
+								cancelText: "OK",
+								confirmText: "",
+							},
+							'modalShow': true,
+							'modalPageId': 'aiSetting'
+						});
 						//console.log(res.msg);
 						_self.custom_api[_self.crt_index].connected = true;
 						_self.custom_api[_self.crt_index].connect_text = '通讯失败，请检查重试';
@@ -288,6 +308,7 @@
 				});
 			},
 			changeAiFun(){
+				let crt_api = this.custom_api[this.crt_index];
 				//console.log(this.select_id, this.custom_api[this.crt_index].model);
 				if(this.select_id > -1){
 					this.setSettingData({
@@ -295,9 +316,9 @@
 						'tokenSetting': this.tokenSetting > this.aiRange[this.select_id].maxTokens
 							? this.aiRange[this.select_id].maxTokens : this.tokenSetting
 					});
-				}else if(this.custom_api[this.crt_index].model){//通过model名获取
+				}else if(crt_api.model){//通过model名获取
 					for(let i in this.aiRange){
-						if(this.custom_api[this.crt_index].model == this.aiRange[i].model){
+						if(crt_api.model == this.aiRange[i].model){
 							this.setSettingData({
 								'maxToken': this.aiRange[i].maxTokens,
 								'tokenSetting': this.tokenSetting > this.aiRange[i].maxTokens
@@ -309,10 +330,10 @@
 					//console.log(this.aiRange);
 					let self_range = this.aiRange;
 					self_range[this.select_id] = {
-						'name': this.custom_api[this.crt_index].model,
-						'model': this.custom_api[this.crt_index].model,
-						'domain': this.custom_api[this.crt_index].domain,
-						'parsedUrl': this.custom_api[this.crt_index].parsed_url,
+						'name': crt_api.model,
+						'model': crt_api.model,
+						'domain': crt_api.domain,
+						'parsedUrl': crt_api.parsed_url,
 						'maxTokens': this.maxToken,
 						'nickName': '自设模型',
 						'price': '自行支付',

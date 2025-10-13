@@ -22,14 +22,16 @@
 					</view>
 				</view>
 			</view>
+			<view class="display-flex display-line account-detail">
+				<view v-for="(item, index) in tags" :key="index" class="tag-item">{{item}}</view>
+			</view>
 			<view class="display-flex display-line account-detail" v-if="aimId == userId">
 				剩余米粒数： {{request_count}} 
 				<cybercafe-button class="reward-detail" btnName="明细" @tapBtn="showRewardDetail"></cybercafe-button>
-				<!-- <view class="reward-detail" @tap="showRewardDetail"></view> -->
 				<!-- <adPart ref="acAP" @afterFinish="getRequestCount"></adPart> -->
 			</view>
 			<view v-if="aimId == userId && userGroup == 2"
-				 class="display-flex display-line account-detail" :class="group_alarm ? 'required' : ''">
+				 class="display-flex display-line" :class="{'required': group_alarm, 'account-detail': !group_alarm}">
 				月卡有效期至：{{expiration}} 0时
 			</view>
 		</cybercafe-card>
@@ -60,11 +62,6 @@
 				default: 0
 			},*/
 		},
-		components: {
-			adPart,
-			checkinPart,
-			followPart
-		},
 		data() {
 			return {
 				account_name: '',
@@ -77,8 +74,14 @@
 				mode_label: '',
 				group_alarm: false,
 				expiration: '',
-				card_title: ''
+				card_title: '',
+				tags: []
 			}
+		},
+		components: {
+			adPart,
+			checkinPart,
+			followPart
 		},
 		computed: {
 			...mapState('user', ['aimId', 'darkMode', 'groupExpiration', 'hasNewMsg', 'ippos', 
@@ -148,16 +151,30 @@
 						+ tmp_date.getDate() + '日';
 						
 					const today = new Date();
-					const timeDiff = Math.abs(tmp_date.getTime() - today.getTime());
-					const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+					const daysDiff = Math.ceil((tmp_date.getTime() - today.getTime()) / (1000 * 3600 * 24));
 					//console.log(daysDiff);
 					if(daysDiff < 5){
 						this.group_alarm = true;
 					}
+					//console.log(this.group_alarm);
+					
+					request.post('adminController/searchUser', 'globalSetting', {search: this.userId
+						}).then(res => {
+							//console.log(res.result);
+							if (res.code == 200) {
+								_self.tags = res.result[0].tag.split(',');
+								//console.log(_self.tags);
+							}else {
+								uni.showToast({
+									title: res.msg,
+									icon: "none"
+								});
+							}
+						});
 				}
 				
 				//获取ip
-				//request.getIp();
+				request.getIp();
 			},
 			changeAvatar(){
 				if(this.aimId != this.userId) return;
@@ -236,24 +253,6 @@
 </script>
 
 <style lang="scss">
-	/* .account-title{
-		font-size: 42rpx;
-		margin: 0 20rpx 20rpx;
-		font-weight: bold;
-		line-height: 42rpx;
-	} */
-	/* .reward-detail{
-		background-color: 'white';
-		color: #999;
-		line-height: 44rpx;
-		padding: 0 10rpx;
-		position: relative;
-		font-weight: 500;
-		border: 1px solid #999;
-		border-radius: 22rpx;
-		height: 44rpx;
-		margin-left: 20rpx;
-	} */
 	.account-info{
 		flex: 1;
 	}
@@ -274,14 +273,17 @@
 	.reward-detail, .icon-fuzhi, .info-part, .account-title{
 		margin-left: $uni-spacing-lg;
 	}
-	
+	.tag-item{
+		color: $uni-color-secondary;
+		border-color: $uni-color-secondary;
+	}
 	@media (prefers-color-scheme: dark) {
 		.account-info, .account-detail{
 			color: $uni-text-color-grey;
 		}
-		/* .reward-detail{
-			background-color: #1f1f1f;
-			color: #999;
-		} */
+		.tag-item{
+			color: $uni-color-dark-secondary;
+			border-color: $uni-color-dark-secondary;
+		}
 	}
 </style>

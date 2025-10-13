@@ -180,6 +180,7 @@ export default {
 		data.temperature = store.state.setting.temperature;
 		data.top_p = store.state.setting.topP;
 		data.max_token = store.state.setting.tokenSetting;
+		data.group = store.state.user.userGroup;
 		//console.log(data);
 		this.getResponse('newAiController/chat', data);
 		this.last_called = now;
@@ -190,7 +191,8 @@ export default {
 		uni.request({
 			url: "https://api.ip.sb/jsonip", 
 			success: res => {
-				if(res.data.ip != store.state.user.ip || store.state.user.ippos == ''){
+				//console.log(res.data);
+				if(res.data.ip != store.state.user.ip || store.state.user.ippos == '未知'){
 					store.commit('user/setUserData', {'ip': res.data.ip});
 					_self.post('userController/getIpPos', {
 						'ip': store.state.user.ip,

@@ -36,7 +36,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	.chat-header{
 		z-index: 3;
 	}
@@ -45,5 +45,8 @@
 	}
 	.header-right{
 		justify-content: flex-end;
+	}
+	.iconfont{
+		font-size: calc(2 * $uni-font-size-sm);
 	}
 </style>

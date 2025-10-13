@@ -127,7 +127,6 @@
 	import baseQuery from '@/func/dbManager/baseQuery';
 	import request from '@/func/common/request';
 	import responseFun from '@/func/entity/responseFun';
-	//import relationHandle from '@/func/relation/relationHandle';
 	import {
 		mapMutations,
 		mapState,
@@ -246,10 +245,10 @@
 				//检测
 				//console.log(kind, value);
 				let hint_name = '';
-				if(this.character_name.length == 0){
+				if(this.character_name.trim().length == 0){
 					hint_name = "角色名称";
 				}
-				if(this.short_description.length == 0){
+				if(this.short_description.trim().length == 0){
 					hint_name = "简介";
 				}
 				if(hint_name.length > 0){
@@ -293,7 +292,7 @@
 						'character_description': JSON.stringify(this.discription_data)
 					};
 					if('character_name' == kind){
-						updateArr[kind] = value;
+						updateArr[kind] = value.trim();
 					} 
 					let response_feedback = await responseFun.toolRequest('sensitive',
 						value, 'character');

@@ -47,18 +47,15 @@
 	.header-bg{
 		position: absolute;
 		width: 100vw;
-		height: 8vh;
+		height: 10vh;
 		background-color: $uni-bg-color-hover;
 		box-shadow: $uni-width-none $uni-spacing-mini $uni-spacing-lg $uni-text-color-grey;
 		z-index: -1;
 	}
 	.header-container .display-line{
-		margin-top: 3vh;
+		margin-top: 5vh;
 		padding: $uni-spacing-lg;
 		color: $uni-text-color;//$uni-color-main;
-	}
-	.iconfont{
-		font-size: $uni-font-size-huge;
 	}
 	.header-img{
 		width: $uni-img-size-lg;

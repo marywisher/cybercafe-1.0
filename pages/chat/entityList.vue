@@ -65,10 +65,13 @@
 				});
 			},
 			gotoEntitySetting(entity_id){
-				console.log('设置页')
+				this.setSettingData({'entityId': entity_id});
+				uni.navigateTo({
+					url: '/pages/chat/setting'
+				})
 			}
 		},
-		onLoad() {
+		onShow() {
 			this.init();
 		}
 	}
