@@ -123,6 +123,11 @@
 					} */
 				}
 			},
+			gotoCharacterList(){
+				uni.navigateTo({
+					url: '/pages/character/characterList'
+				})
+			}
 		}
 	}
 </script>
