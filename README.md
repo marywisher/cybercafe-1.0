@@ -6,7 +6,7 @@
 | 小红书   | [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)（目前内测0.6版本的操作说明在小红书上） |
 | B站     | 搭建中，稍后公布 |
 | QQ群    | 42094098（已满）（目前内测的0.6版APK和PC模拟器在群文件夹里） |
-| Discord | [https://discord.gg/G6RbQKm4](https://discord.gg/G6RbQKm4) （内测0.6版APK也打了分包提交在社区了） |
+| Discord | [https://discord.gg/YHbrvYnx](https://discord.gg/YHbrvYnx) （内测0.6版APK也打了分包提交在社区了） |
 | 贴吧    | [赛博食堂](https://tieba.baidu.com/f?kw=赛博食堂) (刚建) |
 
 
@@ -52,36 +52,111 @@
 App.vue                 # 主应用入口
 config.json             # uni-app配置文件
 index.html              # HTML入口
+LICENSE.txt             # 许可证文件
 main.js                 # 主入口脚本
 manifest.json           # 应用清单
 package.json            # 项目依赖和脚本
 pages.json              # 页面路由配置
+README.md               # 项目说明文档
 theme.json              # 主题配置
+uni.promisify.adaptor.js # uni-app Promise适配器
 uni.scss                # 全局样式
 _doc/                   # 文档相关
-  local_db.db           # 本地数据库文件
 components/             # 自定义组件
   cybercafe-button/     # 按钮组件
-  ...                   # 其他组件
+  cybercafe-card/       # 卡片组件
+  cybercafe-context-menu/ # 上下文菜单组件
+  cybercafe-dialogueModal/ # 对话框模态框组件
+  cybercafe-draggableList/ # 可拖拽列表组件
+  cybercafe-header/     # 头部组件
+  cybercafe-menu/       # 菜单组件
+  cybercafe-modal/      # 模态框组件
+  cybercafe-segmented-control/ # 分段控制组件
+  cybercafe-swiper-dot/ # 轮播图指示点组件
+  cybercafe-view/       # 视图组件
+  image-part/           # 图片部分组件
+    water-mark/         # 水印组件
 func/                   # 功能模块
   common/               # 公共工具函数
+    base64.min.js       # Base64工具
+    common.js           # 通用函数
+    constants.js        # 常量定义
+    handleFun.js        # 处理函数
+    request.js          # 请求工具
+    sqlite.js           # SQLite工具
   dbManager/            # 数据库管理
-  entity/               # 容器类
-  incubator/            # 角色类
+    baseQuery.js        # 基础查询
+    dialogueQuery.js    # 对话查询
+  entity/               # 实体类
+    characterFun.js     # 角色功能
+    entityFun.js        # 实体功能
+    messageFun.js       # 消息功能
+    promptFun.js        # 提示功能
+    responseFun.js      # 响应功能
+  incubator/            # 孵化器类
+    incubatorFun.js     # 孵化器功能
   setting/              # 设置类
+    aiFun.js            # AI功能
+    bubbleFun.js        # 气泡功能
   user/                 # 用户类
+    userFun.js          # 用户功能
 modules/                # 模块化组件
+  account/              # 账户相关
+    adPart.vue          # 广告部分
+    checkinPart.vue     # 签到部分
+    followPart.vue      # 关注部分
+    userinfo.vue        # 用户信息
   character/            # 角色相关
+    characterHeader.vue # 角色头部
+    descriptionPart.vue # 描述部分
+    previewDescriptionPart.vue # 预览描述部分
+    previewHeader.vue   # 预览头部
   chat/                 # 聊天功能
+    characterPart.vue   # 角色部分
+    chatBg.vue          # 聊天背景
+    chatBottom.vue      # 聊天底部
+    chatHeader.vue      # 聊天头部
+    chatInput.vue       # 聊天输入
+    editPart.vue        # 编辑部分
+    listMenu.vue        # 列表菜单
+    listPart.vue        # 列表部分
+    newUserPart.vue     # 新用户部分
+    popMenu.vue         # 弹出菜单
+    titlePart.vue       # 标题部分
+  entity/               # 实体相关
+    detailPart.vue      # 详情部分
+    entityHeader.vue    # 实体头部
   login/                # 登录注册
+    login.vue           # 登录
+    register.vue        # 注册
   setting/              # 设置页面
+    decorate/           # 装饰设置
+    quickMenu/          # 快捷菜单
+    settingPage/        # 设置页面
 pages/                  # 页面文件
+  character/            # 角色页面
+    characterList.vue   # 角色列表
+    index.vue           # 角色首页
+    preview.vue         # 角色预览
   chat/                 # 聊天页面
+    entityList.vue      # 实体列表
+    incubator.vue       # 孵化器
+    index.vue           # 聊天首页
+    setting.vue         # 聊天设置
   index/                # 首页
+    dataList.vue        # 数据列表
+    index.vue           # 首页
+    info.vue            # 信息页面
   login/                # 登录页面
+    login.vue           # 登录
   setting/              # 设置页面
+    aiSetting.vue       # AI设置
+    bubbleMarket.vue    # 气泡市场
+    decorateSetting.vue # 装饰设置
+    globalSetting.vue   # 全局设置
+    promptSetting.vue   # 提示设置
+    rewardDetail.vue    # 奖励详情
 static/                 # 静态资源
-  logo.png              # 应用图标
   iconfont/             # 字体图标
 store/                  # Vuex状态管理
   index.js              # 主store
@@ -91,8 +166,9 @@ uni_modules/            # uni-app模块
 unpackage/              # 打包输出
 ```
 
-- **components/**: 存放可复用的Vue组件，如按钮、模态框等。
-- **func/**: 核心业务逻辑，包括数据库操作、用户管理等。
+- **components/**: 存放可复用的Vue组件，如按钮、卡片、模态框等。
+- **func/**: 核心业务逻辑，包括公共工具、数据库管理、实体类、用户管理等。
+- **modules/**: 模块化组件，按功能划分，如账户、角色、聊天、登录、设置等。
 - **pages/**: uni-app的页面文件，每个子文件夹对应一个功能模块。
 - **store/**: 使用Vuex管理全局状态，便于组件间数据共享。
 
@@ -121,6 +197,6 @@ unpackage/              # 打包输出
 
 ## 联系我们
 - QQ: 63846152（不知名剧作家）
-- Discord: [https://discord.gg/mqqfd4JM](https://discord.gg/mqqfd4JM)
+- Discord: [https://discord.gg/YHbrvYnx](https://discord.gg/YHbrvYnx)
 - 小红书: [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)
 - 贴吧: [赛博食堂](https://tieba.baidu.com/f?kw=赛博食堂)

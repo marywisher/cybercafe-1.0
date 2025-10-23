@@ -63,16 +63,16 @@ export default{
 				//console.log(entity_data);
 				let entity_list = entity_data;
 				for(let i in entity_data){
-					let sql_str2 = "select character_img from cybercafe_character cc "
+					let sql_str2 = "select cc.character_id, character_img from cybercafe_character cc "
 						+ " left join cybercafe_entity_detail cd on cc.character_id = cd.character_id "
 						+ " where cd.entity_id = '" + entity_data[i].entity_id + "' order by cd.entity_detail_id";
 					sqlite.selectSQL(sql_str2).then(img_data => {
 						//console.log(img_data);
-						let tmp_img_arr = [];
+						let tmp_img_arr = {};
 						for(let j in img_data){
 							if(img_data[j].character_img == configData.voiceOver || 
 								img_data[j].character_img == configData.defaultImg) continue;
-							tmp_img_arr.push(img_data[j].character_img);
+							tmp_img_arr[img_data[j].character_id] = img_data[j].character_img;
 						}
 						entity_list[i].character_img = tmp_img_arr;
 						resolve(entity_list);

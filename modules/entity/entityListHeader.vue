@@ -1,9 +1,9 @@
 <template>
-	<cybercafe-header :bgOpacity="bgOpacity">
+	<cybercafe-header :bgOpacity="1">
 		<view class="iconfont icon-xiayibu iconback menu-icon-left" @tap="back"></view>
 		<view class="header-right display-flex display-line">
-			<view class="iconfont icon-shanchu required"></view>
-			<label class="hint">解散容器</label>
+			<view class="iconfont icon-jiahao" @tap="gotoCharacterList"></view>
+			<label class="hint" @tap="gotoCharacterList">新建容器</label>
 		</view>
 	</cybercafe-header>
 </template>
@@ -11,16 +11,15 @@
 <script>
 	export default{
 		name: 'entityHeader',
-		props: {
-			bgOpacity: {
-				type: Number,
-				default: 0
-			},
-		},
 		methods: {
 			back(){
 				uni.navigateBack();
 			},
+			gotoCharacterList(){
+				uni.navigateTo({
+					url: '/pages/character/characterList'
+				})
+			}
 		}
 	}
 </script>
@@ -31,8 +30,5 @@
 	}
 	.iconback{
 		transform: rotate(180deg);
-	}
-	.icon-shanchu{
-		font-size: calc(2 * $uni-font-size-mini);
 	}
 </style>

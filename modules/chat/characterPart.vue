@@ -97,7 +97,7 @@
 			},
 			gotoDetail(character_id){
 				uni.navigateTo({
-					url: '/pages/chat/character?id=' + character_id
+					url: '/pages/character/index?id=' + character_id
 				})
 			},
 			changeReplyMode(e){

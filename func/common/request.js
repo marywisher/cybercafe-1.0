@@ -20,8 +20,8 @@ export default {
 		url += option;
 		post_data = options;
 		
-		post_data['id'] = store.state.user.userId;
-		post_data['token'] = store.state.user.token;
+		post_data['id'] = store.state.setting.userId;
+		post_data['token'] = store.state.setting.token;
 
 		//console.log(pageId);
 		console.log(configData.domain + option);
@@ -61,13 +61,13 @@ export default {
 						uni.hideLoading();
 						//store.commit('user/resetUserData');
 						console.log(res.data.msg);
-						store.commit('user/setUserData', {'isLogin': false});
+						store.commit('setting/setSettingData', {'isLogin': false});
 						uni.reLaunch({
 							url: '../login/login?msg=' + res.data.msg
 						})
 					}else if(res.data.code == 300){
 						/* uni.hideLoading();
-						store.commit('user/setUserData', {'isLogin': false});
+						store.commit('setting/setSettingData', {'isLogin': false});
 						console.log('重新登录，来自：' + option);
 						uni.reLaunch({
 							url: '../login/login' + (res.msg ? '?msg=' + res.msg : '')
@@ -189,19 +189,12 @@ export default {
 		let _self = this;
 		//console.log('getip');
 		uni.request({
-			url: "https://api.ip.sb/jsonip", 
+			url: "http://ip-api.com/json/?lang=zh-CN", 
 			success: res => {
 				//console.log(res.data);
-				if(res.data.ip != store.state.user.ip || store.state.user.ippos == '未知'){
-					store.commit('user/setUserData', {'ip': res.data.ip});
-					_self.post('userController/getIpPos', {
-						'ip': store.state.user.ip,
-					}).then(response => {
-						//console.log(response);
-						if(response.code == 200){
-							store.commit('user/setUserData', {'ippos': response.result.regionName});
-						}
-					});
+				if(res.data.query != store.state.setting.ip || store.state.setting.ippos == '未知'){
+					store.commit('setting/setSettingData', {'ip': res.data.query});
+					store.commit('setting/setSettingData', {'ippos': res.data.regionName + res.data.city});
 				}
 			},
 			fail: res => {

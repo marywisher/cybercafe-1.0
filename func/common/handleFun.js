@@ -8,14 +8,16 @@ export default {
 		//store.commit('user/setUserData', { 'modalShow': false });
 		plus.navigator.setFullscreen(true);
 		store.commit('user/getUserData');
+		store.commit('setting/getSettingData');
+		console.log(store.state.setting.userId, store.state.setting.token, store.state.setting.isLogin);
 		plus.nativeUI.setUIStyle(store.state.user.darkMode);
-		//store.commit('user/setUserData', { 'isLogin': false });
-		request.getIp();
-		if(store.state.user.isLogin == false){
+		//store.commit('setting/setSettingData', { 'isLogin': false });
+		if(store.state.setting.userId == 0){
 			uni.navigateTo({
 				url: '../login/login'
 			})
 		}else{
+			request.getIp();
 			await userFun.userInit();
 		}
 	},

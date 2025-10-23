@@ -1,29 +1,24 @@
 export default {
 	namespaced: true,
 	state: {
-		userId: 0,
 		userName: '',
 		userKey: '',
-		token: '',
-		isLogin: false,
 		userAvatar: '',
 		aimId: 0,
 		userGroup: 1,
 		groupExpiration: '',
 		powerLevel: 0,//用于限制提交本地崽的等级，非后台用户等级
+		tag: '',
 		
 		latestVersion: '',
 		darkMode: 'light',
 		totalReward: 0,
-		hasNewMsg: false,
+		newMsgCount: 0,
 		settingOpen: {global: true, bubble: true},
 		
 		lastTimestampAd: 0,
 		lastTimestampAccount: 0, 
 		lastTimestampSubmit: {},
-		
-		ip: '',
-		ippos: '',
 		
 		modalShow: false,
 		modalData: {},

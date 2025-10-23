@@ -10,9 +10,22 @@
 			<input v-model="character_name" maxlength="16" class="bg-color" 
 			confirm-type="done" @confirm="autoSave('character_name', character_name)"></input>
 			<view>性别</view>
-			<picker class="gender-pick" @change="genderChange" :value="character_gender" :range="gender">
-				<view>{{gender[character_gender]}}</view>
-			</picker>
+			<view @tap="showGenderView">
+				<view v-if="character_gender == 1" class="iconfont icon-xingbienan"></view>
+				<view v-if="character_gender == 2" class="iconfont icon-xingbienv"></view>
+				<view v-if="character_gender == 0" class="iconfont icon-WuXingBie2"></view>
+			</view>
+		</view>
+		<view v-show="show_gender">
+			<cybercafe-view class="gender-view">
+				<view class="display-flex display-line sp-between gender-pick">
+					<view class="iconfont icon-xingbienan" @tap="genderChange(1)"></view>
+					<view class="gender-border"></view>
+					<view class="iconfont icon-xingbienv" @tap="genderChange(2)"></view>
+					<view class="gender-border"></view>
+					<view class="iconfont icon-WuXingBie2" @tap="genderChange(0)"></view>
+				</view>
+			</cybercafe-view>
 		</view>
 		<view class="character-line">
 			<view class="display-flex display-line sp-between">
@@ -127,6 +140,7 @@
 	import baseQuery from '@/func/dbManager/baseQuery';
 	import request from '@/func/common/request';
 	import responseFun from '@/func/entity/responseFun';
+	import characterFun from '@/func/entity/characterFun';
 	import {
 		mapMutations,
 		mapState,
@@ -142,14 +156,9 @@
 				default_image: configData.defaultImg,
 				character_gender: 0,
 				gender_cn: '未知',
-				gender: ['未知', '男', '女'],
-				discription_data: '', //字段数据
+				description_data: '', //字段数据
 				character_story: '',
 				character_prologue: '',
-				tag: [],
-				character_tag: '',
-				character_memo: '',
-				character_status: 0,
 				
 				short_description: '',
 				full_description: '',
@@ -163,7 +172,8 @@
 				basic_ta_show: false,
 				extend_ta_show: false,
 				
-				hint: "请统一使用<label class=\"required\">{{user}}</label>或<label class=\"required\">你</label>指代主控，<label class=\"required\">{{char}}</label>或<label class=\"required\">他/她</label>指代角色"
+				hint: "请统一使用<label class=\"required\">{{user}}</label>或<label class=\"required\">你</label>指代主控，<label class=\"required\">{{char}}</label>或<label class=\"required\">他/她</label>指代角色",
+				show_gender: false
 			}
 		},
 		computed: {
@@ -180,63 +190,21 @@
 				let character_data = await baseQuery.getDataByKey('cybercafe_character', {character_id: this.character_id});
 				//console.log(character_data);
 				//if(!character_data) return;
-				this.character_name = character_data[0].character_name;
-				this.discription_data = character_data[0].character_description;
-				if(!common.isJsonString(this.discription_data)){
-					//console.log('旧结构');
-					let pos = this.discription_data.indexOf('\\n');
-					if(pos == -1){
-						pos = this.discription_data.indexOf('\r\n');
-					}
-					let gender_pos = this.discription_data.substr(0, pos).indexOf('，');
-					this.gender_cn = this.discription_data.substr(0, gender_pos);
-					switch(this.gender_cn){
-						default: 
-						this.character_gender = 0;
-						break;
-						case '男':
-						this.character_gender = 1;
-						break;
-						case '女':
-						this.character_gender = 2;
-						break;
-					}
-					
-					this.short_description = pos > -1 ? common.textOperation(this.discription_data.substr(gender_pos + 1, pos - 1), '你').text 
-						: common.textOperation(this.discription_data, '你').text;
-					this.full_description = pos > -1 ? common.textOperation(this.discription_data.substr(pos + 2), '你').text : '';
-					this.character_memo = character_data[0].character_memo ? character_data[0].character_memo : '';
-					this.character_prologue = character_data[0].character_prologue;
-				}else{
-					//console.log('新结构');
-					this.discription_data = JSON.parse(this.discription_data);
-					this.gender_cn = this.discription_data.性别;
-					switch(this.gender_cn){
-						default: 
-						this.character_gender = 0;
-						break;
-						case '男':
-						this.character_gender = 1;
-						break;
-						case '女':
-						this.character_gender = 2;
-						break;
-					}
-					if(this.discription_data.基础信息.hasOwnProperty('简介')) 
-						this.short_description = common.textOperation(this.discription_data.基础信息.简介, '你').text;
-					if(this.discription_data.扩展信息.hasOwnProperty('故事背景')) 
-						this.full_description = common.textOperation(this.discription_data.扩展信息.故事背景, '你').text;
-					const {简介, ...basicObj} = this.discription_data.基础信息;
-					const {故事背景, ...extendObj} = this.discription_data.扩展信息;
-					this.basic_description = basicObj;
-					this.extend_description = extendObj;
-					if(this.discription_data.hasOwnProperty('副本')){
-						if(this.discription_data.副本.hasOwnProperty('前情提要')) this.character_story = this.discription_data.副本.前情提要;
-						if(this.discription_data.副本.hasOwnProperty('开场白')) this.character_prologue = this.discription_data.副本.开场白;
-					}
-					
-					//if(basicObj.hasOwnProperty(this.basic_key)) this.basic_key = '';
-				}
+				
+				let return_data = characterFun.parseData(character_data[0], true);
+				this.character_name = return_data.character_name;
+				this.description_data = return_data.character_description;
+				this.character_gender = return_data.character_gender;
+				this.gender_cn = return_data.gender_cn;
+				this.short_description = return_data.short_description;
+				this.full_description = return_data.full_description;
+				this.character_story = return_data.character_story;
+				this.character_prologue = return_data.character_prologue;
+				if(character_data.hasOwnProperty('basic_description'))
+					this.basic_description = character_data.basic_description;
+				if(character_data.hasOwnProperty('extend_description')) 
+					this.extend_description = character_data.extend_description;
+				
 				let character_image = character_data[0].character_img ? character_data[0].character_img : this.default_image;
 				this.$emit('afterLoad', 
 					{'image': character_image});//,'key': character_key
@@ -268,7 +236,7 @@
 				
 				if(this.character_id){
 					let whereArr = {'character_id': this.character_id};
-					this.discription_data = {
+					this.description_data = {
 						'昵称': this.character_name,
 						'性别': this.gender_cn,
 						'基础信息': {
@@ -283,13 +251,13 @@
 						}
 					};
 					for(let key in this.basic_description){
-						this.discription_data.基础信息[key] = this.basic_description[key];
+						this.description_data.基础信息[key] = this.basic_description[key];
 					}
 					for(let key in this.extend_description){
-						this.discription_data.扩展信息[key] = this.extend_description[key];
+						this.description_data.扩展信息[key] = this.extend_description[key];
 					}
 					let updateArr = {
-						'character_description': JSON.stringify(this.discription_data)
+						'character_description': JSON.stringify(this.description_data)
 					};
 					if('character_name' == kind){
 						updateArr[kind] = value.trim();
@@ -319,23 +287,16 @@
 					}
 				}
 			},
-			genderChange(e){
+			showGenderView(){
+				this.show_gender = !this.show_gender; 
+			},
+			genderChange(gender){
 				//console.log(e.detail.value);
-				this.character_gender = e.detail.value;
-				this.gender_cn = '未知';
-				switch(this.character_gender){
-					default: 
-					this.gender_cn = '未知';
-					break;
-					case 1:
-					this.gender_cn = '男';
-					break;
-					case 2:
-					this.gender_cn = '女';
-					break;
-				}
+				this.character_gender = gender;
+				this.gender_cn = characterFun.getGenderCn(gender);
 				//console.log(this.gender_cn);
 				this.autoSave('character_gender', this.gender_cn);
+				this.show_gender = false;
 			},
 			async addDes(key){
 				//console.log(this[key + '_key'], this[key + '_value']);
@@ -378,6 +339,29 @@
 					this.extend_ta_show = (flag == 'show');
 				}
 				this.$forceUpdate();
+			},
+			async createCharacter(online_id){
+				let _self = this;
+				try {
+					let res = await request.post("characterController/getCharacterDetail", 'character',
+						{'character_id': online_id});
+					if (res.code == 200) {
+						//console.log(res.result);
+						let character_id = await characterFun.previewToDb(res.result);
+						_self.init(character_id);
+					} else {
+						uni.showToast({
+							title: res.msg,
+							icon: "none"
+						});
+					}
+				} catch (error) {
+					console.error('创建角色失败:', error);
+					uni.showToast({
+						title: '创建角色失败',
+						icon: "none"
+					});
+				}
 			}
 		}
 	}
@@ -391,14 +375,15 @@
 		line-height: calc(2 * $uni-font-size-lg);
 	}
 	.bg-color{
-		backgroundColor: $uni-bg-color;
+		background-color: $uni-bg-color;
 		color: $uni-text-color;
 	}
-	.gender-pick{
-		padding: $uni-spacing-base $uni-spacing-lg;
+	.gender-pick .iconfont{
+		/* padding: $uni-spacing-base $uni-spacing-lg;
 		border: $uni-border-base solid $uni-border-color;
 		border-radius: $uni-border-radius-base;
-		color: $uni-text-color;
+		color: $uni-text-color; */
+		font-size: $uni-font-size-huge;
 	}
 	.character-container{
 		position: relative;
@@ -422,9 +407,18 @@
 	.display-line{
 		margin-bottom: $uni-spacing-base;
 	}
+	.gender-view{
+		width: 40vw;
+		float: right;
+	}
+	.gender-border{
+		width: $uni-border-base;
+		height: calc(2 * $uni-spacing-lg);
+		background-color: $uni-border-color;
+	}
 	@media (prefers-color-scheme: dark) {
 		.bg-color{
-			backgroundColor: $uni-bg-dark-color-gray;
+			background-color: $uni-bg-dark-color-gray;
 			color: $uni-text-color-grey;
 		}
 		.icon-jiahao{
@@ -432,6 +426,9 @@
 		}
 		.gender-pick{
 			color: $uni-text-color-grey;
+		}
+		.gender-border{
+			background-color: $uni-text-color;
 		}
 	}
 </style>

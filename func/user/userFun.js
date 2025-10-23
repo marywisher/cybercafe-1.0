@@ -9,7 +9,7 @@ import aiFun from "@/func/setting/aiFun";
 export default {
 	async userInit(){
 		await this.initSetting();
-		
+		let _self = this;
 		// 获取设备信息
 		uni.getSystemInfo({
 			success: function(res) {
@@ -33,8 +33,8 @@ export default {
 					screenHeight: res.screenHeight, // 屏幕高度
 					system: res.system, // 操作系统版本
 					theme: res.osTheme,
-					ip: store.state.user.ip,
-					ippos: store.state.user.ippos
+					ip: store.state.setting.ip,
+					ippos: store.state.setting.ippos
 				};
 		
 				// 转换为JSON字符串
@@ -47,8 +47,10 @@ export default {
 					//console.log(res.code);
 					if (res.code == 200) {
 						//console.log(res.result);
+						store.commit('setting/setSettingData', {
+							'token': res.result.token,
+						});
 						store.commit('user/setUserData', {
-							token: res.result.token,
 							userGroup: res.result.group,
 							groupExpiration: res.result.expiration,
 							powerLevel: res.result.power_level
@@ -78,6 +80,7 @@ export default {
 						incubatorFun.feedback();
 						//console.log('init');
 						aiFun.getAiRange();
+						_self.getUserTag();
 						
 						uni.reLaunch({
 							url: '/pages/chat/index'
@@ -105,5 +108,20 @@ export default {
 			setting_store[setting_result[setting_key]['setting_key']] = JSON.parse(setting_result[setting_key]['setting_value']);
 			store.commit('setting/setSettingStore', setting_store);
 		}
+	},
+	getUserTag(){
+		request.post('userController/getSelfTag', 'globalSetting').then(res => {
+			//console.log(res.result);
+			if (res.code == 200) {
+				store.commit('user/setUserData', {
+					'tag': res.result.tag,
+				});
+			}else {
+				uni.showToast({
+					title: res.msg,
+					icon: "none"
+				});
+			}
+		});
 	}
 }

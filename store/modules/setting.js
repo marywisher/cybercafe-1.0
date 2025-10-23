@@ -21,13 +21,18 @@ export default {
 		globalTreeOrder: '[{"id":1,"title":"故事背景","enable":true},{"id":2,"title":"简介","enable":true},{"id":3,"title":"补充说明","enable":true},{"id":4,"title":"聊天记录","enable":false}]',
 		imgRadius: 20,
 		imgWidth: 40,
+		ip: '',
+		ippos: '未知',
+		isLogin: false,
 		maxToken: 4096,
 		promptLength: 0,//基础提示词长度
 		promptSelect: 0, //预设
 		replyMode: 'click', // 自动auto 手动点击click 回复方式
 		temperature: 0.95,
+		token: '',
 		tokenSetting: 4096, //用户设置的token，显示时不得大于该大模型的max_token
 		topP: 0.5,
+		userId: 0,
 	},
 	getters: {},
 	mutations: {

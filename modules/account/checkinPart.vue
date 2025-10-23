@@ -3,12 +3,6 @@
 		<cybercafe-button v-show="show_checkin" :btnDisable="checkin_flag" @tapBtn="checkin"
 			:btnName="checkin_flag ? checkin_str.contentFav : checkin_str.contentDefault"
 			btnClass="btn-primary"></cybercafe-button>
-		<!-- <view v-show="show_checkin" class="checkin-btn" :style="{'background-color': bgStyle(checkin_flag)}"  @tap="checkin">
-			{{checkin_flag == false ? checkin_str.contentDefault : checkin_str.contentFav}}
-		</view> -->
-		<!--uni-fav :checked="checkin_flag" :star="false" :content-text="checkin_str" 
-			:circle="true" bg-color="#007aff"
-			bg-color-checked="#999" fg-color="#ffffff" fg-color-checked="#ffffff" /-->
 		<view class="hint">{{checkin_tip}}</view>
 	</view>
 </template>
@@ -36,19 +30,10 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['userId']),
-			/* bgStyle(){
-				return function(flag){
-					if(flag == true){
-						return '#999';
-					}else{
-						return '#007aff';
-					}
-				}
-			}, */
+			...mapState('setting', ['userId']),
 		},
 		methods: {
-			...mapMutations('user', ['getUserData']),
+			...mapMutations('user', ['getSettingData']),
 			init() {
 				let _self = this;
 				request.post("userController/getCheckin", 'globalSetting').then(res => {
@@ -93,6 +78,9 @@
 					});
 				}
 			},
+			show(){
+				this.show_checkin = true;
+			}
 		}
 	}
 </script>

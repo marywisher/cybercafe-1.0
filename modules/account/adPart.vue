@@ -32,11 +32,12 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['lastTimestampAd', 'modalData', 'modalPageId', 'modalShow',
-				'userId']),
+			...mapState('user', ['lastTimestampAd', 'modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
+			...mapMutations('setting', ['getSettingData']),
 			initAd(){
 				this.getUserData();
 				const now = Date.now();

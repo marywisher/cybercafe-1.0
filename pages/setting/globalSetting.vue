@@ -1,6 +1,21 @@
 <template>
 	<view>
-		<userinfo ref="gsUserinfo"></userinfo>
+		<globalSettingHeader></globalSettingHeader>
+		<userinfo class="user-info-part" ref="gsUserinfo"></userinfo>
+		<cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="gotoCharacterList">
+					<view class="global-setting-label">发现线上角色</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="gotoEntityList">
+					<view class="global-setting-label">查看容器</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
+		</cybercafe-view>
 		<cybercafe-view>
 			<cybercafe-view>
 				<view class="display-flex sp-between display-line">
@@ -83,6 +98,7 @@
 <script>
 	import baseQuery from '@/func/dbManager/baseQuery';
 	import userinfo from '@/modules/account/userinfo';
+	import globalSettingHeader from '@/modules/account/globalSettingHeader';
 	import {
 		mapMutations,
 		mapState,
@@ -96,7 +112,8 @@
 			}
 		},
 		components:{
-			userinfo
+			userinfo,
+			globalSettingHeader
 		},
 		watch:{
 			modalShow: {
@@ -118,10 +135,12 @@
 		},
 		computed: {
 			...mapState('user', ['aimId', 'darkMode', 'latestVersion', 'modalData', 
-				'modalPageId', 'modalShow', 'userId']),
+				'modalPageId', 'modalShow']),
+			...mapState('setting', ['userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
+			...mapMutations('setting', ['getSettingData']),
 			uploadData(){
 				baseQuery.syncDBUpload();
 			},
@@ -205,6 +224,16 @@
 				uni.navigateTo({
 					url: '/pages/login/login'
 				})
+			},
+			gotoCharacterList(){
+				uni.navigateTo({
+					url: '/pages/character/characterList'
+				})
+			},
+			gotoEntityList(){
+				uni.navigateTo({
+					url: '/pages/entity/entityList'
+				})
 			}
 		},
 		onLoad() {
@@ -229,6 +258,9 @@
 </script>
 
 <style lang="scss">
+	.user-info-part{
+		margin-top: $page-header-height;
+	}
 	.global-setting-label{
 		width: 30vw;
 	}

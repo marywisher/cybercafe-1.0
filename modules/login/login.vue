@@ -87,14 +87,15 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'isLogin', 'modalData', 'modalPageId', 
-				'modalShow']),
+			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['isLogin', 'token', 'userId']),
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
 			}
 		},
 		methods: {
 			...mapMutations('user', ['setUserData', 'getUserData']),
+			...mapMutations('setting', ['setSettingData', 'getSettingData']),
 			openReset(){
 				this.form_flag = 'reset';
 				this.$forceUpdate()
@@ -136,16 +137,18 @@
 						if (res.code == 200) {
 							console.log(res.result);
 							_self.hide();
+							_self.setSettingData({
+								'userId': res.result.id,
+								'token': res.result.token,
+								'isLogin': true,
+							})
 							let data = {
-								userId: res.result.id,
 								userName: res.result.name,//Base64.decode(res.result.name),
 								userKey: res.result.key,
-								token: res.result.token,
 								userGroup: res.result.group,
 								groupExpiration: res.result.expiration,
 								latestVersion: res.result.latest_version,
 								powerLevel: res.result.power_level,
-								isLogin: true,
 							};
 							_self.setUserData(data);
 							

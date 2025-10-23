@@ -1,12 +1,10 @@
 <template>
 	<view>
 		<view class="character-bg" :style="dynamicImg"></view>
-		<view class="view-for-tap" @tap="showMoreImg"></view>
-		<characterHeader :bgOpacity="bg_opacity" :img="character_image" :imgOpacity="avatar_opacity"></characterHeader>
+		<previewHeader :bgOpacity="bg_opacity" :img="character_image" 
+			:imgOpacity="avatar_opacity" :characterId="character_id"></previewHeader>
 		
-		<descriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"></descriptionPart>
-		<image-part ref="cImgPart" :originImg="character_image" :dark="darkMode" 
-			showCreate showLocal showOnline @afterClick="afterSelectImg"></image-part>
+		<previewDescriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"></previewDescriptionPart>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
@@ -14,8 +12,8 @@
 <script>
 	import config from '@/config.json';
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
-	import descriptionPart from '@/modules/character/descriptionPart';
-	import characterHeader from '@/modules/character/characterHeader';
+	import previewDescriptionPart from '@/modules/character/previewDescriptionPart';
+	import previewHeader from '@/modules/character/previewHeader';
 	import {
 		mapMutations,
 		mapState,
@@ -32,14 +30,14 @@
 			}
 		},
 		components:{
-			descriptionPart,
-			characterHeader
+			previewDescriptionPart,
+			previewHeader
 		},
 		watch:{
 			modalShow: {
 				handler(newValue, oldValue) {
 				    //console.log(newValue);
-				    if(newValue && this.modalPageId == 'character'){
+				    if(newValue && this.modalPageId == 'characterPreview'){
 				    	this.$nextTick(() => {
 				    		this.$refs.cModal.show(this.modalData);
 						});
@@ -63,31 +61,14 @@
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
-			showMoreImg(){
-				//console.log('show gallery');
-				this.$refs.cImgPart.openBox(this.character_id.toString());
-			},
-			async afterSelectImg(e){
-				this.character_image = e;
-				let whereArr = {'character_id': this.character_id};
-				let updateArr = {'character_img': this.character_image};
-				let feedback = await baseQuery.updateDataByKey('cybercafe_character', updateArr, whereArr);
-				if(feedback == 'inserted' || feedback == 'updated'){
-					//保存
-					uni.showToast({
-						title: '数据已保存',
-						icon: 'none'
-					})
-				}
-			},
 			afterLoad(param){
 				this.character_image = param.image;
 				//this.character_key = param.key;
 				this.$forceUpdate();
 			},
 		},
-		onLoad(option) {
-			this.character_id = option.id;
+		onLoad(option) {//线上崽预览
+			this.character_id = parseInt(option.id);
 			this.$nextTick(() => {
 				this.$refs.cDP.init(this.character_id);
 			})

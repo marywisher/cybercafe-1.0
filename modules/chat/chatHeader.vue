@@ -1,12 +1,14 @@
 <template>
 	<cybercafe-header :bgOpacity="0.75" class="chat-header">
 		<!-- 顶部 -->
-		<view class="header-left">
+		<view class="header-left display-flex display-line">
 			<popMenu ref="chatRMenuPart"></popMenu>
+			<label class="hint">快捷菜单</label>
 		</view>
 		<titlePart ref="chatTitlePart" class="header-center"></titlePart>
-		<view class="header-right display-flex">
+		<view class="header-right display-flex display-line">
 			<view class="iconfont icon-shezhi" @tap="gotoSetting"></view>
+			<label class="hint" @tap="gotoSetting">系统设置</label>
 		</view>
 	</cybercafe-header>
 </template>
@@ -39,12 +41,6 @@
 <style lang="scss">
 	.chat-header{
 		z-index: 3;
-	}
-	.header-left, .header-right{
-		width: 20vw;
-	}
-	.header-right{
-		justify-content: flex-end;
 	}
 	.iconfont{
 		font-size: calc(2 * $uni-font-size-sm);

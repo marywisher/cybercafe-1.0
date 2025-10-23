@@ -122,6 +122,16 @@
 	}
 	.after-tag{
 		margin-top: calc(5 * $uni-spacing-lg);
+		clear: both;
+	}
+	.icon-xingbienan{
+		color: $uni-color-secondary;
+	}
+	.icon-xingbienv{
+		color: $uni-color-main;
+	}
+	.icon-WuXingBie2{
+		color: $uni-text-color-grey;
 	}
 	
 	@media (prefers-color-scheme: dark) {
@@ -143,6 +153,12 @@
 		}
 		input{
 			color: $uni-text-color-disable !important;
+		}
+		.icon-xingbienan{
+			color: $uni-color-dark-secondary;
+		}
+		.icon-xingbienv{
+			color: $uni-color-dark-main;
 		}
 	}
 </style>

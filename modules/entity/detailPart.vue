@@ -28,7 +28,7 @@
 				 :placeholder-style="placeholderStyle" confirm-hold
 				 @blur="autoSave('subject_description', subject_description)"></textarea>
 		</view>
-		<view class="flag-tag branch-story-tag">舞台控制</view>
+		<view class="flag-tag branch-story-tag" @tap="gotoCharacterList">舞台控制</view>
 		<view class="entity-line after-tag"></view>
 		<view class="entity-line">
 			

@@ -53,17 +53,13 @@
 			}
 		},
 		watch:{
-			ai(newValue){
-				//console.log(newValue);
-				this.maxtoken = this.maxToken;
-				this.token_value = this.tokenSetting;
-			},
 			enable(newValue){
 				//console.log(newValue);
 				this.disable_flag = !newValue;
 			},
 			maxToken(newValue){
 				this.maxtoken = newValue;
+				this.token_value = this.tokenSetting;
 			}
 		},
 		computed:{

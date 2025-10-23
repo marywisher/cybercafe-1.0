@@ -1,7 +1,10 @@
 <template>
 	<cybercafe-header :bgOpacity="bgOpacity" :img="img" :imgOpacity="imgOpacity">
 		<view class="iconfont icon-xiayibu iconback menu-icon-left" @tap="back"></view>
-		<view class="iconfont icon-geren menu-icon-left"></view>
+		<view class="header-right display-flex display-line">
+			<view class="iconfont icon-geren"></view>
+			<label class="hint">存为本地角色</label>
+		</view>
 	</cybercafe-header>
 </template>
 

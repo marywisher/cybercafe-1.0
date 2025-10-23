@@ -178,7 +178,7 @@
 
 <style lang="scss">
 	.chat-body{
-		margin: 10vh auto 8vh;
+		margin: $page-header-height auto 8vh;
 		width: calc(100vw - 2 * $uni-spacing-base);
 	}
 	.watermark{

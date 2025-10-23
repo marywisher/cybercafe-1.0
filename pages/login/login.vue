@@ -45,11 +45,12 @@
 			register
 		},
 		computed:{
-			...mapState('user', ['isLogin', 'modalData', 'modalPageId', 'modalShow', 
-				'token']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['isLogin', 'token']),
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
+			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			logoutFun(){
 				let _self = this;
 				this.setUserData({
@@ -60,7 +61,7 @@
 						cancelText: '手滑了',
 						success: function (res) {
 							if (res.confirm) {
-								_self.setUserData({
+								_self.setSettingData({
 									'isLogin': false,
 									'token': ''
 								})

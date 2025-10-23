@@ -119,6 +119,14 @@
   content: "\ec77";
 }
 
+.icon-xingbienan:before {
+  content: "\e641";
+}
+
+.icon-xingbienv:before {
+  content: "\e642";
+}
+
 .icon-feiquanping:before {
   content: "\e610";
 }
@@ -153,6 +161,10 @@
 
 .icon-dengpao:before {
   content: "\e552";
+}
+
+.icon-WuXingBie2:before {
+  content: "\ede2";
 }
 
 .icon-shuangxiangjiantou1:before {

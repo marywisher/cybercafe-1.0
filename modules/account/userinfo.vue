@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<cybercafe-card :cardTitle="card_title" @toggleDetail="titleChange">
-			<view class="display-flex display-line account-top-part">
+			<view class="display-flex account-top-part">
 				<image mode="aspectFit" :src="avatar" class="account-avatar"
 					@tap="changeAvatar"></image>
 				<view class="account-info">
@@ -13,27 +13,29 @@
 								<view class="iconfont icon-fuzhi" @tap="copyKey"></view>
 							</view>
 							<view class="hint" v-if="aimId == userId">
-								{{'IP属地:' + ippos}}
+								{{'IP属地:' + ip_pos}}
 							</view>
 						</view>
 						<followPart v-if="aimId != userId" ref="acFollowPart"
 							:type="1" :aim="aimId" @tagTap="refreshFollow"></followPart>
 						<checkinPart ref="acCheckinPart" @afterCheckin="getRequestCount"></checkinPart>
 					</view>
+					<view class="display-flex display-line tag-part">
+						<view v-for="(item, index) in tags" :key="index" class="tag-item">{{item}}</view>
+					</view>
 				</view>
 			</view>
-			<view class="display-flex display-line account-detail">
-				<view v-for="(item, index) in tags" :key="index" class="tag-item">{{item}}</view>
-			</view>
-			<view class="display-flex display-line account-detail" v-if="aimId == userId">
-				剩余米粒数： {{request_count}} 
-				<cybercafe-button class="reward-detail" btnName="明细" @tapBtn="showRewardDetail"></cybercafe-button>
-				<!-- <adPart ref="acAP" @afterFinish="getRequestCount"></adPart> -->
-			</view>
-			<view v-if="aimId == userId && userGroup == 2"
-				 class="display-flex display-line" :class="{'required': group_alarm, 'account-detail': !group_alarm}">
-				月卡有效期至：{{expiration}} 0时
-			</view>
+			<cybercafe-view class="reward-part">
+				<view class="display-flex display-line account-detail" v-if="aimId == userId">
+					剩余米粒数： {{request_count}} 
+					<cybercafe-button class="reward-detail" btnName="明细" @tapBtn="showRewardDetail"></cybercafe-button>
+					<!-- <adPart ref="acAP" @afterFinish="getRequestCount"></adPart> -->
+				</view>
+				<view v-if="aimId == userId && userGroup == 2"
+					 class="hint" :class="{'required': group_alarm}">
+					月卡有效期至：{{expiration}} 0时
+				</view>
+			</cybercafe-view>
 		</cybercafe-card>
 		<image-part ref="aImgPart" :origin_img="avatar" showCreate :dark="darkMode"
 			showLocal :showOnline="false" @afterClick="uploadAvatar"></image-part>
@@ -75,7 +77,8 @@
 				group_alarm: false,
 				expiration: '',
 				card_title: '',
-				tags: []
+				tags: [],
+				ip_pos: '未知'
 			}
 		},
 		components: {
@@ -83,12 +86,24 @@
 			checkinPart,
 			followPart
 		},
+		watch: {
+			ippos: {
+				handler(newValue, oldValue) {
+				    //console.log(newValue);
+				    this.ip_pos = newValue;
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
+			}
+		},
 		computed: {
-			...mapState('user', ['aimId', 'darkMode', 'groupExpiration', 'hasNewMsg', 'ippos', 
-				'userId', 'userAvatar', 'userKey', 'userGroup']),
+			...mapState('user', ['aimId', 'darkMode', 'groupExpiration', 'newMsgCount', 
+				'tag', 'userAvatar', 'userKey', 'userGroup']),
+			...mapState('setting', ['ippos', 'userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
+			...mapMutations('setting', ['getSettingData']),
 			initPage(){
 				this.avatar = this.default_avatar;
 				
@@ -120,14 +135,14 @@
 					request.post("userController/getUserInfo", 'globalSetting', data).then(res => {
 						if (res.code == 200) {
 							//console.log(res.result);
-							_self.setUserData({'hasNewMsg': res.result.new_msg > 0});
+							_self.setUserData({'newMsgCount': res.result.new_msg});
 							_self.account_name = res.result.user_nickname;
 							_self.user_key = res.result.user_key;
 							_self.fans_num = res.result.fans_num;
 							_self.follow_num = res.result.follow_num;
 							_self.avatar = res.result.avatar ? res.result.avatar : _self.default_avatar;
 							//console.log(res.result.avatar);
-							if(this.aimId != this.userId) _self.$refs.acFollowPart.init();
+							if(_self.aimId != _self.userId) _self.$refs.acFollowPart.init();
 							else _self.$refs.acCheckinPart.init();
 							
 							//_self.$emit('afterInit', res.result.character_num, res.result.character_fans_num);
@@ -158,23 +173,11 @@
 					}
 					//console.log(this.group_alarm);
 					
-					request.post('adminController/searchUser', 'globalSetting', {search: this.userId
-						}).then(res => {
-							//console.log(res.result);
-							if (res.code == 200) {
-								_self.tags = res.result[0].tag.split(',');
-								//console.log(_self.tags);
-							}else {
-								uni.showToast({
-									title: res.msg,
-									icon: "none"
-								});
-							}
-						});
+					if(this.tag != '') this.tags = this.tag.split(',');
 				}
 				
 				//获取ip
-				request.getIp();
+				//request.getIp();
 			},
 			changeAvatar(){
 				if(this.aimId != this.userId) return;
@@ -244,6 +247,11 @@
 			titleChange(param){
 				if(param){
 					this.card_title = '';
+					this.$nextTick(() => {
+						//if(this.aimId != this.userId) this.$refs.acFollowPart.init();
+						//else 
+						this.$refs.acCheckinPart.show();
+					})
 				}else{
 					this.card_title = '账号信息';
 				}
@@ -263,14 +271,14 @@
 		font-weight: bold;
 		font-size: $uni-font-size-huge;
 	}
-	.account-top-part, .hint{
+	.account-top-part, .info-part .hint{
 		padding: $uni-spacing-lg $uni-width-none;
 	}
 	.account-avatar{
-		height: $uni-img-size-huge;
-		width: $uni-img-size-huge;
+		height: calc(2 * $uni-img-size-lg);
+		width: calc(2 * $uni-img-size-lg);
 	}
-	.reward-detail, .icon-fuzhi, .info-part, .account-title{
+	.reward-detail, .icon-fuzhi, .info-part, .account-title, .tag-part{
 		margin-left: $uni-spacing-lg;
 	}
 	.tag-item{

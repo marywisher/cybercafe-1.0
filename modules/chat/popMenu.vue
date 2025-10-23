@@ -19,12 +19,12 @@
 				</view>
 				<view class="iconfont icon-shezhi menu-icon-right" @tap="gotoPromptSetting"></view>
 			</view>
-			<view class="display-flex pop-menu-line">
+			<!-- <view class="display-flex pop-menu-line">
 				<view class="display-flex display-line">
 					<view class="iconfont icon-ziyuan menu-icon-left"></view>
 					<view class="text-center menu-text">着色设置</view>
 				</view>
-			</view>
+			</view> -->
 			<view class="display-flex pop-menu-line">
 				<view class="display-flex display-line" @tap="gotoEntitySetting">
 					<view class="iconfont icon-shezhi menu-icon-left"></view>
@@ -103,13 +103,13 @@
 				this.routerFun('/pages/setting/promptSetting');
 			},
 			gotoEntitySetting(){
-				this.routerFun('/pages/chat/setting');
+				this.routerFun('/pages/entity/index');
 			},
 			delEntity(){
 				entityFun.delEntity();
 			},
 			changeEntity(){
-				this.routerFun('/pages/chat/entityList');
+				this.routerFun('/pages/entity/entityList');
 			},
 			routerFun(param){
 				this.$refs.rightMenuPop.closeView();
@@ -127,6 +127,7 @@
 		height: 80vh;
 		flex-direction: column;
 		z-index: 4;
+		top: $page-header-height;
 	}
 	.pop-menu-line{
 		margin: calc(4 * $uni-spacing-lg) $uni-width-none;

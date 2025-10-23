@@ -1,7 +1,7 @@
 <template>
 	<view class="header-container">
 		<view class="header-bg" :style="dynamicBgOpacity"></view>
-		<view class="display-flex sp-between display-line">
+		<view class="display-flex sp-between display-line" :style="dynamicFontColor">
 			<slot></slot>
 		</view>
 		<image class="header-img" :src="img" :style="dynamicImgOpacity"></image>
@@ -9,6 +9,11 @@
 </template>
 
 <script>
+	import {
+		mapMutations,
+		mapState,
+		mapActions
+	} from 'vuex';
 	export default{
 		name: 'cybercafe-header',
 		props: {
@@ -26,12 +31,27 @@
 			}
 		},
 		computed:{
+			...mapState('user', ['darkMode']),
 			dynamicBgOpacity(){
-				return `opacity: ${this.bgOpacity};`;
+				return {
+					opacity: `${this.bgOpacity}`
+				};
 			},
 			dynamicImgOpacity(){
 				return `opacity: ${this.imgOpacity};`;
 			},
+			dynamicFontColor(){
+				// 根据滚动进度计算颜色(#333 - #c0c0c0)
+				let gray = 192;
+				if(this.darkMode == 'light') gray = 51 + Math.floor((192 - 51) * (1 - this.bgOpacity));
+				return {
+					color: `rgb(${gray}, ${gray}, ${gray})`,
+					transition: 'color 0.1s ease-out'
+				};
+			}
+		},
+		methods: {
+			...mapMutations('user', ['getUserData']),
 		}
 	}
 </script>
@@ -47,7 +67,7 @@
 	.header-bg{
 		position: absolute;
 		width: 100vw;
-		height: 10vh;
+		height: $page-header-height;
 		background-color: $uni-bg-color-hover;
 		box-shadow: $uni-width-none $uni-spacing-mini $uni-spacing-lg $uni-text-color-grey;
 		z-index: -1;

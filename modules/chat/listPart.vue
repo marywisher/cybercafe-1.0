@@ -327,7 +327,7 @@
 			gotoDetail(character_id){
 				this.hideMenu();
 				uni.navigateTo({
-					url: '/pages/chat/character?id=' + character_id
+					url: '/pages/character/index?id=' + character_id
 				})
 			},
 			swiperChange(crt_index){

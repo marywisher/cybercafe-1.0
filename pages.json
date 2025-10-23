@@ -15,20 +15,33 @@
 			}
 		},
 		{
-			"path": "pages/chat/character",
+			"path": "pages/character/index",
 			"style": {
 				"navigationStyle": "custom"
 				//"navigationBarTitleText": "角色切片"
 			}
 		},
 		{
-			"path": "pages/chat/entityList",
+			"path": "pages/character/characterList",
 			"style": {
-				"navigationBarTitleText": "容器列表"
+				"navigationBarTitleText": "发现"
 			}
 		},
 		{
-			"path": "pages/chat/setting",
+			"path": "pages/character/preview",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/entity/entityList",
+			"style": {
+				//"navigationBarTitleText": "容器列表"
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/entity/index",
 			"style": {
 				"navigationStyle": "custom"
 			}
@@ -48,7 +61,8 @@
 		 {
 			"path": "pages/setting/globalSetting",
 			"style": {
-				"navigationBarTitleText": "通用设置"
+				//"navigationBarTitleText": "通用设置"
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -73,6 +87,13 @@
 			"path": "pages/setting/bubbleMarket",
 			"style": {
 				"navigationBarTitleText": "气泡市场"
+			}
+		},
+		{
+			"path": "pages/index/message",
+			"style": {
+				//"navigationBarTitleText": "消息"
+				"navigationStyle": "custom"
 			}
 		},
 		{

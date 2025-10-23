@@ -154,7 +154,7 @@
 	.absolute-view{
 		width: 80vw;
 		padding: $uni-spacing-lg;
-		margin: 10vh auto;
+		margin: $page-header-height auto;
 	}
 	.disabled-view{
 		color: $uni-text-color-disable;
