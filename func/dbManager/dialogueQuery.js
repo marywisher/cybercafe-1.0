@@ -85,16 +85,22 @@ export default{
 			});
 		});
 	},
-	createMessage(ai_id, content, operation) {
+	createMessage(ai_id, content, operation, store_data = {}) {
 		return new Promise((resolve, reject) => {
+			if(!store_data.hasOwnProperty('messageTime')){
+				store_data.messageTime = store.state.dialogue.messageTime;
+				store_data.prevMessageTime = store.state.dialogue.prevMessageTime;
+				store_data.crtCharacterId = store.state.dialogue.crtCharacterId;
+				store_data.entityId = store.state.setting.entityId;
+			} 
 			sqlite.selectSQL("select * from `cybercafe_message` where `message_time` = '" 
-				+ store.state.dialogue.messageTime + "'")
+				+ store_data.messageTime + "'")
 			.then(message_data => {
 				//console.log(JSON.stringify(message_data));
 				if (message_data.length > 0) {
 					sqlite.executeSQL("update `cybercafe_message` set `ai_id` = '" + message_data[0].ai_id + "," +
 						ai_id + "', `message_content` = '" + content + "', operation_content = '" + operation
-						+ "' where `message_time` = '" + store.state.dialogue.messageTime + "'")
+						+ "' where `message_time` = '" + store_data.messageTime + "'")
 					.then(() => {
 						resolve('update');
 					});
@@ -102,9 +108,9 @@ export default{
 					sqlite.executeSQL(
 						"INSERT INTO `cybercafe_message`(`ai_id`, `message_content`, `message_time`, `prev_message_time`," +
 						" `character_id`, `entity_id`, operation_content ) VALUES ('" +
-						ai_id + "', '" + content + "', '" + store.state.dialogue.messageTime + "', '" + 
-						store.state.dialogue.prevMessageTime + "', " + store.state.dialogue.crtCharacterId +
-						", " + store.state.setting.entityId + ", '" + operation + "')")
+						ai_id + "', '" + content + "', '" + store_data.messageTime + "', '" + 
+						store_data.prevMessageTime + "', " + store_data.crtCharacterId +
+						", " + store_data.entityId + ", '" + operation + "')")
 					.then(() => {
 						sqlite.selectSQL("select last_insert_rowid() as message_id;").then(message_res => {
 							if (message_res && message_res.length > 0) {
@@ -127,5 +133,53 @@ export default{
 				sqlite.executeSQL('delete from cybercafe_message where message_id = "' 
 					+ selected_id + '";');
 			});
+	},
+	getSpecialEntityList(character_id){
+		return new Promise((resolve, reject) => {
+			/* let sql_str = "SELECT d.entity_id FROM cybercafe_entity_detail d "
+				+ "JOIN cybercafe_character c ON d.character_id = c.character_id "
+				+ " WHERE c.character_online_id = " + character_id 
+				+ "	AND d.entity_id IS NOT NULL;"
+			sqlite.selectSQL(sql_str).then(detail_data => {
+				console.log(detail_data);
+				let entity_ids = [];
+				let sql_str2 = "SELECT e.* FROM cybercafe_entity e "
+					+ " LEFT JOIN cybercafe_message m ON e.entity_id = m.entity_id ";
+				if(detail_data.length > 0){ */
+					/* for(let i in detail_data){
+						if(detail_data[i].entity_id > 0) entity_ids.push(detail_data[i].entity_id);
+					} */
+					//sql_str2 += " WHERE e.entity_id NOT IN (" + entity_ids.concat(',') + ")";
+					/* sql_str2 += " WHERE e.entity_id NOT IN (" + detail_data[0].entity_id + ")";
+				}
+				sql_str2 += " ORDER BY message_time DESC;";
+				sqlite.selectSQL(sql_str2).then(entity_data => {
+					console.log(entity_data);
+					resolve(entity_data);
+				}).catch(e => {
+					reject(e);
+				})
+			}).catch(e => {
+				reject(e);
+			}); */
+			let sql_str = "SELECT * FROM cybercafe_entity "
+			sqlite.selectSQL(sql_str).then(entity_data => {
+				resolve(entity_data);
+			}).catch(e => {
+				reject(e);
+			})
+		});
+	},
+	getMessageByCharacterId(character_id){//用于检测当前切片所在容器有否初始消息
+		return new Promise((resolve, reject) => {
+			let query_str = "select count(*) as message_count from cybercafe_message m"
+				+ " left join cybercafe_entity_detail d on m.entity_id = d.entity_id where d.character_id = '" 
+				+ character_id + "';";
+			sqlite.selectSQL(query_str).then(messageList => {
+				resolve(messageList);
+			}).catch(e => {
+				reject(e);
+			});
+		});
 	},
 }

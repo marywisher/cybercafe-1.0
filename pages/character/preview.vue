@@ -2,10 +2,13 @@
 	<view>
 		<view class="character-bg" :style="dynamicImg"></view>
 		<previewHeader :bgOpacity="bg_opacity" :img="character_image" 
-			:imgOpacity="avatar_opacity" :characterId="character_id"></previewHeader>
+			:imgOpacity="avatar_opacity" @tapDownload="downloadFun"></previewHeader>
 		
-		<previewDescriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"></previewDescriptionPart>
+		<previewDescriptionPart class="character-des" ref="ppdp" @afterLoad="afterLoad"></previewDescriptionPart>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
+		
+		<previewEntityPart class="ppep-view" ref="ppep" :characterId="character_id" 
+			@cancel="cancelFun"></previewEntityPart>
 	</view>
 </template>
 
@@ -14,6 +17,7 @@
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import previewDescriptionPart from '@/modules/character/previewDescriptionPart';
 	import previewHeader from '@/modules/character/previewHeader';
+	import previewEntityPart from '@/modules/character/previewEntityPart';
 	import {
 		mapMutations,
 		mapState,
@@ -31,7 +35,8 @@
 		},
 		components:{
 			previewDescriptionPart,
-			previewHeader
+			previewHeader,
+			previewEntityPart
 		},
 		watch:{
 			modalShow: {
@@ -66,11 +71,19 @@
 				//this.character_key = param.key;
 				this.$forceUpdate();
 			},
+			downloadFun(){
+				this.$refs.ppep.init();
+			},
+			cancelFun(){
+				this.$nextTick(() => {
+					this.$refs.ppdp.init(this.character_id);
+				})
+			}
 		},
 		onLoad(option) {//线上崽预览
 			this.character_id = parseInt(option.id);
 			this.$nextTick(() => {
-				this.$refs.cDP.init(this.character_id);
+				this.$refs.ppdp.init(this.character_id);
 			})
 		},
 		onPageScroll(e) {
@@ -106,6 +119,9 @@
 	.modal-view{
 		z-index: 999;
 		top: 20vh;
+	}
+	.ppep-view{
+		z-index: 3;
 	}
 	@media (prefers-color-scheme: dark) {
 		

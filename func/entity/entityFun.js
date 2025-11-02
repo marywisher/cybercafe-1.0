@@ -2,6 +2,7 @@ import baseQuery from "../dbManager/baseQuery";
 import dialogueQuery from "../dbManager/dialogueQuery";
 import request from "../common/request";
 import store from "@/store";
+import common from '@/func/common/common';
 
 export default{
 	async getEntityId(entity_id = 0){
@@ -120,9 +121,9 @@ export default{
 									'resetFlag': true
 								});	
 								
-								/* uni.switchTab({
-									url: '/pages/index/entity'
-								}); */
+								uni.redirectTo({
+									url: '/pages/entity/entityList'
+								});
 							}else{
 								uni.showToast({
 									title: res.data.msg,
@@ -153,6 +154,48 @@ export default{
 			}
 		}).catch(e => {
 			console.log(e);
+		});
+	},
+	async createEntity(entity_title = ''){
+		let crtTime = common.getCurrentTimeStampStr();
+		let entity_id = await baseQuery.insertDataByKey('cybercafe_entity', 
+			{'entity_title': entity_title, 'entity_created_at': crtTime,
+			'entity_updated_at': crtTime, 'entity_mode': 'chat'}, 
+			true);
+		//console.log(entity_id);
+		request.post("entityController/createEntity", 'character', {
+			'entity_id': entity_id,
+			'ai_select': 1,
+			'mode': 'chat'
+		}).then(res => {
+			if (res.code == 200) {
+				uni.showToast({
+					title: '保存成功',
+					icon: 'success'
+				})
+			}else{
+				uni.showToast({
+					title: res.data.msg,
+					icon: "none"
+				})
+			}
+		});
+		return entity_id;
+	},
+	updateEntityDetail(entity_id, character_id, detail_status = 1){
+		baseQuery.updateDataByKey('cybercafe_entity_detail',
+			{'detail_status': detail_status},
+			{'entity_id': entity_id, 'character_id': character_id});
+	},
+	enterEntity(){
+		this.updateEntityData();
+		uni.navigateBack({
+		    delta: 1, // 返回上一级页面
+		    success: () => {
+		        uni.redirectTo({ // 或者使用uni.reLaunch({...})
+		            url: '/pages/chat/index'
+		        });
+		    }
 		});
 	}
 }

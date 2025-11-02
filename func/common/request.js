@@ -27,6 +27,22 @@ export default {
 		console.log(configData.domain + option);
 		console.log('post_data:' + JSON.stringify(post_data));
 		
+		if(this.checkNetwork() == false) {
+			store.commit('user/setUserData',
+				{
+					'refreshFlag': 'fail',
+					'modalData':
+						{
+							'content': '这是掉线了吗？',
+							'confirmText': '',
+							'cancelText': 'OK',
+						},
+					'modalShow': true,
+					'modalPageId': pageId
+				});
+			return;
+		}
+		
 		return new Promise((resolve, reject) => {
 			uni.request({
 				url: url, 
@@ -101,7 +117,7 @@ export default {
 							'refreshFlag': 'fail',
 							'modalData':
 								{
-									'content': err.msg,
+									'content': err.msg ? err.msg : '未知错误，请联系管理员',
 									'confirmText': '',
 									'cancelText': 'OK',
 								},
@@ -188,6 +204,23 @@ export default {
 	getIp(){
 		let _self = this;
 		//console.log('getip');
+		
+		if(this.checkNetwork() == false) {
+			store.commit('user/setUserData',
+				{
+					'refreshFlag': 'fail',
+					'modalData':
+						{
+							'content': '这是掉线了吗？',
+							'confirmText': '',
+							'cancelText': 'OK',
+						},
+					'modalShow': true,
+					'modalPageId': 'chat'
+				});
+			return;
+		}
+		
 		uni.request({
 			url: "http://ip-api.com/json/?lang=zh-CN", 
 			success: res => {
@@ -201,5 +234,21 @@ export default {
 				console.log(res);
 			}
 		});
+	},
+	checkNetwork(){
+		//获取APP网络信息，不含H5
+		uni.getNetworkType({
+			success: res => {
+				if (res.networkType === 'none') {
+					// 没有网络连接
+					console.log('当前无网络连接');
+					return false;
+				} else {
+					// 有网络连接
+					console.log('wdebug--res', res.networkType);
+					return true;
+				}
+			}
+		})
 	}
 };

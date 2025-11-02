@@ -55,7 +55,7 @@ export default{
 			//console.log(message_id);
 			store.commit('dialogue/setDiaData', {
 				'breakpointMessageId': message_id,
-				'refreshList': true
+				'refreshList': -2
 			});
 		}
 	},
@@ -103,6 +103,9 @@ export default{
 			last_data['html'] = common.textToHtml(content, 
 				store.state.dialogue.crtCharacterId == 0 ? 'right' : 'left', true);
 			history_list[history_list.length - 1] = last_data;
+			store.commit('dialogue/setDiaData', {
+				'refreshList': -1,
+			});
 		}else{//新消息
 			//整理数据
 			let new_data = {
@@ -117,13 +120,13 @@ export default{
 			history_list.push(new_data);
 			store.commit('dialogue/setDiaData', {
 				'cDisplayId': store.state.dialogue.crtCharacterId,
+				'refreshList': 0
 			});
 			//console.log(history_list);
 		}
 		store.commit('dialogue/setDiaData', {
 			'historylist': history_list,
 			'optionFirst': content,
-			'refreshList': true,
 		});
 		//console.log(store.state.dialogue.optionFirst);
 		let tmp_content = store.state.setting.editContent;
@@ -133,7 +136,7 @@ export default{
 		});
 		uni.hideLoading();
 	},
-	updateMessage(operation) {//修改文本
+	updateMessage(operation, content_index) {//修改文本
 		baseQuery.updateDataByKey('cybercafe_message', {
 			'message_content': store.state.dialogue.optionFirst,
 			'operation_content': operation
@@ -150,7 +153,7 @@ export default{
 		history_list[history_list.length - 1].html = last_html;
 		store.commit('dialogue/setDiaData', {
 			'historylist': history_list,
-			'refreshList': true,
+			'refreshList': content_index,
 		});
 		let tmp_content = store.state.setting.editContent;
 		tmp_content[store.state.setting.entityId] = '';
@@ -158,6 +161,30 @@ export default{
 			'editContent': tmp_content
 		});
 		//console.log(store.state.dialogue.historylist);
+		uni.hideLoading();
+	},
+	async injectPrologue(character_id) {//注入开场白，仅用在创建本地切片初始
+		console.log(character_id);
+		if(character_id == 0) return;
+		let detail_data = await baseQuery.getDataByKey('cybercafe_entity_detail', {'character_id': character_id});
+		console.log(detail_data);
+		if(detail_data.length > 0){
+			let character_data = await baseQuery.getDataByKey('cybercafe_character', {'character_id': character_id});
+			if(character_data.length > 0){
+				let content = common.textOperation(character_data[0].character_prologue, '你').text;
+				
+				let entity_id = detail_data[0].entity_id;
+				let message_time = common.getCurrentTimeStampStr(true);
+				let store_data = {
+					'messageTime': message_time,
+					'prevMessageTime': '0',
+					'crtCharacterId': character_id,
+					'entityId': entity_id,
+				}
+				let message_id = await dialogueQuery.createMessage(0, content, message_time + ':creating', store_data);
+				console.log(message_id);
+			}
+		}
 		uni.hideLoading();
 	},
 }

@@ -31,10 +31,10 @@
 					</view>
 				</view>
 			</view>
-			<view class='cropper-config' :style="dynamicStyle">
-				<view class="cropper-choose" :style="'background-color: '+selectButtonBackgroundColor+';color: '+selectButtonColor+';'" @click="chooseImage">{{ selectButtonText }}</view>
-				<view class="cropper-confirm" :style="'background-color: '+saveButtonBackgroundColor+';color: '+saveButtonColor+';'" @click="getImageInfo">{{ saveButtonText }}</view>
-				<view v-if="beEmpty" class="cropper-confirm" :style="'background-color: '+saveButtonBackgroundColor+';color: '+saveButtonColor+';'" @click="returnEmpty">{{ emptyButtonText }}</view>
+			<view class='cropper-config display-flex sp-around display-line'>
+				<cybercafe-button class="cropper-choose" btnClass="btn-default" @click="chooseImage" :btnName="selectButtonText"/>
+				<cybercafe-button class="cropper-confirm" btnClass="btn-primary" @click="getImageInfo" :btnName="saveButtonText"/>
+				<cybercafe-button v-if="beEmpty" class="cropper-confirm" btnClass="btn-warn" @click="returnEmpty" :btnName="emptyButtonText"/>
 			</view>
 			<canvas canvas-id="myCanvas" v-if="originalW>0 && originalH>0" :style="'position:absolute;border: 1px solid red; width:'+(original?originalW:imageW)+'px;height:'+(original?originalH:imageH)+'px;top:-9999px;left:-9999px;'"></canvas>
 		</view>
@@ -107,25 +107,9 @@
 				type:String,
 				default:'选择照片'
 			},
-			selectButtonColor:{
-				type:String,
-				default:'#FFFFFF'
-			},
-			selectButtonBackgroundColor:{
-				type:String,
-				default:'#E94E46'
-			},
 			saveButtonText:{
 				type:String,
 				default:'完成'
-			},
-			saveButtonColor:{
-				type:String,
-				default:'#FFFFFF'
-			},
-			saveButtonBackgroundColor:{
-				type:String,
-				default:'#E94E46'
 			},
 			image:{
 				type:String,
@@ -165,10 +149,6 @@
 				type: Boolean,
 				default: false
 			},
-			dark: {//黑夜模式
-				type: String,
-				default: 'light' //light dark
-			}
 		},
 		/**
 		 * 页面的初始数据
@@ -228,13 +208,6 @@
 				var _this = this; 
 				_this.imageSrc = _this.image; 
 				_this.loadImage(); 
-			}
-		},
-		computed: {
-			dynamicStyle() {
-				return this.dark == 'light' ?
-					`background-color: rgba(255, 255, 255, 1);` : 
-					`background-color: rgba(0, 0, 0, 1);`;
 			}
 		},
 		methods: {
@@ -853,27 +826,25 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	.cropper-config {
-		padding: 100rpx 90rpx;
-		display: flex;
-		justify-content: space-between;
+		padding: calc(10 * $uni-spacing-base) $uni-width-none;
+		background-color: $uni-bg-color-hover;
 	}
 
 	.cropper-choose,.cropper-confirm{
-		background-color: #E94E46;
-		color: #FFFFFF;
-		height: 60rpx;
-		line-height: 60rpx;
-		border-radius: 8rpx;
+		color: $uni-text-color-grey;
+		height: calc(3 * $uni-spacing-lg);
+		line-height: calc(3 * $uni-spacing-lg);
+		border-radius: calc(4 * $uni-spacing-mini);
 		text-align: center;
-		width: 180rpx;
-		font-size: 20rpx;
+		width: calc(7 * $uni-spacing-lg);
+		font-size: $uni-font-size-mini;
 		font-weight: 600;
 	}
 	
 	.page-body{
-		width: calc(100vw);
+		width: 100vw;
 	}
 
 	.cropper-content {
@@ -902,13 +873,13 @@
 	.uni-corpper-content image {
 		display: block;
 		width: 100%;
-		min-width: 0 !important;
+		min-width: $uni-width-none !important;
 		max-width: none !important;
 		height: 100%;
-		min-height: 0 !important;
+		min-height: $uni-width-none !important;
 		max-height: none !important;
 		image-orientation: 0deg !important;
-		margin: 0 auto;
+		margin: $uni-width-none auto;
 	}
 	/* 移动图片效果 */
 
@@ -952,7 +923,7 @@
 		width: 100%;
 		height: 100%;
 		overflow: visible;
-		outline: 1rpx solid #f0ad4e;
+		outline: 1rpx solid $uni-color-secondary;
 		outline-color: rgba(240, 173, 78, .75)
 	}
 	/* 横向虚线 */
@@ -982,7 +953,7 @@
 		position: absolute;
 		display: block;
 		width: 100%;
-		background-color: #f0ad4e;
+		background-color: $uni-color-secondary;
 		top: 0;
 		left: 0;
 		height: 1rpx;
@@ -1007,9 +978,9 @@
 	.uni-cropper-line-r {
 		position: absolute;
 		display: block;
-		background-color: #f0ad4e;
+		background-color: $uni-color-secondary;
 		top: 0;
-		right: 0rpx;
+		right: 0;
 		width: 1rpx;
 		opacity: 0.1;
 		height: 100%;
@@ -1034,7 +1005,7 @@
 		position: absolute;
 		display: block;
 		width: 100%;
-		background-color: #f0ad4e;
+		background-color: $uni-color-secondary;
 		bottom: 0;
 		left: 0;
 		height: 1rpx;
@@ -1046,7 +1017,7 @@
 		content: '';
 		position: absolute;
 		top: 50%;
-		right: 0rpx;
+		right: 0;
 		width: 100%;
 		-webkit-transform: translate3d(0, -50%, 0);
 		transform: translate3d(0, -50%, 0);
@@ -1059,7 +1030,7 @@
 	.uni-cropper-line-l {
 		position: absolute;
 		display: block;
-		background-color: #f0ad4e;
+		background-color: $uni-color-secondary;
 		top: 0;
 		left: 0;
 		width: 1rpx;
@@ -1121,7 +1092,7 @@
 		cursor: n-resize;
 		width: 36rpx;
 		height: 36rpx;
-		background-color: #f0ad4e;
+		background-color: $uni-color-secondary;
 		position: absolute;
 		z-index: 1112;
 		opacity: 1;
@@ -1177,5 +1148,10 @@
 		top: -100rpx;
 		left: 0;
 		right: 0;
+	}
+	@media (prefers-color-scheme: dark) {
+		.cropper-config{
+			background-color: $uni-bg-dark-color-gray;
+		}
 	}
 </style>

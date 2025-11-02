@@ -109,7 +109,7 @@
 							this.historylist.splice(i, 1);
 							this.setDiaData({
 								'historylist': this.historylist,
-								'refreshList': true,
+								'refreshList': -2,
 							});
 							//promptFun.preOperation();
 							break;
@@ -154,9 +154,9 @@
 					'options': option_list
 				});
 						
-				//promptFun.preOperation();		
+				//promptFun.preOperation();
 				this.setDiaData({
-					'refreshList': true,
+					'refreshList': -2,
 				});
 			},
 			decorateBubble(){

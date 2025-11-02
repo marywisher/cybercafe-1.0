@@ -6,7 +6,7 @@
 | 小红书   | [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)（目前内测0.6版本的操作说明在小红书上） |
 | B站     | 搭建中，稍后公布 |
 | QQ群    | 42094098（已满）（目前内测的0.6版APK和PC模拟器在群文件夹里） |
-| Discord | [https://discord.gg/YHbrvYnx](https://discord.gg/YHbrvYnx) （内测0.6版APK也打了分包提交在社区了） |
+| Discord | [https://discord.gg/2gCrR88D](https://discord.gg/2gCrR88D) （内测0.6版APK也打了分包提交在社区了） |
 | 贴吧    | [赛博食堂](https://tieba.baidu.com/f?kw=赛博食堂) (刚建) |
 
 
@@ -80,7 +80,6 @@ func/                   # 功能模块
   common/               # 公共工具函数
     base64.min.js       # Base64工具
     common.js           # 通用函数
-    constants.js        # 常量定义
     handleFun.js        # 处理函数
     request.js          # 请求工具
     sqlite.js           # SQLite工具
@@ -197,6 +196,6 @@ unpackage/              # 打包输出
 
 ## 联系我们
 - QQ: 63846152（不知名剧作家）
-- Discord: [https://discord.gg/YHbrvYnx](https://discord.gg/YHbrvYnx)
+- Discord: [https://discord.gg/2gCrR88D](https://discord.gg/2gCrR88D)
 - 小红书: [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)
 - 贴吧: [赛博食堂](https://tieba.baidu.com/f?kw=赛博食堂)

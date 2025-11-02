@@ -1,5 +1,6 @@
 import common from '@/func/common/common';
 import baseQuery from '@/func/dbManager/baseQuery';
+import entityFun from './entityFun';
 
 export default{
 	parseData(result_data, is_local = false){
@@ -8,8 +9,9 @@ export default{
 			'character_id': result_data.character_id,
 			'character_name': result_data.character_name,
 			'character_img': result_data.img_url,
-			'character_prologue': result_data.character_prologue,
+			'character_prologue': result_data.character_prologue ? result_data.character_prologue : '',
 			'character_created_at': result_data.character_created_at,
+			'character_story': result_data.character_memo ? result_data.character_memo : ''
 		};
 		if(!is_local){
 			let tag_list = [];
@@ -53,8 +55,6 @@ export default{
 			}
 			
 			character_data.full_description = pos > -1 ? common.textOperation(description_data.substr(pos + 2), '你').text : '';
-			character_data.character_story = result_data.character_memo ? result_data.character_memo : '';
-			character_data.character_prologue = result_data.character_prologue;
 		}else{
 			description_data = JSON.parse(description_data);
 			//新结构
@@ -80,7 +80,7 @@ export default{
 		//console.log(character_data);
 		return character_data;
 	},
-	async previewToDb(result_data){
+	async previewToDb(result_data, entity_id = 0){
 		//console.log(result_data);
 		let character_gender = result_data.character_gender;
 		let gender_cn = this.getGenderCn(character_gender);
@@ -99,6 +99,14 @@ export default{
 		//console.log(db_data);
 		let character_id = await baseQuery.insertDataByKey('cybercafe_character', db_data, true);
 		//console.log(character_id);
+		
+		if(entity_id == 0){
+			let entity_id = await entityFun.createEntity(result_data.character_name + '的容器');	
+			//console.log(entity_id);
+			entityFun.updateEntityDetail(entity_id, character_id);
+		}else{
+			entityFun.updateEntityDetail(entity_id, character_id);
+		}
 		return character_id;
 	},
 	getGenderCn(gender_num){

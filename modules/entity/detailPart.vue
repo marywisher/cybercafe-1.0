@@ -30,16 +30,22 @@
 		</view>
 		<view class="flag-tag branch-story-tag" @tap="gotoCharacterList">舞台控制</view>
 		<view class="entity-line after-tag"></view>
-		<view class="entity-line">
-			
+		<view class="entity-line character-line">
+			<characterPart v-for="item, index in character_on_stage" :key="index" character-type="out"
+				:characterId="item.character_id" :characterImg="item.character_img" @afterTap="moveCharacter"></characterPart>
+		</view>
+		<view class="entity-line character-line">
+			<characterPart v-for="item, index in character_off_stage" :key="index" character-type="in"
+				:characterId="item.character_id" :characterImg="item.character_img"@afterTap="moveCharacter"></characterPart>
 		</view>
 	</cybercafe-view>
 </template>
 
 <script>
-	//import responseFun from '@/func/entity/responseFun';
 	import common from '@/func/common/common';
 	import baseQuery from '@/func/dbManager/baseQuery';
+	import characterPart from './characterPart';
+	import dialogueQuery from '@/func/dbManager/dialogueQuery';
 	import {
 		mapMutations,
 		mapState,
@@ -51,8 +57,13 @@
 			return{
 				entity_title: '',
 				subject_name: '',
-				subject_description: ''
+				subject_description: '',
+				character_on_stage: [],
+				character_off_stage: []
 			}
+		},
+		components: {
+			characterPart
 		},
 		computed: {
 			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
@@ -74,6 +85,18 @@
 				this.subject_description = entity_data[0].subject_description;
 				this.$emit('afterLoad',
 					{'image': entity_data[0].entity_img});
+				
+				let img_data = await dialogueQuery.getCharacterByEntityIdNoLimit();
+				this.character_on_stage = [];
+				this.character_off_stage = [];
+				for(let i in img_data){
+					if(img_data[i].detail_status == 1){
+						this.character_on_stage.push(img_data[i]);
+					}else{
+						this.character_off_stage.push(img_data[i]);
+					}
+				}
+				this.$forceUpdate();
 			},
 			async autoSave(kind, value){
 				if(kind == 'entity_title' && this.entity_title.trim().length == 0){
@@ -90,43 +113,50 @@
 					})
 					return;
 				}else{
-					/* let response_feedback = await responseFun.toolRequest('sensitive',
-						value, 'entity');
-					if(response_feedback == 200){ */
-						let updateArr = {'entity_updated_at': common.getCurrentTimeStampStr()};
-						updateArr[kind] = value;
-						let whereArr = {entity_id: this.entityId};
-						let feedback = await baseQuery.updateDataByKey('cybercafe_entity', updateArr, whereArr);
-						if(feedback == 'inserted' || feedback == 'updated'){
-							if(kind == 'entity_title'){
-								this.setDiaData({
-									'title': value,
-								});
-							}
-							//保存
-							uni.showToast({
-								title: '数据已保存',
-								icon: 'none'
-							})
+					let updateArr = {'entity_updated_at': common.getCurrentTimeStampStr()};
+					updateArr[kind] = value;
+					let whereArr = {entity_id: this.entityId};
+					let feedback = await baseQuery.updateDataByKey('cybercafe_entity', updateArr, whereArr);
+					if(feedback == 'inserted' || feedback == 'updated'){
+						if(kind == 'entity_title'){
+							this.setDiaData({
+								'title': value,
+							});
 						}
-					/* }else{
-						this.setUserData({
-							'modalData': {
-								title: "温馨提示",
-								content: response_feedback,
-								confirmText: '',
-								cancelText: "OK",
-							},
-							'modalShow': true,
-							'modalPageId': 'entity'
+						//保存
+						uni.showToast({
+							title: '数据已保存',
+							icon: 'none'
 						})
-					} */
+					}					
 				}
 			},
 			gotoCharacterList(){
 				uni.navigateTo({
 					url: '/pages/character/characterList'
 				})
+			},
+			moveCharacter(character_id){
+				let flag = true;
+				for(let i in this.character_on_stage){
+					if(this.character_on_stage[i].character_id == character_id){
+						let character_data = this.character_on_stage[i];
+						this.character_off_stage.push(character_data);
+						this.character_on_stage.splice(i, 1);
+						flag = false;
+						break;
+					}
+				}
+				if(flag){
+					for(let i in this.character_off_stage){
+						if(this.character_off_stage[i].character_id == character_id){
+							let character_data = this.character_off_stage[i];
+							this.character_on_stage.push(character_data);
+							this.character_off_stage.splice(i, 1);
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -142,5 +172,11 @@
 	}
 	.flag-tag{
 		left: $uni-spacing-lg;
+	}
+	.character-line{
+		flex-wrap: wrap;
+	}
+	.character-line .item-character{
+		margin: $uni-spacing-base $uni-spacing-base $uni-spacing-base 0;
 	}
 </style>

@@ -2,9 +2,9 @@
 	<view>
 		<view class="entity-bg" :style="dynamicImg(entity_image)"></view>
 		<view class="view-for-tap" @tap="showMoreImg"></view>
-		<entityHeader :bg_opacity="bg_opacity"></entityHeader>
+		<entityHeader ref="eEHP" :bg_opacity="bg_opacity"></entityHeader>
 		<detailPart class="entity-des" ref="eDP" @afterLoad="afterLoad"></detailPart>
-		<image-part ref="eImgPart" :originImg="entity_image" :dark="darkMode" 
+		<image-part ref="eImgPart" :originImg="entity_image"
 			showCreate showLocal @afterClick="afterSelectImg"></image-part>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
@@ -26,7 +26,8 @@
 		data(){
 			return {
 				entity_image: configData.defaultImg,
-				bg_opacity: 0
+				bg_opacity: 0,
+				entity_character_count: 0 //有角色才能开聊
 			}
 		},
 		components:{
@@ -96,6 +97,7 @@
 		},
 		onLoad() {
 			this.$nextTick(() => {
+				this.$refs.eEHP.init();
 				this.$refs.eDP.init();
 			})
 		},

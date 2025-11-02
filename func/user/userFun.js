@@ -1,7 +1,7 @@
 import common from "../common/common";
+import { VERSION } from "../common/common";
 import store from "@/store";
 import request from "@/func/common/request";
-import { VERSION } from "../common/constants";
 import baseQuery from "../dbManager/baseQuery";
 import incubatorFun from "@/func/incubator/incubatorFun";
 import aiFun from "@/func/setting/aiFun";

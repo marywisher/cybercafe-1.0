@@ -15,8 +15,8 @@
 	} from 'vuex';
 	export default{
 		name: 'entityHeader',
-		data:{
-			return (){
+		data(){
+			return {
 				new_msg_count: false
 			}
 		},

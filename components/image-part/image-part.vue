@@ -21,7 +21,7 @@
 		
 		<cybercafe-view ref="popup" @maskClick="closeCrop" isAbsolute closeAble :closeType="0"
 			popViewStyle="position: fixed; bottom: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none;">
-			<okingtz-cropper :beEmpty="beEmpty" :fixedNumber="fixedNumber" :dark="dark"
+			<okingtz-cropper :beEmpty="beEmpty" :fixedNumber="fixedNumber"
 				:maxCropper="true" @uploadSuccess="saveImage"></okingtz-cropper>
 		</cybercafe-view>
 	</cybercafe-view>
@@ -61,10 +61,6 @@
 				type: Boolean,
 				default: false
 			},
-			dark:{
-				type: String,
-				default: 'light'
-			},
 			ckey: {
 				type: String,
 				default: ''
@@ -88,7 +84,7 @@
 		},
 		watch: {
 			id(newValue){
-				//console.log(newValue);
+				console.log(newValue);
 			}
 		},
 		components: {

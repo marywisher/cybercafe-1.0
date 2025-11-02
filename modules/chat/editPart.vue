@@ -27,7 +27,6 @@
 </template>
 
 <script>
-	import common from '@/func/common/common';
 	import responseFun from '@/func/entity/responseFun';
 	import {
 		mapMutations,

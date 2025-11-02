@@ -19,7 +19,7 @@ export default {
 		editMode: false, //弹出编辑模块后，是否显示编辑框，只在3处更改状态
 		blankMode: false, //是否纯手写模式
 		resetFlag: false, //是否编辑框初始化
-		refreshList: false, //刷新chat列表
+		refreshList: 0, //刷新chat列表 0续写回复，-1重说，n已知序号修改，-2页面初始化未知位置， -3不刷
 		breakpointMessageId: 0, //用于记录下拉加载的断点
 		
 		entityImage: '',

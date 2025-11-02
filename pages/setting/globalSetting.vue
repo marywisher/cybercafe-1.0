@@ -259,7 +259,7 @@
 
 <style lang="scss">
 	.user-info-part{
-		margin-top: $page-header-height;
+		margin-top: calc($page-header-height + $uni-spacing-lg);
 	}
 	.global-setting-label{
 		width: 30vw;

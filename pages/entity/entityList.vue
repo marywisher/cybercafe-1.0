@@ -61,15 +61,7 @@
 			},
 			async gotoEntity(entity_id){
 				this.setSettingData({'entityId': entity_id});
-				entityFun.updateEntityData();
-				uni.navigateBack({
-				    delta: 1, // 返回上一级页面
-				    success: () => {
-				        uni.redirectTo({ // 或者使用uni.reLaunch({...})
-				            url: '/pages/chat/index'
-				        });
-				    }
-				});
+				entityFun.enterEntity();
 			},
 			gotoEntitySetting(entity_id){
 				this.setSettingData({'entityId': entity_id});

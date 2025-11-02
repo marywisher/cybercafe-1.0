@@ -5,7 +5,6 @@
 			<view class="iconfont icon-chatou" @tap="download"></view>
 			<label class="hint" @tap="download">载入切片</label>
 		</view>
-		
 	</cybercafe-header>
 </template>
 
@@ -30,10 +29,6 @@
 				type: Number,
 				default: 0
 			},
-			characterId: {
-				type: Number,
-				default: 0
-			}
 		},
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
@@ -52,11 +47,7 @@
 						confirmText: '确认载入',
 						cancelText: "手滑了",
 						success: (res) => {
-							if(_self.characterId != 0){
-								uni.navigateTo({
-									url: '/pages/character/index?online_id=' + _self.characterId
-								})
-							}
+							_self.$emit('tapDownload');
 						},
 					},
 					'modalShow': true,

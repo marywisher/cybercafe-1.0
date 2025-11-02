@@ -2,10 +2,13 @@
 	<view>
 		<view class="character-bg" :style="dynamicImg"></view>
 		<view class="view-for-tap" @tap="showMoreImg"></view>
-		<characterHeader :bgOpacity="bg_opacity" :img="character_image" :imgOpacity="avatar_opacity"></characterHeader>
+		<characterHeader :bgOpacity="bg_opacity" :img="character_image" 
+			:imgOpacity="avatar_opacity" ref="cCH"
+			@tapEnter="gotoEntity"></characterHeader>
 		
-		<descriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"></descriptionPart>
-		<image-part ref="cImgPart" :originImg="character_image" :dark="darkMode" 
+		<descriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"
+			@afterCreate="gotoEntity"></descriptionPart>
+		<image-part ref="cImgPart" :originImg="character_image"
 			showCreate showLocal showOnline @afterClick="afterSelectImg"></image-part>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
@@ -16,6 +19,10 @@
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import descriptionPart from '@/modules/character/descriptionPart';
 	import characterHeader from '@/modules/character/characterHeader';
+	import entityFun from '@/func/entity/entityFun';
+	import baseQuery from '@/func/dbManager/baseQuery';
+	import messageFun from '@/func/entity/messageFun';
+	import dialogueQuery from '@/func/dbManager/dialogueQuery';
 	import {
 		mapMutations,
 		mapState,
@@ -55,6 +62,7 @@
 		},
 		computed: {
 			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['entityId']),
 			dynamicImg() {
 				return this.darkMode == 'light' ?
 				`background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.1) 80%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 1)), url('${this.character_image}');` : 
@@ -63,6 +71,7 @@
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
+			...mapMutations('setting', ['setSettingData']),
 			showMoreImg(){
 				//console.log('show gallery');
 				this.$refs.cImgPart.openBox(this.character_id.toString());
@@ -85,16 +94,45 @@
 				//this.character_key = param.key;
 				this.$forceUpdate();
 			},
+			async gotoEntity(character_id = 0){
+				console.log(character_id);
+				if(character_id > 0){
+					this.character_id = character_id;
+					//开场白注入
+					messageFun.injectPrologue(character_id);
+				} else{
+					let message_count = await dialogueQuery.getMessageByCharacterId(this.character_id);
+					//console.log(message_count);
+					if(message_count[0].message_count == 0) messageFun.injectPrologue(this.character_id);
+				}
+				this.$refs.cCH.init(this.character_id);
+				let detail_data = await baseQuery.getDataByKey('cybercafe_entity_detail',
+					{'character_id': this.character_id});
+				if(detail_data){
+					console.log(detail_data[0].entity_id);
+					this.setSettingData({'entityId': detail_data[0].entity_id});
+					entityFun.enterEntity();
+				}else{
+					uni.showToast({
+						title: '请重新载入数据或联系管理员',
+						icon:'none'
+					})
+				}
+			},
 		},
 		onLoad(option) {
 			if(option.hasOwnProperty('id')){
-				this.character_id = option.id;
+				//console.log(option.id);
+				this.character_id = parseInt(option.id);
 				this.$nextTick(() => {
 					this.$refs.cDP.init(this.character_id);
+					this.$refs.cCH.init(this.character_id);
 				})
 			}else if(option.hasOwnProperty('online_id')){
+				this.character_id = 0;
+				//console.log(option.online_id, option.entity_id);
 				this.$nextTick(() => {
-					this.character_id = this.$refs.cDP.createCharacter(option.online_id);
+					this.$refs.cDP.createCharacter(option.online_id, option.entity_id);
 				})
 			}
 		},

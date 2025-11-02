@@ -121,10 +121,21 @@
 		},
 		watch: {
 			refreshList(newOption){
-				if(newOption){
+				console.log(newOption);
+				switch(newOption){
+					case -3: //不刷
+					break;
+					case -2: //初始化
 					this.$nextTick(() => {
 						this.init();
 					})
+					break;
+					case -1: //重说
+					this.fastInit(this.options.length - 1);
+					break;
+					default: //0续写 n修改
+					this.fastInit(newOption);
+					break;
 				} 
 			},
 			lockMode(newValue){
@@ -168,7 +179,7 @@
 		computed: {
 			...mapState('user', ['darkMode']),
 			...mapState('dialogue', ['cDisplayId', 'characterlist',  'entityMode', 'historylist', 
-				'optionFirst', 'options', 'refreshList']),
+				'messageTime', 'optionFirst', 'options', 'refreshList']),
 			...mapState('setting', ['bubbleAlign', 'bubbleColor', 'bubbleOpacity', 
 				'chatCss', 'chatPattern', 
 				'fontColor', 'fontSize', 'imgWidth', 'imgRadius']),
@@ -228,12 +239,7 @@
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			async init(){
-				this.option_first_text = this.optionFirst;
-				this.option_first_html = common.textToHtml(this.optionFirst, this.cDisplayId ? 'left' : 'right', true);
-				//console.log(this.cDisplayId, this.option_first_html);
-				this.history_list = this.historylist;
-				//console.log('option_first_text:' + this.optionFirst);
-				this.swiper_index = -1;
+				this.fastInit(-1);
 				for(let i = 0; i < this.options.length; i ++){
 					//console.log(this.options[i].text);
 					if(this.options[i].text == this.option_first_text){
@@ -242,10 +248,9 @@
 						break;
 					}
 				}
-				//console.log(this.swiper_index);
+				console.log(this.swiper_index);
 				if(!this.lock_mode) this.$emit('afterUpdate');
 				this.refreshPattern(this.chatPattern);
-				uni.hideLoading();
 				if(this.history_list.length >= 50) {
 					setTimeout(() => {
 						this.loading_text = this.origin_text;
@@ -253,6 +258,18 @@
 				}
 				//console.log(this.options.length);
 				//console.log(this.edit_mode);
+			},
+			fastInit(content_index){
+				this.option_first_text = this.optionFirst;
+				this.option_first_html = common.textToHtml(this.optionFirst, this.cDisplayId ? 'left' : 'right', true);
+				//console.log(this.cDisplayId, this.option_first_html);
+				this.history_list = this.historylist;
+				//console.log('option_first_text:' + this.optionFirst);
+				this.swiper_index = content_index;
+				uni.hideLoading();
+				this.setDiaData({
+					'refreshList': -3,
+				}); 
 			},
 			async handleLongPress(event) {
 				//console.log(event.currentTarget);
@@ -339,7 +356,7 @@
 				}
 				let	operation = this.messageTime + ':option.select:'
 					+ (this.options.length > 0 ? this.options[this.swiper_index].model : 'prologue') + (this.edit ? '-edit' : '');
-				messageFun.updateMessage(operation);
+				messageFun.updateMessage(operation, crt_index);
 			},
 			editChange(param){
 				this.hideMenu();
@@ -348,9 +365,6 @@
 			async refreshPattern(pattern_index){
 				//console.log(pattern_index);
 				let pattern_data = await baseQuery.getDataByKey('cybercafe_bubble_pattern', {pattern_id: pattern_index});
-				this.setDiaData({
-					'refreshList': false,
-				}); 
 				let pattern_css = pattern_data[0].pattern_css;
 				pattern_css = pattern_css.replace('<style><style>', '<style>').replace('</style></style>', '</style>');
 				this.setSettingData({
