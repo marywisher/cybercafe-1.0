@@ -6,14 +6,13 @@
 
 <script>
 	import config from '@/config.json';
+	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
+	
 	import {
 		mapMutations,
 		mapState,
 		mapActions
 	} from 'vuex';
-	
-	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
-	
 	export default{
 		name: 'chatBg',
 		computed:{

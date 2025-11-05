@@ -103,6 +103,6 @@
 		width: calc(2 * $uni-spacing-lg);
 		height: calc(2 * $uni-spacing-lg);
 		border-radius: $uni-border-radius-circle;
-		margin: $uni-spacing-base $uni-spacing-base $uni-spacing-base 0;
+		margin: $uni-spacing-base $uni-spacing-base $uni-spacing-base $uni-width-none;
 	}
 </style>

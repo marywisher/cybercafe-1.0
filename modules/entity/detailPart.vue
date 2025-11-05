@@ -30,13 +30,18 @@
 		</view>
 		<view class="flag-tag branch-story-tag" @tap="gotoCharacterList">舞台控制</view>
 		<view class="entity-line after-tag"></view>
-		<view class="entity-line character-line">
-			<characterPart v-for="item, index in character_on_stage" :key="index" character-type="out"
+		<view class="hint">场上角色：</view>
+		<view class="entity-line character-line display-flex display-line">
+			<characterPart v-for="item, index in character_on_stage" :key="index" 
+				:character-type="character_on_stage.length == 1 ? 'default' : 'out'"
 				:characterId="item.character_id" :characterImg="item.character_img" @afterTap="moveCharacter"></characterPart>
 		</view>
-		<view class="entity-line character-line">
+		<view class="hint">候场角色：</view>
+		<view class="entity-line character-line display-flex display-line">
 			<characterPart v-for="item, index in character_off_stage" :key="index" character-type="in"
 				:characterId="item.character_id" :characterImg="item.character_img"@afterTap="moveCharacter"></characterPart>
+				
+			<view class="character-more iconfont icon-jiahao"></view>
 		</view>
 	</cybercafe-view>
 </template>
@@ -80,9 +85,10 @@
 			async init(){
 				//console.log(this.entityId);
 				let entity_data = await baseQuery.getDataByKey('cybercafe_entity', {'entity_id': this.entityId});
-				this.entity_title = entity_data[0].entity_title;
-				this.subject_name = entity_data[0].subject_name;
-				this.subject_description = entity_data[0].subject_description;
+				console.log(entity_data);
+				this.entity_title = entity_data[0].entity_title ? entity_data[0].entity_title : '';
+				this.subject_name = entity_data[0].subject_name ? entity_data[0].subject_name : '';
+				this.subject_description = entity_data[0].subject_description ? entity_data[0].subject_description : '';
 				this.$emit('afterLoad',
 					{'image': entity_data[0].entity_img});
 				
@@ -137,6 +143,7 @@
 				})
 			},
 			moveCharacter(character_id){
+				console.log(character_id);
 				let flag = true;
 				for(let i in this.character_on_stage){
 					if(this.character_on_stage[i].character_id == character_id){
@@ -176,7 +183,13 @@
 	.character-line{
 		flex-wrap: wrap;
 	}
-	.character-line .item-character{
-		margin: $uni-spacing-base $uni-spacing-base $uni-spacing-base 0;
+	.character-more{
+		width: calc(2 * $uni-font-size-huge);
+		height: calc(2 * $uni-font-size-huge);
+		border-radius: $uni-border-radius-circle;
+		border: $uni-border-base solid $uni-border-color;
+		font-size: $uni-font-size-huge;
+		text-align: center;
+		line-height: calc(2 * $uni-font-size-huge);
 	}
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<view class="character-container">
 		<image mode="aspectFill" class="item-character" :src="characterImg"></image>
-		<view class="iconfont red-point" @tap="operation" 
+		<view v-if="characterType != 'default'" class="iconfont red-point" @tap="operation" 
 			:class="{'icon-jiahao': characterType == 'in', 'icon-jianhao': characterType == 'out'}"></view>
 	</view>
 </template>
@@ -28,7 +28,7 @@
 			},
 			characterType: {
 				type: String,
-				default: 'in' //in 待上场   out 待离场
+				default: 'in' //in 待上场   out 待离场	default 最后一个，无符号
 			}
 		},
 		computed:{
@@ -37,12 +37,18 @@
 		methods: {
 			...mapMutations('setting', ['getSettingData']),
 			operation(){
-				if(this.entityId == 0 || this.characterId == 0) return;
+				if(this.entityId == 0 || this.characterId == 0 || this.characterType == 'default') return;
 				let status = 0;
+				let hint_str = '离场';
 				if(this.characterType == 'in'){
 					status = 1;
+					hint_str = '登场';
 				}
 				entityFun.updateEntityDetail(this.entityId, this.characterId, status);
+				uni.showToast({
+					title: '角色已' + hint_str,
+					icon: 'none'
+				})
 				this.$emit('afterTap', this.characterId);
 			}
 		}
@@ -52,6 +58,9 @@
 <style lang="scss">
 	.character-container{
 		position: relative;
+		width: calc(2 * $uni-font-size-huge);
+		height: calc(2 * $uni-font-size-huge);
+		margin: $uni-spacing-base $uni-spacing-base $uni-spacing-base $uni-width-none;;
 	}
 	.item-character{
 		width: calc(2 * $uni-font-size-huge);
@@ -61,13 +70,15 @@
 	.red-point{
 		font-size: $uni-font-size-mini;
 		background-color: $uni-color-main;
-		color: $uni-text-color-disable;
-		width: calc(2 * $uni-spacing-sm);
-		height: calc(2 * $uni-spacing-sm);
+		color: $uni-color-secondary;
+		width: calc(4 * $uni-spacing-sm);
+		height: calc(4 * $uni-spacing-sm);
 		border-radius: $uni-border-radius-circle;
 		position: absolute;
 		top: 0;
 		right: 0;
+		text-align: center;
+		line-height: calc(4 * $uni-spacing-sm);
 	}
 	@media (prefers-color-scheme: dark) {
 		.red-point{

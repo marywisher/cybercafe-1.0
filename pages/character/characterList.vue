@@ -37,7 +37,7 @@
 <script>
 	import config from '@/config.json';
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
-	import baseQuery from '@/func/dbManager/baseQuery';
+	
 	import common from '@/func/common/common';
 	import request from '@/func/common/request';
 	import characterFun from '@/func/entity/characterFun';

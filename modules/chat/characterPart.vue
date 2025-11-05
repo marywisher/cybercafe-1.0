@@ -162,7 +162,7 @@
 		height: calc(2 * $uni-img-size-base);
 	}
 	.character-right, .character-name{
-		font-size: $uni-font-size-huge;
+		//font-size: $uni-font-size-huge;
 		line-height: calc($uni-img-size-base * 2 + $uni-border-base * 2);
 	}
 	.character-name, .character-line .icon-shezhi{

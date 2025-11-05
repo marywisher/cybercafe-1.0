@@ -154,7 +154,7 @@
 	.absolute-view{
 		width: 80vw;
 		padding: $uni-spacing-lg;
-		margin: $page-header-height auto;
+		margin: calc($page-header-height + $uni-spacing-base) auto $page-bottom-height;
 	}
 	.disabled-view{
 		color: $uni-text-color-disable;

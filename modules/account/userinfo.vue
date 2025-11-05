@@ -281,9 +281,13 @@
 	.reward-detail, .icon-fuzhi, .info-part, .account-title, .tag-part{
 		margin-left: $uni-spacing-lg;
 	}
+	.tag-part{
+		flex-wrap: wrap;
+	}
 	.tag-item{
 		color: $uni-color-secondary;
 		border-color: $uni-color-secondary;
+		margin-bottom: $uni-spacing-lg;
 	}
 	@media (prefers-color-scheme: dark) {
 		.account-info, .account-detail{

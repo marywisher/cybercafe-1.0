@@ -14,6 +14,7 @@
 	import config from '@/config.json';
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	
+	import baseQuery from '@/func/dbManager/baseQuery';
 	import entityHeader from '@/modules/entity/entityHeader';
 	import detailPart from '@/modules/entity/detailPart';
 	import common from '@/func/common/common';
@@ -78,6 +79,7 @@
 			},
 			async afterSelectImg(e){
 				this.entity_image = e;
+				this.$forceUpdate();
 				let whereArr = {'entity_id': this.entityId};
 				let updateArr = {'entity_img': this.entity_image,
 					'entity_updated_at': common.getCurrentTimeStampStr()};

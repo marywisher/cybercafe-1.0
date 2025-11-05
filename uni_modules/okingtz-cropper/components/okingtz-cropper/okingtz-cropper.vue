@@ -32,9 +32,9 @@
 				</view>
 			</view>
 			<view class='cropper-config display-flex sp-around display-line'>
-				<cybercafe-button class="cropper-choose" btnClass="btn-default" @click="chooseImage" :btnName="selectButtonText"/>
-				<cybercafe-button class="cropper-confirm" btnClass="btn-primary" @click="getImageInfo" :btnName="saveButtonText"/>
-				<cybercafe-button v-if="beEmpty" class="cropper-confirm" btnClass="btn-warn" @click="returnEmpty" :btnName="emptyButtonText"/>
+				<view class="cropper-choose" @click="chooseImage">{{ selectButtonText }}</view>
+				<view class="cropper-confirm" @click="getImageInfo">{{ saveButtonText }}</view>
+				<view v-if="beEmpty" class="cropper-primary" @click="returnEmpty">{{ emptyButtonText }}</view>
 			</view>
 			<canvas canvas-id="myCanvas" v-if="originalW>0 && originalH>0" :style="'position:absolute;border: 1px solid red; width:'+(original?originalW:imageW)+'px;height:'+(original?originalH:imageH)+'px;top:-9999px;left:-9999px;'"></canvas>
 		</view>
@@ -832,15 +832,26 @@
 		background-color: $uni-bg-color-hover;
 	}
 
-	.cropper-choose,.cropper-confirm{
-		color: $uni-text-color-grey;
-		height: calc(3 * $uni-spacing-lg);
-		line-height: calc(3 * $uni-spacing-lg);
-		border-radius: calc(4 * $uni-spacing-mini);
+	.cropper-choose, .cropper-confirm, .cropper-primary{
+		border-radius: $uni-border-radius-lg;
+		font-size: $uni-font-size-sm;
 		text-align: center;
-		width: calc(7 * $uni-spacing-lg);
-		font-size: $uni-font-size-mini;
-		font-weight: 600;
+		padding: $uni-spacing-sm $uni-spacing-lg;
+		line-height: calc(2 * $uni-spacing-lg);
+		width: calc(9 * $uni-spacing-lg);
+	}
+	.cropper-choose{
+		background-color: $uni-bg-color-grey;
+		color: $uni-color-main;
+		border: $uni-border-base solid $uni-color-main;
+	}
+	.cropper-confirm{
+		background-color: $uni-color-main;
+		color: $uni-bg-color-grey;
+	}
+	.cropper-primary{
+		background-color: $uni-color-secondary;
+		color: $uni-color-main;
 	}
 	
 	.page-body{

@@ -3,7 +3,7 @@
 		popViewStyle="position: fixed; top: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none; color: #c0c0c0;">
 		
 		<swiper class="swiper-box" @change="swiperChange" :current="swiper_current">
-			<swiper-item>
+			<swiper-item v-if="originImg && originImg != default_image">
 				<image class="ipimg" mode="aspectFit" :src="originImg" @tap="closeBox"></image>
 			</swiper-item>
 			<swiper-item v-if="images.length > 0" v-for="(item, index) in images" :key="index">
@@ -16,12 +16,12 @@
 				<image class="ipimg" mode="aspectFit" :src="default_image" @tap="openCrop"></image>
 			</swiper-item>
 		</swiper>
-		<cybercafeSwiperDot :list="(showCreate ? images.concat(['1', '2']) : images.concat(['1']))"
+		<cybercafeSwiperDot :list="(showCreate && originImg && originImg != default_image ? images.concat(['1', '2']) : images.concat(['1']))"
 			@tapDot="clickItem" :swiperCurrent="swiper_current"></cybercafeSwiperDot>
 		
 		<cybercafe-view ref="popup" @maskClick="closeCrop" isAbsolute closeAble :closeType="0"
 			popViewStyle="position: fixed; bottom: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none;">
-			<okingtz-cropper :beEmpty="beEmpty" :fixedNumber="fixedNumber"
+			<okingtz-cropper :beEmpty="beEmpty && originImg" :fixedNumber="fixedNumber"
 				:maxCropper="true" @uploadSuccess="saveImage"></okingtz-cropper>
 		</cybercafe-view>
 	</cybercafe-view>
@@ -248,7 +248,7 @@
 						'image_selected_count': 1,
 						'image_status': 4
 					};
-					baseQuery.insertDataByKey('cybercafe_images', insertArr, true);	
+					baseQuery.insertDataByKey('cybercafe_images', insertArr);	
 				}
 				this.closeBox();
 				this.$emit('afterClick', imgFile);

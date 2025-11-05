@@ -135,6 +135,7 @@
 					break;
 					default: //0续写 n修改
 					this.fastInit(newOption);
+					if(!this.lock_mode) this.$emit('afterUpdate');
 					break;
 				} 
 			},
@@ -403,13 +404,13 @@
 		height: calc(90vh - 2 * $uni-font-size-lg);
 	} */
 	.novel-line, .chat-line .chat-box{
-		font-size: 28rpx;
+		font-size: $uni-font-size-base;
 		font-weight: 500;
-		line-height: 46rpx;
+		line-height: calc(23 * $uni-spacing-mini);
 	}
 	.novel-line{
-		padding: 16rpx 20rpx;
-		border-bottom: 1px #EBEEF5 solid;
+		padding: calc(8 * $uni-spacing-mini) $uni-spacing-lg;
+		border-bottom: $uni-spacing-mini $uni-box-shadow-color solid;
 		background-repeat: no-repeat;
 		background-size: auto 100%;/* 宽高 */
 		background-origin: border-box;
@@ -419,40 +420,40 @@
 		background-position: top right;
 	}
 	.deep-cell{
-		background-color: rgba(204,204,204,0.7);
+		background-color: $uni-bg-color-grey-half-transparent;
 	}
 	.chat-line{
-		padding: 10rpx 0;
+		padding: $uni-spacing-lg $uni-width-none;
 		flex-direction: row;
 	}
 	.chat-line.right{
 		flex-direction: row-reverse;
 	}
 	.chat-line.left .chat-img-box{
-		margin-right: 10px;
+		margin-right: $uni-spacing-lg;
 	}
 	.chat-line.right .chat-img-box{
-		margin-left: 10px;
+		margin-left: $uni-spacing-lg;
 	}
 	.header-part{
 		height: 3vh;
 	}
 	.input-mode{
-		height: 90rpx;
+		height: calc(9 * $uni-spacing-base);
 	}
 	.textarea-mode{
-		height: 520rpx;
+		height: calc(52 * $uni-spacing-base);
 	}
 	@media (prefers-color-scheme: dark) {
 		.loading-view{
 			color: $uni-color-dark-main;
 		}
 		.novel-line{
-			color: #999;
-			border-bottom: 1px #333 solid;
+			color: $uni-text-color-grey;
+			border-bottom: $uni-border-base $uni-text-color solid;
 		}
 		.deep-cell{
-			background-color: rgba(51,51,51,0.7);
+			background-color: $uni-bg-deep-cell-half-transparent;
 		}
 	}
 </style>

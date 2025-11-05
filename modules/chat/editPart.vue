@@ -117,18 +117,20 @@
 				this.$emit('editChange', true);
 			},
 			cancelFun(){
-				//console.log(this.crtIndex, this.swiper_current);
+				console.log(this.crtIndex, this.swiper_current);
 				if(this.crtIndex == -1){
 					this.swiper_current = 0;
 				}else{
 					this.swiper_current = this.crtIndex;
 				}
+				console.log(this.edit_text, this.options[this.swiper_current].text);
 				if(this.edit_text != this.options[this.swiper_current].text){
 					this.setDiaData({
 						'optionFirst': this.options[this.swiper_current].text
 					});
 				}
 				this.$emit('editChange', false);
+				this.$emit('swiperChange', this.swiper_current);
 			},
 			async confirmFun(){
 				let response_feedback = await responseFun.toolRequest('sensitive', this.edit_text.trim(), 'chat');

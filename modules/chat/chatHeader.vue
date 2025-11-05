@@ -3,7 +3,7 @@
 		<!-- 顶部 -->
 		<view class="header-left display-flex display-line">
 			<popMenu ref="chatRMenuPart"></popMenu>
-			<label class="hint">快捷菜单</label>
+			<label class="hint" @tap="clickRightMenu">快捷菜单</label>
 		</view>
 		<titlePart ref="chatTitlePart" class="header-center"></titlePart>
 		<view class="header-right display-flex display-line">
@@ -34,6 +34,9 @@
 					url: '/pages/setting/globalSetting'
 				})
 			},
+			clickRightMenu(){
+				this.$refs.chatRMenuPart.openMenuFun();
+			}
 		}
 	}
 </script>
