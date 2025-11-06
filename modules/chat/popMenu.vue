@@ -4,7 +4,7 @@
 			<view class="iconfont icon-xitongcaidan" @tap="openMenuFun"></view>
 		</view>
 		<cybercafe-menu ref="rightMenuPop" class="pop-menu display-flex sp-between"
-			viewTitle="快捷菜单">
+			viewTitle="快捷菜单" shadowView>
 			<view class="display-flex pop-menu-line">
 				<view class="display-flex display-line" @tap="openSetting('ai')">
 					<view class="iconfont icon-chatou menu-icon-left"></view>
@@ -180,9 +180,6 @@
 	@media (prefers-color-scheme: dark) {
 		.cybercafe-main-menu .iconfont{
 			color: $uni-text-color-grey;
-		}
-		.cybercafe-main-menu{
-			background-color: $uni-bg-dark-color-gray;
 		}
 		.under-line{
 			border-bottom-color: $uni-color-dark-main;

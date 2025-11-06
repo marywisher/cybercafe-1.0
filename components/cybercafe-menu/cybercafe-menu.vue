@@ -79,6 +79,7 @@
 		color: $uni-text-color;
 		padding: $uni-spacing-base;
 		z-index: 4;
+		box-shadow: $uni-width-none $uni-width-none $uni-spacing-base $uni-spacing-mini $uni-box-shadow-color;
 	}
 	.cybercafe-main-menu-left{
 		left: 0;

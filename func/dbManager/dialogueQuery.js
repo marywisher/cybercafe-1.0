@@ -136,38 +136,30 @@ export default{
 	},
 	getSpecialEntityList(character_id){
 		return new Promise((resolve, reject) => {
-			/* let sql_str = "SELECT d.entity_id FROM cybercafe_entity_detail d "
+			let sql_str = "SELECT d.entity_id FROM cybercafe_entity_detail d "
 				+ "JOIN cybercafe_character c ON d.character_id = c.character_id "
 				+ " WHERE c.character_online_id = " + character_id 
-				+ "	AND d.entity_id IS NOT NULL;"
+				+ " AND d.entity_id IS NOT NULL;"
 			sqlite.selectSQL(sql_str).then(detail_data => {
-				console.log(detail_data);
-				let entity_ids = [];
-				let sql_str2 = "SELECT e.* FROM cybercafe_entity e "
-					+ " LEFT JOIN cybercafe_message m ON e.entity_id = m.entity_id ";
-				if(detail_data.length > 0){ */
-					/* for(let i in detail_data){
-						if(detail_data[i].entity_id > 0) entity_ids.push(detail_data[i].entity_id);
-					} */
-					//sql_str2 += " WHERE e.entity_id NOT IN (" + entity_ids.concat(',') + ")";
-					/* sql_str2 += " WHERE e.entity_id NOT IN (" + detail_data[0].entity_id + ")";
+				//console.log(detail_data);
+				let sql_str2 = "SELECT * FROM cybercafe_entity "
+				if(detail_data.length > 0){
+					const entity_ids = detail_data
+				        .filter(item => item.entity_id > 0)
+				        .map(item => item.entity_id);
+					sql_str2 += " WHERE entity_id NOT IN (" + entity_ids.join(',') + ")";
 				}
-				sql_str2 += " ORDER BY message_time DESC;";
+				sql_str2 += " ORDER BY entity_id DESC;";
 				sqlite.selectSQL(sql_str2).then(entity_data => {
-					console.log(entity_data);
+					//console.log(entity_data);
 					resolve(entity_data);
 				}).catch(e => {
+					//console.log(e);
 					reject(e);
 				})
 			}).catch(e => {
 				reject(e);
-			}); */
-			let sql_str = "SELECT * FROM cybercafe_entity "
-			sqlite.selectSQL(sql_str).then(entity_data => {
-				resolve(entity_data);
-			}).catch(e => {
-				reject(e);
-			})
+			});
 		});
 	},
 	getMessageByCharacterId(character_id){//用于检测当前切片所在容器有否初始消息
