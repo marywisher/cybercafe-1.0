@@ -1,6 +1,7 @@
 import common from '@/func/common/common';
 import baseQuery from '@/func/dbManager/baseQuery';
 import entityFun from './entityFun';
+import store from '@/store';
 
 export default{
 	parseData(result_data, is_local = false){
@@ -80,7 +81,7 @@ export default{
 		//console.log(character_data);
 		return character_data;
 	},
-	async previewToDb(result_data, entity_id = 0){
+	async previewToDb(result_data){
 		//console.log(result_data);
 		let character_gender = result_data.character_gender;
 		let gender_cn = this.getGenderCn(character_gender);
@@ -100,13 +101,16 @@ export default{
 		let character_id = await baseQuery.insertDataByKey('cybercafe_character', db_data, true);
 		//console.log(character_id);
 		
-		if(entity_id == 0){
-			let entity_id = await entityFun.createEntity(result_data.character_name + '的容器');	
+		if(store.state.dialogue.selectedEntityId == 0){
+			await entityFun.createEntity(result_data.character_name + '的容器');	
 			//console.log(entity_id);
-			entityFun.updateEntityDetail(entity_id, character_id);
+			entityFun.updateEntityDetail(character_id);
 		}else{
-			entityFun.updateEntityDetail(entity_id, character_id);
+			entityFun.updateEntityDetail(character_id);
 		}
+		store.commit('dialogue/setDiaData', {
+			'selectedEntityId': 0
+		});
 		return character_id;
 	},
 	getGenderCn(gender_num){

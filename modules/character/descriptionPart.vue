@@ -340,7 +340,7 @@
 				}
 				this.$forceUpdate();
 			},
-			async createCharacter(online_id, entity_id = 0){
+			async createCharacter(online_id){
 				//console.log(online_id, entity_id);
 				let _self = this;
 				try {
@@ -348,7 +348,7 @@
 						{'character_id': online_id});
 					if (res.code == 200) {
 						//console.log(res.result);
-						let character_id = await characterFun.previewToDb(res.result, entity_id);
+						let character_id = await characterFun.previewToDb(res.result);
 						_self.init(character_id);
 						
 						_self.setUserData({

@@ -21,6 +21,11 @@
 	import config from '@/config.json';
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import dialogueQuery from '@/func/dbManager/dialogueQuery';
+	import {
+		mapMutations,
+		mapState,
+		mapActions
+	} from 'vuex';
 	export default{
 		name: 'previewEntityPart',
 		data(){
@@ -35,7 +40,11 @@
 				default: 0
 			}
 		},
-		methods:{
+		computed: {
+			...mapState('dialogue', ['selectedEntityId']),
+		},
+		methods: {
+			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			async init(){
 				this.$refs.partContainer.openView();
 				//不包含当前online_id的entity
@@ -43,10 +52,11 @@
 				//console.log(this.entity_list);
 			},
 			goToCharacter(entity_id){
+				this.setDiaData({'selectedEntityId': entity_id});
 				//console.log(entity_id);
 				//console.log(this.characterId)
 				uni.navigateTo({
-					url: '/pages/character/index?online_id=' + this.characterId + '&entity_id=' + entity_id
+					url: '/pages/character/index?online_id=' + this.characterId
 				})
 			},
 			closeFun(){

@@ -32,11 +32,14 @@
 		},
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('dialogue', ['selectedEntityId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
+			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			back(){
 				uni.navigateBack();
+				this.setDiaData({'selectedEntityId': 0});
 			},
 			download(){
 				let _self = this;
@@ -48,7 +51,7 @@
 						cancelText: "手滑了",
 						success: (res) => {
 							_self.$emit('tapDownload');
-						},
+						}
 					},
 					'modalShow': true,
 					'modalPageId': 'characterPreview'

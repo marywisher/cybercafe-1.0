@@ -163,6 +163,9 @@ export default{
 			'entity_updated_at': crtTime, 'entity_mode': 'chat'}, 
 			true);
 		//console.log(entity_id);
+		store.commit('dialogue/setDiaData', {
+			'selectedEntityId': entity_id
+		});
 		request.post("entityController/createEntity", 'character', {
 			'entity_id': entity_id,
 			'ai_select': 1,
@@ -180,12 +183,11 @@ export default{
 				})
 			}
 		});
-		return entity_id;
 	},
-	updateEntityDetail(entity_id, character_id, detail_status = 1){
+	updateEntityDetail(character_id, detail_status = 1){
 		baseQuery.updateDataByKey('cybercafe_entity_detail',
 			{'detail_status': detail_status},
-			{'entity_id': entity_id, 'character_id': character_id});
+			{'entity_id': store.state.dialogue.selectedEntityId, 'character_id': character_id});
 	},
 	enterEntity(){
 		this.updateEntityData();

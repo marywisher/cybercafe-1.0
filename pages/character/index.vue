@@ -132,7 +132,7 @@
 				this.character_id = 0;
 				//console.log(option.online_id, option.entity_id);
 				this.$nextTick(() => {
-					this.$refs.cDP.createCharacter(option.online_id, option.entity_id);
+					this.$refs.cDP.createCharacter(option.online_id);
 				})
 			}
 		},

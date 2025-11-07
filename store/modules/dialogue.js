@@ -22,6 +22,7 @@ export default {
 		refreshList: 0, //刷新chat列表 0续写回复，-1重说，n已知序号修改，-2页面初始化未知位置， -3不刷
 		breakpointMessageId: 0, //用于记录下拉加载的断点
 		
+		selectedEntityId: 0, //仅用于控场
 		entityImage: '',
 		cDisplayId: 0,//crtCharaterId 仅用户list展示时
 		aiSelect: '',//模型名，用于显示

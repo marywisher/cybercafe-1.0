@@ -41,7 +41,7 @@
 			<characterPart v-for="item, index in character_off_stage" :key="index" character-type="in"
 				:characterId="item.character_id" :characterImg="item.character_img"@afterTap="moveCharacter"></characterPart>
 				
-			<view class="character-more iconfont icon-jiahao"></view>
+			<view class="character-more iconfont icon-jiahao" @tap="moreCharacter"></view>
 		</view>
 	</cybercafe-view>
 </template>
@@ -73,7 +73,7 @@
 		computed: {
 			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
 			...mapState('setting', ['entityId']),
-			...mapState('dialogue', ['title']),
+			...mapState('dialogue', ['selectedEntityId', 'title']),
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
 			}
@@ -164,6 +164,12 @@
 						}
 					}
 				}
+			},
+			moreCharacter(){
+				this.setDiaData({'selectedEntityId': this.entityId});
+				uni.navigateTo({//此处排除已有角色的线上版
+					url: '/pages/character/characterList'
+				})
 			}
 		}
 	}
