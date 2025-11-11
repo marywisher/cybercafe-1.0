@@ -2,10 +2,10 @@
 	<cybercafe-view ref="eCL" isAbsolute closeAble isScrollable 
 		viewTitle="其他可选角色">
 		<cybercafe-view v-for="(item, index) in character_list" :key="item.character_id">
-			 <view class="display-flex sp-between" @tap="selectCharacter(item.character_id)">
+			<view class="display-flex sp-between" @tap="selectCharacter(item.character_id)">
 				<view>
 					<image v-if="item.character_img && item.character_img != default_img"
-					 	class="character-img" mode="aspectFill" :src="item.character_img"></image>
+						class="character-img" mode="aspectFill" :src="item.character_img"></image>
 				</view>
 				<view class="item-content">
 					<view class="display-flex sp-between display-line">
@@ -20,8 +20,10 @@
 						{{item.short_description}}
 					</view>
 				</view>	
-			 </view>
+			</view>
 		</cybercafe-view>
+		<view v-show="!no_more" class="text-center hint" @tap="loadCharacter">—— 点击加载 ——</view>
+		<view v-show="no_more" class="text-center hint">—— 没有更多了 ——</view>
 	</cybercafe-view>
 </template>
 
@@ -43,7 +45,8 @@
 			return{
 				character_list: [],
 				next_page: 0,
-				default_img: configData.defaultImg
+				default_img: configData.defaultImg,
+				no_more: false
 			}
 		},
 		props: {
@@ -61,34 +64,28 @@
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			init(){
+				this.loadCharacter();
+				//后续再加上本机创建角色
+				this.$refs.eCL.openView();
+			},
+			async loadCharacter(){
+				console.log(this.next_page);
 				let request_data = {
 					aim_id: this.userId,
 					type: 'new',
 					limit: 10,
 					except: this.exceptIds,//此处加上当前容器内的角色
+					page: this.next_page
 				};
-				let _self = this;
-				request_data.page = this.next_page;
-				request.post("characterController/getUserCharacter", 'characterList', request_data).then(res => {
-					if (res.code == 200) {
-						//console.log(res.result);
-						let result_data;
-						result_data = res.result.data;
-						_self.next_page = res.result.current_page + 1;
-						for (let i in result_data) {
-							_self.character_list.push(characterFun.parseData(result_data[i]));
-						}
-						_self.$forceUpdate();
-						//console.log(_self.character_list);
-					} else {
-						uni.showToast({
-							title: res.msg,
-							icon: "none"
-						});
-					}
-				});
-				//后续再加上本机创建角色
-				this.$refs.eCL.openView();
+				let result_data = await characterFun.loadList(request_data, 'entity');
+				if(result_data.character_list.length == 0) this.no_more = true;
+				//console.log(result_data);
+				this.next_page = result_data.next_page;
+				for (let i in result_data.character_list) {
+					this.character_list.push(result_data.character_list[i]);
+				}
+				//console.log(this.character_list);
+				this.$forceUpdate();
 			},
 			selectCharacter(character_online_id){
 				let _self = this;

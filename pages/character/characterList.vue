@@ -80,36 +80,20 @@
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
-			loadList(){
+			async loadList(){
 				let request_data = {
 					aim_id: this.userId,
 					type: 'new',
 					limit: 10,
 					except: [],
 				};
-				let _self = this;
+				//let _self = this;
 				if(this.from == 'index') request_data.page = this.next_page;
-				request.post("characterController/getUserCharacter", 'characterList', request_data).then(res => {
-					if (res.code == 200) {
-						//console.log(res.result);
-						let result_data;
-						if(_self.from == 'index'){
-							result_data = res.result.data;
-							_self.next_page = res.result.current_page + 1;
-						} 
-						else result_data = res.result;
-						for (let i in result_data) {
-							_self.character_list.push(characterFun.parseData(result_data[i]));
-						}
-						_self.$forceUpdate();
-						//console.log(_self.character_list);
-					} else {
-						uni.showToast({
-							title: res.msg,
-							icon: "none"
-						});
-					}
-				});
+				let result_data = await characterFun.loadList(request_data, 'characterList');
+				this.next_page = result_data.next_page;
+				for (let i in result_data.character_list) {
+					this.character_list.push(result_data.character_list[i]);
+				}
 			},
 			gotoDetail(character_id){
 				//console.log(character_id);

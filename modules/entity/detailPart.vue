@@ -86,7 +86,7 @@
 			async init(){
 				//console.log(this.entityId);
 				let entity_data = await baseQuery.getDataByKey('cybercafe_entity', {'entity_id': this.entityId});
-				console.log(entity_data);
+				//console.log(entity_data);
 				this.entity_title = entity_data[0].entity_title ? entity_data[0].entity_title : '';
 				this.subject_name = entity_data[0].subject_name ? entity_data[0].subject_name : '';
 				this.subject_description = entity_data[0].subject_description ? entity_data[0].subject_description : '';
@@ -102,10 +102,10 @@
 					}else{
 						this.character_off_stage.push(character_data[i]);
 					}
-					console.log(character_data[i].character_online_id);
+					//console.log(character_data[i].character_online_id);
 					if(character_data[i].character_online_id) this.character_in_entity.push(character_data[i].character_online_id);
 				}
-				console.log(this.character_in_entity);
+				//console.log(this.character_in_entity);
 				this.$emit('afterLoad',
 					{'image': entity_img,
 					'character_in_entity': this.character_in_entity});

@@ -171,5 +171,29 @@ export default{
 				icon: "none"
 			});
 		}
-	}
+	},
+	async loadList(request_data, page_id){
+		let return_data = {};
+		return_data.character_list = [];
+		let res = await request.post("characterController/getUserCharacter", page_id, request_data);
+		if (res.code == 200) {
+			//console.log(res.result);
+			let result_data;
+			//if(_self.from == 'index'){
+				result_data = res.result.data;
+				return_data.next_page = res.result.current_page + 1;
+			//} 
+			//else result_data = res.result;
+			for (let i in result_data) {
+				return_data.character_list.push(this.parseData(result_data[i]));
+			}
+			//console.log(return_data.character_list);			
+		} else {
+			uni.showToast({
+				title: res.msg,
+				icon: "none"
+			});
+		}
+		return return_data;
+	},
 }

@@ -98,7 +98,7 @@
 				}
 			},
 			afterLoad(param){
-				console.log(param);
+				//console.log(param);
 				if(param.image) this.entity_image = param.image;
 				this.character_in_entity = param.character_in_entity;
 			},
