@@ -129,7 +129,8 @@
 							if (res.code == 200) {
 								console.log(res.result.img);
 								for(let j = 0; j < res.result.img.length; j ++){
-									if(_self.images.indexOf(res.result.img[j].img_url) == -1 && res.result.img[j].img_url != _self.originImg){
+									if(_self.images.indexOf(res.result.img[j].img_url) == -1 
+									 && res.result.img[j].img_url != _self.originImg){
 										_self.images.push(res.result.img[j].img_url);
 									}
 								}
@@ -151,7 +152,8 @@
 					sqlite.selectSQL(sqlStr).then(data => {
 						if(data.length > 0){
 							for(let i = 0; i < data.length; i ++){
-								if(_self.images.indexOf(data[i].image_src) == -1 && data[i].image_src != _self.originImg){
+								if(_self.images.indexOf(data[i].image_src) == -1 
+								 && data[i].image_src != _self.originImg){
 									_self.images.push(data[i].image_src);
 								}
 							}

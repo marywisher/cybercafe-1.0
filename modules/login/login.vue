@@ -140,13 +140,13 @@
 							_self.setSettingData({
 								'userId': res.result.id,
 								'token': res.result.token,
+								'groupExpiration': res.result.expiration,
 								'isLogin': true,
 							})
 							let data = {
 								userName: res.result.name,//Base64.decode(res.result.name),
 								userKey: res.result.key,
 								userGroup: res.result.group,
-								groupExpiration: res.result.expiration,
 								latestVersion: res.result.latest_version,
 								powerLevel: res.result.power_level,
 							};

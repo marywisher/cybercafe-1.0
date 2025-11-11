@@ -341,44 +341,25 @@
 				this.$forceUpdate();
 			},
 			async createCharacter(online_id){
-				//console.log(online_id, entity_id);
 				let _self = this;
-				try {
-					let res = await request.post("characterController/getCharacterDetail", 'character',
-						{'character_id': online_id});
-					if (res.code == 200) {
-						//console.log(res.result);
-						let character_id = await characterFun.previewToDb(res.result);
-						_self.init(character_id);
-						
-						_self.setUserData({
-							'modalData': {
-								title: "温馨提示",
-								content: "本地切片创建成功",
-								cancelText: "再修改一下",
-								confirmText: "立即聊天",
-								success: (res) => {
-									if (res.confirm) {
-										_self.$emit('afterCreate', character_id);
-									}
-								},
-							},
-							'modalShow': true,
-							'modalPageId': 'character'
-						})
-					} else {
-						uni.showToast({
-							title: res.msg,
-							icon: "none"
-						});
-					}
-				} catch (error) {
-					console.error('创建角色失败:', error);
-					uni.showToast({
-						title: '创建角色失败',
-						icon: "none"
-					});
-				}
+				//console.log(online_id, entity_id);
+				let character_data = await characterFun.createCharacter(online_id, 'character');
+				this.init(character_data.character_id);
+				this.setUserData({
+					'modalData': {
+						title: "温馨提示",
+						content: "本地切片创建成功",
+						cancelText: "再修改一下",
+						confirmText: "立即聊天",
+						success: (res) => {
+							if (res.confirm) {
+								_self.$emit('afterCreate', character_data.character_id);
+							}
+						},
+					},
+					'modalShow': true,
+					'modalPageId': 'character'
+				})
 			}
 		}
 	}

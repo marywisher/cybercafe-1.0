@@ -1,5 +1,5 @@
 <template>
-	<view class="new-user-part">
+	<view class="new-user-part group-item">
 		<view><b>数据迁移入口：</b></view>
 		<view>屏幕右上角<span class="iconfont icon-shezhi guide-icon"></span>系统设置 -> 下载数据</view>
 		<view>完成旧数据本系统安装</view>
@@ -27,7 +27,7 @@
 		},
 		methods: {
 			init(){
-				console.log('newUser init');
+				//console.log('newUser init');
 				uni.hideLoading();
 			}
 		}
@@ -36,13 +36,10 @@
 
 <style lang="scss">
 	.new-user-part{
-		padding: calc(3 * $uni-spacing-lg); 
 		background-color: $uni-bg-color-grey-half-transparent;
-		margin: calc($page-header-height + $uni-img-size-lg) 5vw;
-		border-radius: $uni-border-radius-base;
 		color: $uni-text-color;
 		line-height: calc(1.5 * $uni-font-size-huge);
-		border: $uni-border-base solid $uni-bg-color-grey;
+		margin-top: calc($page-header-height + $uni-spacing-lg);
 	}
 	.guide-icon{
 		border: $uni-border-base solid $uni-color-main;

@@ -98,13 +98,11 @@
 				console.log(character_id);
 				if(character_id > 0){
 					this.character_id = character_id;
-					//开场白注入
-					messageFun.injectPrologue(character_id);
-				} else{
-					let message_count = await dialogueQuery.getMessageByCharacterId(this.character_id);
-					//console.log(message_count);
-					if(message_count[0].message_count == 0) messageFun.injectPrologue(this.character_id);
 				}
+				//开场白注入
+				let message_count = await dialogueQuery.getMessageByCharacterId(this.character_id);
+				//console.log(message_count);
+				if(message_count[0].message_count == 0) messageFun.injectPrologue(this.character_id);
 				this.$refs.cCH.init(this.character_id);
 				let detail_data = await baseQuery.getDataByKey('cybercafe_entity_detail',
 					{'character_id': this.character_id});

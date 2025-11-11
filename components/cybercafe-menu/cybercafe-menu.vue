@@ -119,6 +119,7 @@
 			border: $uni-border-base solid $uni-bg-dark-color-gray;
 			background-color: $uni-bg-dark-color-gray;
 			color: $uni-text-color-grey;
+			box-shadow: $uni-width-none $uni-width-none $uni-spacing-base $uni-spacing-mini $uni-color-subtitle;
 		}
 	}
 </style>

@@ -4,8 +4,8 @@
 		<view class="header-right display-flex display-line">
 			<view class="iconfont icon-shanchu required" v-if="entityId > 0" @tap="delEntity"></view>
 			<label class="hint" v-if="entityId > 0" @tap="delEntity">解散容器</label>
-			<view class="iconfont icon-chatou" v-if="show_enter" @tap="enterEntity"></view>
-			<label class="hint" v-if="show_enter" @tap="enterEntity">进入容器</label>
+			<view class="iconfont icon-chatou" v-if="enterable" @tap="enterEntity"></view>
+			<label class="hint" v-if="enterable" @tap="enterEntity">进入容器</label>
 		</view>
 	</cybercafe-header>
 </template>
@@ -30,6 +30,10 @@
 				type: Number,
 				default: 0
 			},
+			enterable: {
+				type: Boolean,
+				default: false
+			}
 		},
 		watch:{
 			entityId(newValue){
@@ -42,7 +46,7 @@
 		methods: {
 			...mapMutations('setting', ['getSettingData']),
 			init(){
-				this.getDetailCount();
+				//this.getDetailCount();
 			},
 			back(){
 				uni.navigateBack();
@@ -53,12 +57,12 @@
 			enterEntity(){
 				entityFun.enterEntity();
 			},
-			async getDetailCount(){
+			/* async getDetailCount(){
 				let detail_data = await baseQuery.getDataByKey('cybercafe_entity_detail',
 					{'entity_id': this.entityId, 'detail_status': 1});
 				//console.log(detail_data);
 				if(detail_data.length > 0) this.show_enter = true;
-			}
+			} */
 		}
 	}
 </script>

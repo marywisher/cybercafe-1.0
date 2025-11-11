@@ -49,10 +49,10 @@ export default {
 						//console.log(res.result);
 						store.commit('setting/setSettingData', {
 							'token': res.result.token,
+							'groupExpiration': res.result.expiration,
 						});
 						store.commit('user/setUserData', {
 							userGroup: res.result.group,
-							groupExpiration: res.result.expiration,
 							powerLevel: res.result.power_level
 						});
 						if(res.result.latest_version > store.state.user.latestVersion){

@@ -80,7 +80,13 @@
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
-			loadList(request_data){
+			loadList(){
+				let request_data = {
+					aim_id: this.userId,
+					type: 'new',
+					limit: 10,
+					except: [],
+				};
 				let _self = this;
 				if(this.from == 'index') request_data.page = this.next_page;
 				request.post("characterController/getUserCharacter", 'characterList', request_data).then(res => {
@@ -113,24 +119,12 @@
 			}
 		},
 		onLoad() {
-			let request_data = {
-				aim_id: this.userId,
-				type: 'new',
-				limit: 10,
-				except: [],
-			};
-			this.loadList(request_data);
+			this.loadList();
 		},
 		onReachBottom() {
 			//console.log('pulling down');
 			uni.startPullDownRefresh();
-			let request_data = {
-				aim_id: this.userId,
-				type: 'new',
-				limit: 10,
-				except: [],
-			};
-			this.loadList(request_data);
+			this.loadList();
 			
 			setTimeout(() => {
 				uni.stopPullDownRefresh();

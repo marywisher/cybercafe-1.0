@@ -7,12 +7,12 @@
 		<view class="chat-body content" @longpress="handleLongPress" @touchmove="handleMove"
 			@touchstart="handleTouchStart" @touchend="handleTouchEnd">
 			<!-- 内容区 -->
-			<listPart v-if="entityId > 0" ref="chatListPart" :lockMode="in_pull_down_mode"
+			<listPart v-show="historylist.length > 0"  ref="chatListPart" :lockMode="in_pull_down_mode"
 				:viewMode="input_mode" @afterUpdate="afterUpdateList" :scroll="scroll"></listPart>
-			<newUserPart v-else ref="chatNewUserPart"></newUserPart><!-- 新用户可见-->
+			<newUserPart v-show="historylist.length == 0" ref="chatNewUserPart"></newUserPart><!-- 新用户可见-->
 			<view class="btm"></view>
 		</view>
-		<chatBottom v-if="entityId > 0" :inputMode="input_mode" ref="chatBottomPart"
+		<chatBottom :inputMode="input_mode" ref="chatBottomPart"
 			@chageInputMode="chageInputMode"></chatBottom>
 		<view v-if="show_to_btm_btn" class="fix-btm" 
 			:class="{'heigher-btn': input_mode == 'max'}" @tap="clickToBtm">>></view>
@@ -92,10 +92,10 @@
 				
 				this.$nextTick(() =>{
 					this.$refs.chatHeaderPart.init();
-					console.log(this.entityId);
-					if(this.historylist.length == 0) this.$refs.chatNewUserPart.init();
-					else this.$refs.chatBottomPart.init();
-					//this.$refs.chatNewUserPart.init();
+					//console.log(this.entityId);
+					//console.log(this.historylist);
+					this.$refs.chatNewUserPart.init();
+					this.$refs.chatBottomPart.init();
 				})
 			},
 			afterUpdateList(){//非锁定状态时，自动下滑到底部
@@ -178,7 +178,7 @@
 
 <style lang="scss">
 	.chat-body{
-		margin: $page-header-height auto 8vh;
+		margin: $page-header-height auto $page-bottom-height;
 		width: calc(100vw - 2 * $uni-spacing-base);
 	}
 	.watermark{

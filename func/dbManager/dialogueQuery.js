@@ -22,7 +22,8 @@ export default{
 				+ " where entity_id = '" + store.state.setting.entityId + "'"
 				+ " order by message_time desc limit 0, 1;")
 			.then(last_data => {
-				resolve(last_data[0].character_id);
+				if(last_data.length > 0) resolve(last_data[0].character_id);
+				else resolve(0);
 			}).catch(e => {
 				reject(e);
 			});

@@ -28,7 +28,7 @@
 				 :placeholder-style="placeholderStyle" confirm-hold
 				 @blur="autoSave('subject_description', subject_description)"></textarea>
 		</view>
-		<view class="flag-tag branch-story-tag" @tap="gotoCharacterList">舞台控制</view>
+		<view class="flag-tag branch-story-tag">舞台控制</view>
 		<view class="entity-line after-tag"></view>
 		<view class="hint">场上角色：</view>
 		<view class="entity-line character-line display-flex display-line">
@@ -64,7 +64,8 @@
 				subject_name: '',
 				subject_description: '',
 				character_on_stage: [],
-				character_off_stage: []
+				character_off_stage: [],
+				character_in_entity: []
 			}
 		},
 		components: {
@@ -89,19 +90,26 @@
 				this.entity_title = entity_data[0].entity_title ? entity_data[0].entity_title : '';
 				this.subject_name = entity_data[0].subject_name ? entity_data[0].subject_name : '';
 				this.subject_description = entity_data[0].subject_description ? entity_data[0].subject_description : '';
-				this.$emit('afterLoad',
-					{'image': entity_data[0].entity_img});
+				let entity_img = entity_data[0].entity_img;
 				
-				let img_data = await dialogueQuery.getCharacterByEntityIdNoLimit();
+				let character_data = await dialogueQuery.getCharacterByEntityIdNoLimit();
 				this.character_on_stage = [];
 				this.character_off_stage = [];
-				for(let i in img_data){
-					if(img_data[i].detail_status == 1){
-						this.character_on_stage.push(img_data[i]);
+				this.character_in_entity = [];
+				for(let i in character_data){
+					if(character_data[i].detail_status == 1){
+						this.character_on_stage.push(character_data[i]);
 					}else{
-						this.character_off_stage.push(img_data[i]);
+						this.character_off_stage.push(character_data[i]);
 					}
+					console.log(character_data[i].character_online_id);
+					if(character_data[i].character_online_id) this.character_in_entity.push(character_data[i].character_online_id);
 				}
+				console.log(this.character_in_entity);
+				this.$emit('afterLoad',
+					{'image': entity_img,
+					'character_in_entity': this.character_in_entity});
+				
 				this.$forceUpdate();
 			},
 			async autoSave(kind, value){
@@ -137,11 +145,6 @@
 					}					
 				}
 			},
-			gotoCharacterList(){
-				uni.navigateTo({
-					url: '/pages/character/characterList'
-				})
-			},
 			moveCharacter(character_id){
 				console.log(character_id);
 				let flag = true;
@@ -167,10 +170,16 @@
 			},
 			moreCharacter(){
 				this.setDiaData({'selectedEntityId': this.entityId});
-				uni.navigateTo({//此处排除已有角色的线上版
+				/* uni.navigateTo({//此处排除已有角色的线上版
 					url: '/pages/character/characterList'
-				})
-			}
+				}) */
+				this.$emit('selectCharacter');
+			},
+			addCharacter(character_data){
+				console.log(character_data);
+				this.character_on_stage.push(character_data);
+				this.$forceUpdate();
+			},
 		}
 	}
 </script>

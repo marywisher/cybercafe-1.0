@@ -97,9 +97,9 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['aimId', 'darkMode', 'groupExpiration', 'newMsgCount', 
+			...mapState('user', ['aimId', 'darkMode', 'newMsgCount', 
 				'tag', 'userAvatar', 'userKey', 'userGroup']),
-			...mapState('setting', ['ippos', 'userId']),
+			...mapState('setting', ['groupExpiration', 'ippos', 'userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),

@@ -2,6 +2,7 @@ import common from '@/func/common/common';
 import baseQuery from '@/func/dbManager/baseQuery';
 import entityFun from './entityFun';
 import store from '@/store';
+import request from '../common/request';
 
 export default{
 	parseData(result_data, is_local = false){
@@ -142,5 +143,33 @@ export default{
 			break;
 		}
 		return character_gender;
+	},
+	async createCharacter(online_id, page_id){
+		//console.log(online_id, entity_id);
+		let _self = this;
+		try {
+			let res = await request.post("characterController/getCharacterDetail", page_id,
+				{'character_id': online_id});
+			if (res.code == 200) {
+				//console.log(res.result);
+				let character_id = await _self.previewToDb(res.result);
+				let character_data = {
+					'character_id': character_id,
+					'character_img': res.result.img[0].img_url
+				}
+				return character_data;
+			} else {
+				uni.showToast({
+					title: res.msg,
+					icon: "none"
+				});
+			}
+		} catch (error) {
+			console.error('创建角色失败:', error);
+			uni.showToast({
+				title: '创建角色失败',
+				icon: "none"
+			});
+		}
 	}
 }

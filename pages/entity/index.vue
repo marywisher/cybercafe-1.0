@@ -2,8 +2,11 @@
 	<view>
 		<view class="entity-bg" :style="dynamicImg(entity_image)"></view>
 		<view class="view-for-tap" @tap="showMoreImg"></view>
-		<entityHeader ref="eEHP" :bg_opacity="bg_opacity"></entityHeader>
-		<detailPart class="entity-des" ref="eDP" @afterLoad="afterLoad"></detailPart>
+		<entityHeader ref="eEHP" :bg_opacity="bg_opacity" :enterable="character_in_entity.length > 0"></entityHeader>
+		<detailPart class="entity-des" ref="eDP" @afterLoad="afterLoad" @selectCharacter="openCharacterList"></detailPart>
+		<characterList class="character-list" ref="eCL" :exceptIds="character_in_entity"
+			@addCharacter="addCharacterFun"></characterList>
+		
 		<image-part ref="eImgPart" :originImg="entity_image"
 			showCreate showLocal @afterClick="afterSelectImg"></image-part>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
@@ -18,6 +21,7 @@
 	import entityHeader from '@/modules/entity/entityHeader';
 	import detailPart from '@/modules/entity/detailPart';
 	import common from '@/func/common/common';
+	import characterList from '@/modules/entity/characterList';
 	import {
 		mapMutations,
 		mapState,
@@ -28,12 +32,13 @@
 			return {
 				entity_image: configData.defaultImg,
 				bg_opacity: 0,
-				entity_character_count: 0 //有角色才能开聊
+				character_in_entity: []
 			}
 		},
 		components:{
 			entityHeader,
-			detailPart
+			detailPart,
+			characterList
 		},
 		watch:{
 			modalShow: {
@@ -93,9 +98,16 @@
 				}
 			},
 			afterLoad(param){
-				//console.log(param);
-				this.entity_image = param.image;
+				console.log(param);
+				if(param.image) this.entity_image = param.image;
+				this.character_in_entity = param.character_in_entity;
 			},
+			openCharacterList(){
+				this.$refs.eCL.init();
+			},
+			addCharacterFun(character_data){
+				this.$refs.eDP.addCharacter(character_data);
+			}
 		},
 		onLoad() {
 			this.$nextTick(() => {
@@ -135,5 +147,8 @@
 	.modal-view{
 		z-index: 999;
 		top: 20vh;
+	}
+	.character-list{
+		z-index: 3;
 	}
 </style>

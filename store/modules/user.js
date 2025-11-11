@@ -6,7 +6,6 @@ export default {
 		userAvatar: '',
 		aimId: 0,
 		userGroup: 1,
-		groupExpiration: '',
 		powerLevel: 0,//用于限制提交本地崽的等级，非后台用户等级
 		tag: '',
 		
