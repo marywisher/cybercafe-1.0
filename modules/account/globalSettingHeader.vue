@@ -17,21 +17,21 @@
 		name: 'entityHeader',
 		data(){
 			return {
-				new_msg_count: false
+				new_msg_count: 0
 			}
 		},
 		watch: {
 			newMsgCount:{
 				handler(newValue, oldValue) {
 				    //console.log(newValue);
-				    this.new_msg_count = newValue;
+				    if(newValue) this.new_msg_count = newValue;
 				},
 				immediate: true, // 立即执行一次
 				deep: true // 深度监听（可选）
 			}
 		},
 		computed: {
-			...mapState('user', ['hasNewMsg']),
+			...mapState('user', ['hasNewMsg', 'newMsgCount']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData']),
@@ -50,6 +50,7 @@
 <style lang="scss">
 	.header-right{
 		justify-content: flex-end;
+		position: relative;
 	}
 	.iconfont{
 		font-size: calc(2 * $uni-font-size-sm);

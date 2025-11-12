@@ -144,7 +144,6 @@
 							//console.log(res.result.avatar);
 							if(_self.aimId != _self.userId) _self.$refs.acFollowPart.init();
 							else _self.$refs.acCheckinPart.init();
-							
 							//_self.$emit('afterInit', res.result.character_num, res.result.character_fans_num);
 						} else {
 							uni.showToast({

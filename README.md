@@ -104,11 +104,14 @@ modules/                # 模块化组件
     adPart.vue          # 广告部分
     checkinPart.vue     # 签到部分
     followPart.vue      # 关注部分
+    globalSettingHeader.vue # 全局设置头部
+    messageHeader.vue   # 消息头部
     userinfo.vue        # 用户信息
   character/            # 角色相关
     characterHeader.vue # 角色头部
     descriptionPart.vue # 描述部分
     previewDescriptionPart.vue # 预览描述部分
+    previewEntityPart.vue # 预览实体部分
     previewHeader.vue   # 预览头部
   chat/                 # 聊天功能
     characterPart.vue   # 角色部分
@@ -123,8 +126,11 @@ modules/                # 模块化组件
     popMenu.vue         # 弹出菜单
     titlePart.vue       # 标题部分
   entity/               # 实体相关
+    characterList.vue   # 角色列表
+    characterPart.vue   # 角色部分
     detailPart.vue      # 详情部分
     entityHeader.vue    # 实体头部
+    entityListHeader.vue # 实体列表头部
   login/                # 登录注册
     login.vue           # 登录
     register.vue        # 注册
@@ -138,14 +144,16 @@ pages/                  # 页面文件
     index.vue           # 角色首页
     preview.vue         # 角色预览
   chat/                 # 聊天页面
-    entityList.vue      # 实体列表
     incubator.vue       # 孵化器
     index.vue           # 聊天首页
-    setting.vue         # 聊天设置
+  entity/               # 实体页面
+    entityList.vue      # 实体列表
+    index.vue           # 实体首页
   index/                # 首页
     dataList.vue        # 数据列表
     index.vue           # 首页
     info.vue            # 信息页面
+    message.vue         # 消息页面
   login/                # 登录页面
     login.vue           # 登录
   setting/              # 设置页面
