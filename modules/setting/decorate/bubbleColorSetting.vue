@@ -9,7 +9,8 @@
 				<label class="hint">{{param_hint_font1}}</label>
 			</view>
 			<view>
-				<input v-model="font_color1" @blur="setPattern"/>
+				<input v-model="font_color1" confirm-type="done"  
+				@blur="setPattern" @confirm="setPattern"/>
 			</view>
 		</view>
 		<view class="display-flex display-line">
@@ -17,7 +18,8 @@
 				<label class="hint">{{param_hint_bg1}}</label>
 			</view>
 			<view>
-				<input v-model="bubble_color1" @blur="setPattern"/>
+				<input v-model="bubble_color1" confirm-type="done"  
+				@blur="setPattern" @confirm="setPattern"/>
 			</view>
 		</view>
 		<view class="display-flex display-line">
@@ -25,7 +27,8 @@
 				<label class="hint">{{param_hint_font2}}</label>
 			</view>
 			<view>
-				<input v-model="font_color2" @blur="setPattern"/>
+				<input v-model="font_color2" confirm-type="done"  
+				@blur="setPattern" @confirm="setPattern"/>
 			</view>
 		</view>
 		<view class="display-flex display-line">
@@ -33,7 +36,8 @@
 				<label class="hint">{{param_hint_bg2}}</label>
 			</view>
 			<view>
-				<input v-model="bubble_color2" @blur="setPattern"/>
+				<input v-model="bubble_color2" confirm-type="done"  
+				@blur="setPattern" @confirm="setPattern"/>
 			</view>
 		</view>
 		<label class="hint">点击输入框外空白处查看样式生效预览</label>		

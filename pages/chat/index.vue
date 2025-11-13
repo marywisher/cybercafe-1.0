@@ -7,12 +7,12 @@
 		<view class="chat-body content" @longpress="handleLongPress" @touchmove="handleMove"
 			@touchstart="handleTouchStart" @touchend="handleTouchEnd">
 			<!-- 内容区 -->
-			<listPart v-show="historylist.length > 0"  ref="chatListPart" :lockMode="in_pull_down_mode"
+			<listPart v-show="historylist.length > 0" ref="chatListPart" :lockMode="in_pull_down_mode"
 				:viewMode="input_mode" @afterUpdate="afterUpdateList" :scroll="scroll"></listPart>
 			<newUserPart v-show="historylist.length == 0" ref="chatNewUserPart"></newUserPart><!-- 新用户可见-->
 			<view class="btm"></view>
 		</view>
-		<chatBottom :inputMode="input_mode" ref="chatBottomPart"
+		<chatBottom :inputMode="input_mode" ref="chatBottomPart" v-show="historylist.length > 0"
 			@chageInputMode="chageInputMode"></chatBottom>
 		<view v-if="show_to_btm_btn" class="fix-btm" 
 			:class="{'heigher-btn': input_mode == 'max'}" @tap="clickToBtm">>></view>

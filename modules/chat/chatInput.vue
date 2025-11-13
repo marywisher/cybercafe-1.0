@@ -1,11 +1,11 @@
 <template>
 	<view class="display-flex display-line sp-around input-container" :class="{'max-view': input_mode == 'max'}">
 		<view v-show="input_mode == 'min'" class="input-box">
-			<input class="chat-input" v-model="chat_input" @input="autoSaveContent"
+			<input class="chat-input" v-model="chat_input" @input="autoSaveContent" :maxlength="-1"
 				placeholder="回复由AI生成，仅供娱乐"/>
 			<view class="iconfont icon-quanping" @tap="changeInputMode"></view>
 		</view>
-		<view v-show="input_mode == 'min'" class="iconfont icon-fasong" @tap="sendMessage"></view>
+		<view v-show="input_mode == 'min' && !sending" class="iconfont icon-fasong" @tap="sendMessage"></view>
 		
 		<view v-show="input_mode == 'max'" ref="popup">
 			<view class="textarea-box">
@@ -15,7 +15,7 @@
 			</view>
 			<view class="textarea-btn display-flex display-line sp-around">
 				<view class="iconfont icon-feiquanping" @tap="changeInputMode"></view>
-				<view class="iconfont icon-fasong" @tap="sendMessage"></view>
+				<view v-show="!sending" class="iconfont icon-fasong" @tap="sendMessage"></view>
 			</view>
 		</view>
 	</view>
@@ -37,6 +37,7 @@
 			return {
 				chat_input: '',
 				input_mode: 'min',//max min
+				sending: false,
 			}
 		},
 		computed: {
@@ -54,6 +55,7 @@
 			},
 			async sendMessage(){
 				this.input_mode = 'min';
+				this.sending = true;
 				this.$emit('inputModeChange', this.input_mode);
 				//敏感审核
 				let response_feedback = await responseFun.toolRequest('sensitive', this.chat_input.trim(), 'chat');
@@ -85,6 +87,7 @@
 						'modalPageId': 'chat'
 					})
 				}
+				this.sending = false;
 			},
 			autoSaveContent(e){
 				//console.log(e);

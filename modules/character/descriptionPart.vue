@@ -7,8 +7,9 @@
 				<view><label class="required">*</label>昵称 </view>
 				<view class="hint" style="margin-left: 10rpx;">{{character_name.length}} / 16字</view>
 			</view>
-			<input v-model="character_name" maxlength="16" class="bg-color" 
-			confirm-type="done" @confirm="autoSave('character_name', character_name)"></input>
+			<input v-model="character_name" :maxlength="16" class="bg-color" 
+			confirm-type="done" @confirm="autoSave('character_name', character_name)"
+			@blur="autoSave('character_name', character_name)"></input>
 			<view>性别</view>
 			<view @tap="showGenderView">
 				<view v-if="character_gender == 1" class="iconfont icon-xingbienan"></view>
@@ -32,8 +33,8 @@
 				<view><label class="required">*</label>简介</view>
 				<view class="hint">{{short_description.length}} / 100字， 用于角色列表展示</view>
 			</view>
-			<textarea autoHeight v-model="short_description" maxlength="100" :cursor-spacing="150"
-			 class="bg-color" placeholder="请输入角色简介" adjust-position  
+			<textarea autoHeight v-model="short_description" :maxlength="100" :cursor-spacing="150"
+			 class="bg-color" placeholder="请输入角色简介" adjust-position
 			 :placeholder-style="placeholderStyle" confirm-hold
 			 @blur="autoSave('basic', short_description)"></textarea>
 		</view>

@@ -11,6 +11,7 @@
 <script>
 	import sqlite from '@/func/common/sqlite';
 	import handleFun from '@/func/common/handleFun';
+	import request from '@/func/common/request';
 	import {
 		mapMutations,
 		mapState,
@@ -46,14 +47,21 @@
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
+			async init(){
+				//获取APP网络信息，不含H5
+				let network_type = await request.checkNetwork('index');
+				if(network_type == 'none') return;
+				
+				sqlite.initTable();
+				//每日随机一个tip options.msg
+				//console.log(options)
+				setTimeout(() =>{
+					handleFun.beforeInit();
+				}, 500);
+			}
 		},
 		onLoad() {
-			sqlite.initTable();
-			//每日随机一个tip options.msg
-			//console.log(options)
-			setTimeout(() =>{
-				handleFun.beforeInit();
-			}, 500);
+			this.init();
 		},
 	}
 </script>

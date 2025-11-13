@@ -7,8 +7,9 @@
 			<view class="hint" style="margin-left: 10rpx;">{{entity_title.length}} / 32字</view>
 		</view>
 		<view class="entity-line">
-			<input v-model="entity_title" maxlength="32" class="bg-color" 
-			confirm-type="done" @confirm="autoSave('entity_title', entity_title)"></input>
+			<input v-model="entity_title" :maxlength="32" class="bg-color" 
+			confirm-type="done" @confirm="autoSave('entity_title', entity_title)"
+			@blur="autoSave('entity_title', entity_title)"></input>
 		</view>
 		<view class="flag-tag world-tag">主控信息</view>
 		<view class="after-tag display-flex entity-line display-line">
@@ -16,8 +17,9 @@
 			<view class="hint" style="margin-left: 10rpx;">{{subject_name.length}} / 32字</view>
 		</view>
 		<view class="entity-line">
-			<input v-model="subject_name" maxlength="32" class="bg-color" 
-			confirm-type="done" @confirm="autoSave('subject_name', subject_name)"></input>
+			<input v-model="subject_name" :maxlength="32" class="bg-color" 
+			confirm-type="done" @confirm="autoSave('subject_name', subject_name)"
+			@blur="autoSave('subject_name', subject_name)"></input>
 		</view>
 		<view class="entity-line">
 			<view class="display-flex display-line sp-between">主控描述

@@ -27,21 +27,8 @@ export default {
 		console.log(configData.domain + option);
 		console.log('post_data:' + JSON.stringify(post_data));
 		
-		if(this.checkNetwork() == false) {
-			store.commit('user/setUserData',
-				{
-					'refreshFlag': 'fail',
-					'modalData':
-						{
-							'content': '这是掉线了吗？',
-							'confirmText': '',
-							'cancelText': 'OK',
-						},
-					'modalShow': true,
-					'modalPageId': pageId
-				});
-			return;
-		}
+		let network_type = await this.checkNetwork(pageId);
+		if(network_type == 'none') return;
 		
 		return new Promise((resolve, reject) => {
 			uni.request({
@@ -112,12 +99,16 @@ export default {
 				},
 				fail: err => {
 					uni.hideLoading();
+					let msg_str = err ? JSON.stringify(err) : '未知错误，请联系管理员';
+					if(err.errMsg && err.errMsg.indexOf('request:fail abort statusCode:-1') > -1){
+						msg_str = option + ' fail:这是掉线了吗？';
+					}
 					store.commit('user/setUserData',
 						{
 							'refreshFlag': 'fail',
 							'modalData':
 								{
-									'content': err.msg ? err.msg : '未知错误，请联系管理员',
+									'content': msg_str,
 									'confirmText': '',
 									'cancelText': 'OK',
 								},
@@ -201,25 +192,12 @@ export default {
 		this.getResponse('newAiController/chat', data);
 		this.last_called = now;
 	},
-	getIp(){
+	async getIp(){
 		let _self = this;
 		//console.log('getip');
 		
-		if(this.checkNetwork() == false) {
-			store.commit('user/setUserData',
-				{
-					'refreshFlag': 'fail',
-					'modalData':
-						{
-							'content': '这是掉线了吗？',
-							'confirmText': '',
-							'cancelText': 'OK',
-						},
-					'modalShow': true,
-					'modalPageId': 'chat'
-				});
-			return;
-		}
+		let network_type = await this.checkNetwork('index');
+		if(network_type == 'none') return;
 		
 		uni.request({
 			url: "http://ip-api.com/json/?lang=zh-CN", 
@@ -235,20 +213,58 @@ export default {
 			}
 		});
 	},
-	checkNetwork(){
+	checkNetwork(pageId){
 		//获取APP网络信息，不含H5
-		uni.getNetworkType({
-			success: res => {
-				if (res.networkType === 'none') {
-					// 没有网络连接
-					console.log('当前无网络连接');
-					return false;
-				} else {
-					// 有网络连接
-					console.log('wdebug--res', res.networkType);
-					return true;
+		return new Promise((resolve, reject) => {
+			uni.getNetworkType({
+				success: res => {
+					/* uni.showToast({
+						title: res.networkType,
+						icon: 'none'
+					}) */
+					if (res.networkType == 'none') {
+						// 没有网络连接
+						console.log('当前无网络连接');
+						store.commit('user/setUserData',
+							{
+								'refreshFlag': 'fail',
+								'modalData':
+									{
+										'content': '请检查网络',
+										'confirmText': '',
+										'cancelText': 'OK',
+									},
+								'modalShow': true,
+								'modalPageId': pageId
+							});
+						reject('none');
+					} else {
+						// 有网络连接
+						console.log('wdebug--res', res.networkType);
+						resolve(res.networkType);
+					}
+				},
+				fail: err =>{
+					console.log(JSON.stringify(err));
+					let msg_str = err ? JSON.stringify(err) : '未知错误，请联系管理员';
+					if(err.errMsg && err.errMsg.indexOf('request:fail abort statusCode:-1') > -1){
+						msg_str = '盲猜一个，掉线了';
+					}
+					store.commit('user/setUserData',
+						{
+							'refreshFlag': 'fail',
+							'modalData':
+								{
+									'content': msg_str,
+									'confirmText': '',
+									'cancelText': 'OK',
+								},
+							'modalShow': true,
+							'modalPageId': pageId
+						});
+					reject('none');
 				}
-			}
-		})
+			});
+		});
 	}
 };

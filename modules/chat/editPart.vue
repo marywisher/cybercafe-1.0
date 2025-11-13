@@ -3,7 +3,8 @@
 		<view v-if="edit">
 			<textarea adjust-position autoHeight :cursor-spacing="150"
 				v-model="edit_text" class="edit-box" :styles="dynamicStyle"
-				trim="both" @input="autoSaveContent" confirm-hold></textarea>
+				trim="both" @input="autoSaveContent" confirm-hold
+				:maxlength="-1"></textarea>
 			<view class="display-flex display-line sp-between icon-part">
 				<cybercafe-button btnClass="btn-default" v-if="options.length > 0"
 					btnName="" class="iconfont icon-guanbi" @tapBtn="cancelFun"/>

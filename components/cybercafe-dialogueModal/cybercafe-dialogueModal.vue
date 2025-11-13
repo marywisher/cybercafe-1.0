@@ -1,7 +1,7 @@
 <template>
 	<cybercafe-view ref="dialogueView" isAbsolute closeAble :viewTitle="title">
 		<view class="display-flex pop-content">
-			<input v-model="value_str" @input="check"/>
+			<input v-model="value_str" :maxlength="-1" @input="check"/>
 			<view>
 				<cybercafe-button btnClass="btn-primary" :btnDisable="unsavable"
 					@tapBtn="confirmFun" btnName="修改"
