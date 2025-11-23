@@ -87,7 +87,7 @@ export default{
 		//let _self = this;
 		store.commit('user/setUserData', {
 			'modalData': {
-				title: '解散羁绊后，本羁绊聊天记录将全部删除，无法恢复',
+				title: '解散容器后，本容器记录将全部删除，无法恢复',
 				confirmText: '确定解散',
 				cancelText: '再想想',
 				success: function (res) {

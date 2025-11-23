@@ -63,8 +63,8 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
-			...mapState('setting', ['isLogin', 'token', 'userId']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['darkMode', 'isLogin', 'token', 'userId']),
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
 			}
@@ -193,7 +193,7 @@
 						/* uni.switchTab({
 							url: '/pages/index/index'
 						}) */
-						handleFun.beforeInit();
+						handleFun.beforeInit('login');
 					} else {
 						uni.showToast({
 							title: res.msg,

@@ -67,6 +67,20 @@
 				bubble_color2: '',
 			}
 		},
+		watch: {
+			bubbleColor1(newValue){
+				if(newValue) this.bubble_color1 = newValue;
+			},
+			bubbleColor2(newValue){
+				if(newValue) this.bubble_color2 = newValue;
+			},
+			fontColor1(newValue){
+				if(newValue) this.font_color1 = newValue;
+			},
+			fontColor2(newValue){
+				if(newValue) this.font_color2 = newValue;
+			},
+		},
 		computed: {
 			...mapState('bubble', ['bubbleColor1', 'bubbleColor2',
 				'fontColor1', 'fontColor2', 
@@ -78,7 +92,7 @@
 				this.getBubbleData();
 				this.font_color1 = this.fontColor1;
 				this.font_color2 = this.fontColor2;
-							
+				
 				this.bubble_color1 = this.bubbleColor1;
 				this.bubble_color2 = this.bubbleColor2;
 			},

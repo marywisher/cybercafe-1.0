@@ -13,11 +13,13 @@
 						<label>{{replyMode == 'auto' ? '自动' : '长按'}}</label>
 					</view>
 				</view>
+				<view class="hint character-line">自动回复仅支持当前角色连续发言</view>
+				<view class="hint character-line">长按下方角色头像可指定角色发言</view>
 				<view class="hint character-line">至少确保一位角色在场上</view>
 				<view v-for="(item, index) in character_list" :key="item.character_id"
 					class="character-line display-flex sp-between display-line">
 					<view class="display-flex character-tag display-line">
-						<image mode="aspectFit" :src="tagImg(item.character_id)"></image>
+						<image mode="aspectFit" :src="tagImg(item.character_id)" @longpress="speakFun(item.character_id)"></image>
 						<view class="character-name">{{ item.character_name }}</view>
 						<span v-if="item.character_name != '旁白'" class="iconfont icon-shezhi" @tap="gotoDetail(item.character_id)"></span>
 					</view>
@@ -75,13 +77,18 @@
 				//console.log(this.characterlist);
 				this.setCrtCharacter();
 			},
-			setCrtCharacter(){
-				for(let i in this.characterlist){
-					if(i == 0) continue;
-					if(this.characterlist[i].detail_status == 0) continue;
-					this.crt_character_img = this.characterlist[i].character_img;
-					this.crt_character_id = i;
-					break;
+			setCrtCharacter(character_id = 0){
+				if(character_id > 0){
+					this.crt_character_img = this.characterlist[character_id].character_img;
+					this.crt_character_id = character_id;
+				}else{
+					for(let i in this.characterlist){
+						if(i == 0) continue;
+						if(this.characterlist[i].detail_status == 0) continue;
+						this.crt_character_img = this.characterlist[i].character_img;
+						this.crt_character_id = i;
+						break;
+					}
 				}
 			},
 			openFun(){
@@ -122,9 +129,10 @@
 				//舞台数据更新
 				this.$forceUpdate();
 			},
-			speakFun(){
+			speakFun(character_id = 0){
 				console.log('speaking');
 				//console.log(this.crt_character_id);
+				if(character_id > 0) this.setCrtCharacter(character_id);
 				let message_time = common.getCurrentTimeStampStr(true);
 				if(message_time == this.messageTime) message_time += '1';
 				this.setDiaData({

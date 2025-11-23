@@ -25,7 +25,8 @@
 					</view>
 					<view class="display-flex item-character-line display-line hint">{{item.short_description}}</view>
 					<view class="display-flex display-line tag-part">
-						<view v-for="(tag, index1) in item.character_tag" :key="index1" class="tag-item">{{tag}}</view>
+						<view v-for="(tag, index1) in item.character_tag" :key="index1" 
+						class="tag-item" v-if="tag.length > 0">{{tag}}</view>
 					</view>
 				</view>	
 			 </view>

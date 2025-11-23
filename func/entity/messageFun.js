@@ -143,7 +143,7 @@ export default{
 		},{
 			'message_time': store.state.dialogue.messageTime
 		});
-		console.log('optionFirst:', store.state.dialogue.optionFirst);
+		//console.log('optionFirst:', store.state.dialogue.optionFirst);
 		let history_list = store.state.dialogue.historylist;
 		let last_text = store.state.dialogue.optionFirst;
 		let last_html = common.textToHtml(last_text, 

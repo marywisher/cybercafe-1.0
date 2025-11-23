@@ -1,113 +1,125 @@
 import common from "../common/common";
-import { VERSION } from "../common/common";
+import { VERSION } from "@/func/common/common";
 import store from "@/store";
 import request from "@/func/common/request";
-import baseQuery from "../dbManager/baseQuery";
 import incubatorFun from "@/func/incubator/incubatorFun";
 import aiFun from "@/func/setting/aiFun";
 
 export default {
-	async userInit(){
-		await this.initSetting();
-		let _self = this;
-		// 获取设备信息
-		uni.getSystemInfo({
-			success: function(res) {
-				//console.log(res);
-				let deviceData = {
-					appLanguage: res.appLanguage,
-					browserName: res.browserName,
-					browserVersion: res.browserVersion,
-					deviceBrand: res.deviceBrand, // 品牌
-					deviceModel: res.deviceModel, // 型号
-					deviceType: res.deviceType,
-					devicePixelRatio: res.devicePixelRatio, // 设备像素比
-					romName: res.romName,
-					uniPlatform: res.uniPlatform, // 平台（iOS、Android、Windows等）
-					uniRuntimeVersion: res.uniRuntimeVersion,
-		
-					brand: res.brand,
-					model: res.model,
-					platform: res.platform,
-					screenWidth: res.screenWidth, // 屏幕宽度
-					screenHeight: res.screenHeight, // 屏幕高度
-					system: res.system, // 操作系统版本
-					theme: res.osTheme,
-					ip: store.state.setting.ip,
-					ippos: store.state.setting.ippos
-				};
-		
-				// 转换为JSON字符串
-				let jsonData = JSON.stringify(deviceData);
+	userInit(page_id){
+		request.post("userController/relogin", page_id, {
+			device: store.state.user.deviceInfo,
+			version: VERSION
+		}).then(res => {
+			console.log(res.code);
+			if (res.code == 200) {
+				//console.log(res.result);
+				store.commit('setting/setSettingData', {
+					'token': res.result.token,
+					'groupExpiration': res.result.expiration,
+				});
+				store.commit('user/setUserData', {
+					userGroup: res.result.group,
+					powerLevel: res.result.power_level,
+					newMsgCount: res.result.new_msg,
+					hasChecked: res.result.has_checkin,
+					checkinCount: res.result.checkin_count
+				});
+				if(res.result.latest_version > store.state.user.latestVersion){
+					store.commit('user/setUserData', {
+						'latestVersion': res.result.latest_version,
+						'userKey': res.result.key,
+					});
+				}
 				
-				request.post("userController/relogin", 'chat', {
-					device: jsonData,
-					version: VERSION
-				}).then(res => {
-					//console.log(res.code);
-					if (res.code == 200) {
-						//console.log(res.result);
-						store.commit('setting/setSettingData', {
-							'token': res.result.token,
-							'groupExpiration': res.result.expiration,
-						});
+				if(res.result.info){
+					common.checkPopup(function(){
 						store.commit('user/setUserData', {
-							userGroup: res.result.group,
-							powerLevel: res.result.power_level
+							'modalData': {
+								content: res.result.info,
+								confirmText: '',
+								cancelText: 'OK',
+								success: function (res) {}
+							},
+							'modalShow': true,
+							'modalPageId': page_id
 						});
-						if(res.result.latest_version > store.state.user.latestVersion){
-							store.commit('user/setUserData', {
-								'latestVersion': res.result.latest_version,
-								'userKey': res.result.key,
-							});
-						}
-						
-						if(res.result.info){
-							common.checkPopup(function(){
+					});
+				}
+				//数据同步回填
+				incubatorFun.feedback();
+				//console.log('init');
+				aiFun.getAiRange();
+				this.getUserTag();
+				
+				if(res.result.new_msg > 0 && page_id == 'index'){//消息弹窗
+					store.commit('user/setUserData', {
+						'modalData': {
+							content: '来新消息了',
+							confirmText: '去看消息',
+							cancelText: '待会儿再说',
+							success: function (res) {
+								console.log(res);
+								if(res.confirm){
+									uni.navigateTo({
+										url: '/pages/index/message'
+									})
+								}else{
+									uni.reLaunch({
+										url: '/pages/chat/index'
+									})
+								}								
+							}
+						},
+						'modalShow': true,
+						'modalPageId': page_id
+					});
+				}else{
+					uni.reLaunch({
+						url: '/pages/chat/index'
+					})
+				}
+				
+				/* if(res.result.has_checkin == 0 && page_id == 'index'){//签到
+					let _self = this;
+					if(this.checkin_flag == false){
+						request.post("userController/setCheckin", 'globalSetting').then(res => {
+							if (res.code == 200) {
 								store.commit('user/setUserData', {
 									'modalData': {
-										content: res.result.info,
+										content: res.result.message,
 										confirmText: '',
 										cancelText: 'OK',
-										success: function (res) {}
+										success: function (res) {
+										}
 									},
 									'modalShow': true,
-									'modalPageId': 'chat'
+									'modalPageId': page_id
 								});
-							});
-						}
-						//数据同步回填
-						incubatorFun.feedback();
-						//console.log('init');
-						aiFun.getAiRange();
-						_self.getUserTag();
-						
-						uni.reLaunch({
-							url: '/pages/chat/index'
-						})
-					}else{
-						uni.showToast({
-							title: res.data.msg,
-							icon: "none"
-						})
-						uni.navigateTo({
-							url: '../login/login'
-						})
+								if(res.result.count > 0){
+									_self.getRequestCount();
+								}
+							} else {
+								uni.showToast({
+									title: res.msg,
+									icon: "none"
+								});
+							}
+						});
 					}
-				}).catch(e =>{
-					console.log(e);
-				});
+				} */
+			}else{
+				uni.showToast({
+					title: res.data.msg,
+					icon: "none"
+				})
+				uni.navigateTo({
+					url: '../login/login'
+				})
 			}
+		}).catch(e =>{
+			console.log(e);
 		});
-	},
-	async initSetting(){
-		let setting_result = await baseQuery.getDataByKey('cybercafe_setting', []);
-		for(let setting_key in setting_result){
-			//console.log(setting_result[setting_key]['setting_key'], setting_result[setting_key]);
-			let setting_store = {};
-			setting_store[setting_result[setting_key]['setting_key']] = JSON.parse(setting_result[setting_key]['setting_value']);
-			store.commit('setting/setSettingStore', setting_store);
-		}
 	},
 	getUserTag(){
 		request.post('userController/getSelfTag', 'globalSetting').then(res => {
@@ -115,6 +127,7 @@ export default {
 			if (res.code == 200) {
 				store.commit('user/setUserData', {
 					'tag': res.result.tag,
+					'tagLevel': res.result.level
 				});
 			}else {
 				uni.showToast({
@@ -123,5 +136,19 @@ export default {
 				});
 			}
 		});
-	}
+	},
+	getRequestCount(page_id){
+		let _self = this;
+		request.post("aiController/getRequestCount", page_id).then(res => {
+			if (res.code == 200) {
+				//console.log(res.result);
+				store.commit('user/setUserData', {'totalReward': res.result});
+			} else {
+				uni.showToast({
+					title: res.msg,
+					icon: "none"
+				});
+			}
+		});
+	},
 }

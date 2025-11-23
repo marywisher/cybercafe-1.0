@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<cybercafe-card cardTitle="羁绊气泡样式" :showDetail="show_detail" @toggleDetail="toggleDetail">
+		<cybercafe-card cardTitle="容器气泡样式" :showDetail="show_detail" @toggleDetail="toggleDetail">
 			<view class="sample">
 				<view class="chat-line left">
 					<view class="chat-img-box" :style="dynamicImg">

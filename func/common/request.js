@@ -69,13 +69,7 @@ export default {
 							url: '../login/login?msg=' + res.data.msg
 						})
 					}else if(res.data.code == 300){
-						/* uni.hideLoading();
-						store.commit('setting/setSettingData', {'isLogin': false});
-						console.log('重新登录，来自：' + option);
-						uni.reLaunch({
-							url: '../login/login' + (res.msg ? '?msg=' + res.msg : '')
-						}); */
-						userFun.userInit();
+						userFun.userInit(pageId);
 					}else if(res.data.code == 400){
 						uni.hideLoading();
 						if(res.data.msg){

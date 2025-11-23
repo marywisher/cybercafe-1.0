@@ -65,7 +65,7 @@
 		},
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
-			...mapState('bubble', ['patternIndex', 'patternRange']),
+			...mapState('bubble', ['bubbleRefresh', 'patternIndex', 'patternRange']),
 			...mapState('setting', ['chatPattern']),
 		},
 		methods: {
@@ -85,7 +85,10 @@
 			},
 			async changePattern(){
 				//console.log(this.operate_id);
-				this.setBubbleData({'patternIndex': this.operate_id});
+				this.setBubbleData({
+					'patternIndex': this.operate_id,
+					'bubbleRefresh': true,
+				});
 				this.setSettingData({'chatPattern': this.operate_id});
 				await bubbleFun.loadPattern(this.patternIndex, true);
 				this.closeView();

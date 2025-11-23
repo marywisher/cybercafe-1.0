@@ -66,11 +66,21 @@
 				},
 				immediate: true, // 立即执行一次
 				deep: true // 深度监听（可选）
+			},
+			refreshList: {
+				handler(newValue, oldValue) {
+				    if(newValue == -2){
+						this.option_list = this.options;
+					}
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
 			}
 		},
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
-			...mapState('dialogue', ['cDisplayId', 'optionFirst', 'options']),
+			...mapState('dialogue', ['cDisplayId', 'optionFirst', 'options', 'prevMessageTime',
+				'refreshList']),
 			...mapState('setting', ['editContent', 'entityId', 'fontColor', 'fontSize']),
 			dynamicStyle: function(){
 				if(this.side == 'left'){
@@ -118,13 +128,13 @@
 				this.$emit('editChange', true);
 			},
 			cancelFun(){
-				console.log(this.crtIndex, this.swiper_current);
+				//console.log(this.crtIndex, this.swiper_current);
 				if(this.crtIndex == -1){
 					this.swiper_current = 0;
 				}else{
 					this.swiper_current = this.crtIndex;
 				}
-				console.log(this.edit_text, this.options[this.swiper_current].text);
+				//console.log(this.edit_text, this.options[this.swiper_current].text);
 				if(this.edit_text != this.options[this.swiper_current].text){
 					this.setDiaData({
 						'optionFirst': this.options[this.swiper_current].text

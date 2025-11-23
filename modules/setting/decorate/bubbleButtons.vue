@@ -34,15 +34,19 @@
 		name: "bubbleButtons",
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'userKey']),
-			...mapState('bubble', ['bubbleColor1', 'bubbleColor2', 'cssAfter', 'cssPrev',
+			...mapState('bubble', ['bubbleColor1', 'bubbleColor2', 'bubbleRefresh',
+				'cssAfter', 'cssPrev',
 				'displayCss', 'displayHtml',
 				'fontColor1', 'fontColor2', 'nextId',
 				'patternCss', 'patternHtml', 'patternIndex', 'patternKey', 
 				'patternName', 'patternRange', 'patternStatus', 'showCode']),
+			...mapState('setting', ['bubbleColor', 'chatCss', 'chatHtml', 'chatPattern', 
+				'fontColor']),
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('bubble', ['getBubbleData', 'setBubbleData']),
+			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			saveNew() {
 				this.$refs.newPatterName.open();
 			},
@@ -173,9 +177,20 @@
 						'chatCss': this.cssPrev + this.patternCss + this.cssAfter
 					});
 				}
-				uni.showToast({
-					title: '已全局应用',
-					icon: 'success'
+				this.setBubbleData({
+					'bubbleRefresh': true
+				})
+				this.setUserData({
+					'modalData': {
+						title: "温馨提示",
+						content: "已全局应用",
+						cancelText: "OK",
+						confirmText: "",
+						success: (res) => {
+						},
+					},
+					'modalShow': true,
+					'modalPageId': 'decorateSetting'
 				})
 			},
 			async reset() {

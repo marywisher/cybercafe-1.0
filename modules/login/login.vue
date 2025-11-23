@@ -60,6 +60,7 @@
 <script>
 	import request from '@/func/common/request';
 	import userFun from '@/func/user/userFun';
+	import { VERSION } from "@/func/common/common";
 	import {
 		mapMutations,
 		mapState,
@@ -87,8 +88,8 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
-			...mapState('setting', ['isLogin', 'token', 'userId']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['darkMode', 'isLogin', 'token', 'userId']),
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
 			}
@@ -131,6 +132,7 @@
 				let _self = this
 				if(this.form_flag == 'login'){//login
 					request.post("userController/login", 'login', {
+						version: VERSION,
 						account: this.account,//Base64.encode(this.account),
 						pwd: this.pwd
 					}).then(res => {
@@ -162,7 +164,7 @@
 								'modalShow': true,
 								'modalPageId': 'chat'
 							});
-							userFun.userInit();
+							userFun.userInit('login');
 						} else {
 							uni.showToast({
 								title: res.msg,

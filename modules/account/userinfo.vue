@@ -2,8 +2,13 @@
 	<view>
 		<cybercafe-card :cardTitle="card_title" @toggleDetail="titleChange">
 			<view class="display-flex account-top-part">
-				<image mode="aspectFit" :src="avatar" class="account-avatar"
-					@tap="changeAvatar"></image>
+				<view>
+					<image mode="aspectFit" :src="avatar" class="account-avatar"
+						@tap="changeAvatar"></image>
+					<view class="hint" v-if="aimId == userId">
+						{{'IP属地:' + ip_pos}}
+					</view>
+				</view>
 				<view class="account-info">
 					<view class="account-title">{{account_name}}</view>
 					<view class="display-flex display-line info-part sp-between">
@@ -12,18 +17,16 @@
 								{{'ID:' + user_key}}
 								<view class="iconfont icon-fuzhi" @tap="copyKey"></view>
 							</view>
-							<view class="hint" v-if="aimId == userId">
-								{{'IP属地:' + ip_pos}}
-							</view>
 						</view>
-						<followPart v-if="aimId != userId" ref="acFollowPart"
-							:type="1" :aim="aimId" @tagTap="refreshFollow"></followPart>
-						<checkinPart ref="acCheckinPart" @afterCheckin="getRequestCount"></checkinPart>
+						<!-- <followPart v-if="aimId != userId" ref="acFollowPart"
+							:type="1" :aim="aimId" @tagTap="refreshFollow"></followPart> -->
 					</view>
-					<view class="display-flex display-line tag-part">
-						<view v-for="(item, index) in tags" :key="index" class="tag-item">{{item}}</view>
-					</view>
+					<view class="checkin-box hint">这是您第 <b>{{checkinCount}}</b> 次签到</view>
+					<cybercafe-week-card ref="acWeekCard" class="checkin-box" @afterCheckin="getRequestCount"></cybercafe-week-card>
 				</view>
+			</view>
+			<view class="display-flex display-line tag-part">
+				<view v-for="(item, index) in tags" :key="index" class="tag-item">{{item}}</view>
 			</view>
 			<cybercafe-view class="reward-part">
 				<view class="display-flex display-line account-detail" v-if="aimId == userId">
@@ -51,6 +54,7 @@
 	import adPart from './adPart';
 	import followPart from './followPart';
 	import checkinPart from '@/modules/account/checkinPart';
+	import userFun from '@/func/user/userFun';
 	import {
 		mapMutations,
 		mapState,
@@ -94,19 +98,29 @@
 				},
 				immediate: true, // 立即执行一次
 				deep: true // 深度监听（可选）
+			},
+			totalReward: {
+				handler(newValue, oldValue) {
+				    //console.log(newValue);
+				    this.request_count = newValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
 			}
 		},
 		computed: {
-			...mapState('user', ['aimId', 'darkMode', 'newMsgCount', 
-				'tag', 'userAvatar', 'userKey', 'userGroup']),
-			...mapState('setting', ['groupExpiration', 'ippos', 'userId']),
+			...mapState('user', ['aimId', 'checkinCount', 'newMsgCount', 'tag', 
+				'totalReward', 'userAvatar', 'userKey', 'userGroup']),
+			...mapState('setting', ['darkMode', 'groupExpiration', 'ippos', 'userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
 			initPage(){
 				this.avatar = this.default_avatar;
-				
+				this.$nextTick(() => {
+					this.$refs.acWeekCard.init();
+				});
 				//console.log(this.ippos);
 				//console.log(this.aimId);
 				let _self = this;
@@ -195,19 +209,7 @@
 				}
 			},
 			getRequestCount(){
-				let _self = this;
-				request.post("aiController/getRequestCount", 'globalSetting').then(res => {
-					if (res.code == 200) {
-						//console.log(res.result);
-						_self.setUserData({'total_reward': res.result});
-						_self.request_count = res.result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					} else {
-						uni.showToast({
-							title: res.msg,
-							icon: "none"
-						});
-					}
-				});
+				userFun.getRequestCount();
 			},
 			showRewardDetail(){
 				uni.navigateTo({
@@ -277,7 +279,7 @@
 		height: calc(2 * $uni-img-size-lg);
 		width: calc(2 * $uni-img-size-lg);
 	}
-	.reward-detail, .icon-fuzhi, .info-part, .account-title, .tag-part{
+	.reward-detail, .icon-fuzhi, .info-part, .account-title, .tag-part, .checkin-box{
 		margin-left: $uni-spacing-lg;
 	}
 	.tag-part{

@@ -29,7 +29,8 @@
 		<view class="character-line"></view>
 		
 		<view class="display-flex display-line tag-part">
-			<view v-for="(item, index) in character_tag" :key="index" class="tag-item">{{item}}</view>
+			<view v-for="(item, index) in character_tag" :key="index" 
+			class="tag-item" v-if="item.length > 0">{{item}}</view>
 		</view>
 		<view class="character-line"></view>
 		
@@ -116,13 +117,15 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['darkMode']),
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
 			}
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
+			...mapMutations('setting', ['getSettingData']),
 			async init(character_id){
 				//console.log(character_id);
 				let _self = this;

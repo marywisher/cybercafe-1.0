@@ -121,7 +121,7 @@
 		},
 		watch: {
 			refreshList(newOption){
-				console.log(newOption);
+				//console.log(newOption);
 				switch(newOption){
 					case -3: //不刷
 					break;
@@ -161,9 +161,19 @@
 					_self.new_scroll = newValue;
 				})
 			},
-			chatPattern(newValue){
-				this.refreshPattern(newValue);
-			},
+			bubbleRefresh: {
+				handler(newValue, oldValue) {
+				    //console.log(newValue);
+					if(newValue){
+						this.refreshPattern(this.chatPattern);
+						this.setBubbleData({
+							'bubbleRefresh': false
+						})
+					} 
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
+			}
 			/* optionFirst:{
 				handler(newValue, oldValue) {
 				    //console.log(newValue);
@@ -178,12 +188,12 @@
 			} */
 		},
 		computed: {
-			...mapState('user', ['darkMode']),
 			...mapState('dialogue', ['cDisplayId', 'characterlist',  'entityMode', 'historylist', 
 				'messageTime', 'optionFirst', 'options', 'refreshList']),
 			...mapState('setting', ['bubbleAlign', 'bubbleColor', 'bubbleOpacity', 
-				'chatCss', 'chatPattern', 
+				'chatCss', 'chatPattern', 'darkMode',
 				'fontColor', 'fontSize', 'imgWidth', 'imgRadius']),
+			...mapState('bubble', ['bubbleRefresh']),
 			dynamicNovelStyle() {
 				return function(character_id) {
 					//console.log(this.characterlist, character_id);
@@ -236,9 +246,9 @@
 			},
 		},
 		methods: {
-			...mapMutations('user', ['getUserData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			...mapMutations('setting', ['getSettingData', 'setSettingData']),
+			...mapMutations('bubble', ['getBubbleData', 'setBubbleData']),
 			async init(){
 				this.fastInit(-1);
 				for(let i = 0; i < this.options.length; i ++){
@@ -249,7 +259,7 @@
 						break;
 					}
 				}
-				console.log(this.swiper_index);
+				//console.log(this.swiper_index);
 				if(!this.lock_mode) this.$emit('afterUpdate');
 				this.refreshPattern(this.chatPattern);
 				if(this.history_list.length >= 50) {
@@ -362,6 +372,7 @@
 			editChange(param){
 				this.hideMenu();
 				this.edit_mode = param;
+				this.$emit('editing', param);
 			},
 			async refreshPattern(pattern_index){
 				//console.log(pattern_index);

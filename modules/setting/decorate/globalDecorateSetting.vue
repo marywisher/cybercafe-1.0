@@ -2,7 +2,7 @@
 	<view>
 		<cybercafe-card cardTitle="全局样式设置" :showDetail="show_detail" @toggleDetail="toggleDetail">
 			<view class="display-flex display-line">
-				<view class="global-setting-label">羁绊背景图：</view>
+				<view class="global-setting-label">容器背景图：</view>
 				<switch :checked="bgOpacity" style="transform:scale(0.6)" color="#E94E46"
 					@change="turnOpacity"></switch>
 				<label>{{opacity_label}}</label>

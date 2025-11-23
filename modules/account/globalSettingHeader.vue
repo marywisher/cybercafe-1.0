@@ -31,12 +31,15 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['hasNewMsg', 'newMsgCount']),
+			...mapState('user', ['newMsgCount']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData']),
 			back(){
-				uni.navigateBack();
+				//uni.navigateBack();
+				uni.navigateTo({
+					url: '/pages/chat/index'
+				})
 			},
 			gotoMessageList(){
 				uni.navigateTo({

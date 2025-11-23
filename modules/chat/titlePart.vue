@@ -5,7 +5,7 @@
 			<span class="iconfont icon-dianping" @tap="openPop"></span>
 		</view>
 		
-		<cybercafe-dialogueModal class="pop-view" ref="popEditTitle" title="修改羁绊名称"
+		<cybercafe-dialogueModal class="pop-view" ref="popEditTitle" title="修改容器名称"
 			:content="title" @confirm="editEntityName"></cybercafe-dialogueModal>
 	</view>
 </template>

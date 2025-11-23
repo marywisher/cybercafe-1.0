@@ -104,15 +104,28 @@ export default {
 		let preview_css;
 		if (reset) {
 			let poptions = JSON.parse(pattern_data[0].pattern_options);
-			if (poptions['bg-color1']) 
+			//console.log(pattern_data[0].pattern_options);
+			let bubble_color = store.state.setting.bubbleColor;
+			let font_color = store.state.setting.fontColor;
+			if (poptions.hasOwnProperty('bg-color1')) {
 				store.commit('bubble/setBubbleData', {'bubbleColor1': poptions['bg-color1']});
-			if (poptions['bg-color2']) 
+				bubble_color[0] = poptions['bg-color1'];
+			}
+			if (poptions.hasOwnProperty('bg-color2')) {
 				store.commit('bubble/setBubbleData', {'bubbleColor2': poptions['bg-color2']});
-			if (poptions['font-color1']) 
+				bubble_color[1] = poptions['bg-color2'];
+			}
+			store.commit('setting/setSettingData', {'bubbleColor': bubble_color});
+			if (poptions.hasOwnProperty('font-color1')) {
 				store.commit('bubble/setBubbleData', {'fontColor1': poptions['font-color1']});
-			if (poptions['font-color2']) 
+				font_color[0] = poptions['font-color1'];
+			}
+			if (poptions.hasOwnProperty('font-color2')) {
 				store.commit('bubble/setBubbleData', {'fontColor2': poptions['font-color2']});
-	
+				font_color[1] = poptions['font-color2'];
+			}
+			store.commit('setting/setSettingData', {'fontColor': font_color});
+			//console.log(store.state.bubble.bubbleColor2);
 			store.commit('bubble/setBubbleData', {
 				'displayHtml': pattern_data[0].pattern_html,
 				'displayCss': pattern_data[0].pattern_css

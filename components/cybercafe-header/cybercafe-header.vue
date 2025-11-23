@@ -31,7 +31,7 @@
 			}
 		},
 		computed:{
-			...mapState('user', ['darkMode']),
+			...mapState('setting', ['darkMode']),
 			dynamicBgOpacity(){
 				return {
 					opacity: `${this.bgOpacity}`
@@ -51,7 +51,7 @@
 			}
 		},
 		methods: {
-			...mapMutations('user', ['getUserData']),
+			...mapMutations('setting', ['getSettingData']),
 		}
 	}
 </script>

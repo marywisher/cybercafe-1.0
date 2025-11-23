@@ -5,7 +5,7 @@
 				placeholder="回复由AI生成，仅供娱乐"/>
 			<view class="iconfont icon-quanping" @tap="changeInputMode"></view>
 		</view>
-		<view v-show="input_mode == 'min' && !sending" class="iconfont icon-fasong" @tap="sendMessage"></view>
+		<view v-show="input_mode == 'min'" class="iconfont icon-fasong" @tap="sendMessage"></view>
 		
 		<view v-show="input_mode == 'max'" ref="popup">
 			<view class="textarea-box">
@@ -15,7 +15,7 @@
 			</view>
 			<view class="textarea-btn display-flex display-line sp-around">
 				<view class="iconfont icon-feiquanping" @tap="changeInputMode"></view>
-				<view v-show="!sending" class="iconfont icon-fasong" @tap="sendMessage"></view>
+				<view class="iconfont icon-fasong" @tap="sendMessage"></view>
 			</view>
 		</view>
 	</view>
@@ -54,8 +54,25 @@
 				this.chat_input = this.editContent[this.entityId];
 			},
 			async sendMessage(){
+				if(!this.chat_input || this.chat_input.trim().length == 0){
+					this.setUserData({
+						'modalData': {
+							title: "温馨提示",
+							content: '请先输入内容',
+							confirmText: '',
+							cancelText: "OK",
+						},
+						'modalShow': true,
+						'modalPageId': 'chat'
+					})
+					return;
+				}
+				if(this.sending) return;
 				this.input_mode = 'min';
 				this.sending = true;
+				setTimeout(() => {
+					this.sending = false;
+				}, 2000);
 				this.$emit('inputModeChange', this.input_mode);
 				//敏感审核
 				let response_feedback = await responseFun.toolRequest('sensitive', this.chat_input.trim(), 'chat');
@@ -87,7 +104,6 @@
 						'modalPageId': 'chat'
 					})
 				}
-				this.sending = false;
 			},
 			autoSaveContent(e){
 				//console.log(e);

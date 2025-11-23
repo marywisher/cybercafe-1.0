@@ -16,9 +16,8 @@
 	export default{
 		name: 'chatBg',
 		computed:{
-			...mapState('user', ['darkMode']),
 			...mapState('dialogue', ['entityImage']),
-			...mapState('setting', ['bgOpacity']),
+			...mapState('setting', ['bgOpacity', 'darkMode']),
 			dynamicBg() {
 				return function(bgOpacity){
 					if(this.entityImage == configData.defaultImg){
@@ -37,7 +36,6 @@
 			}
 		},
 		methods:{
-			...mapMutations('user', ['getUserData']),
 			...mapMutations('dialogue', ['getDiaData']),
 			...mapMutations('setting', ['getSettingData']),
 		}
