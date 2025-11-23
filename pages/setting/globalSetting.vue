@@ -134,13 +134,13 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['aimId', 'darkMode', 'latestVersion', 'modalData', 
-				'modalPageId', 'modalShow']),
-			...mapState('setting', ['userId']),
+			...mapState('user', ['aimId', 'latestVersion', 'modalData', 'modalPageId', 
+			'modalShow']),
+			...mapState('setting', ['darkMode', 'userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
-			...mapMutations('setting', ['getSettingData']),
+			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			uploadData(){
 				baseQuery.syncDBUpload();
 			},
@@ -149,13 +149,13 @@
 			},
 			turnLight(e){
 				if(e.detail.value == true){
-					this.setUserData({
+					this.setSettingData({
 						darkMode: 'light'
 					});
 					plus.nativeUI.setUIStyle('light');
 					this.light_label = '开灯中';
 				}else{
-					this.setUserData({
+					this.setSettingData({
 						darkMode: 'dark'
 					});
 					plus.nativeUI.setUIStyle('dark');

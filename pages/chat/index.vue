@@ -8,11 +8,12 @@
 			@touchstart="handleTouchStart" @touchend="handleTouchEnd">
 			<!-- 内容区 -->
 			<listPart v-show="historylist.length > 0" ref="chatListPart" :lockMode="in_pull_down_mode"
-				:viewMode="input_mode" @afterUpdate="afterUpdateList" :scroll="scroll"></listPart>
+				:viewMode="input_mode" @afterUpdate="afterUpdateList" :scroll="scroll"
+				@editing='changeEditMode'></listPart>
 			<newUserPart v-show="historylist.length == 0" ref="chatNewUserPart"></newUserPart><!-- 新用户可见-->
 			<view class="btm"></view>
 		</view>
-		<chatBottom :inputMode="input_mode" ref="chatBottomPart" v-show="historylist.length > 0"
+		<chatBottom :inputMode="input_mode" ref="chatBottomPart" v-show="historylist.length > 0 && !edit_mode"
 			@chageInputMode="chageInputMode"></chatBottom>
 		<view v-if="show_to_btm_btn" class="fix-btm" 
 			:class="{'heigher-btn': input_mode == 'max'}" @tap="clickToBtm">>></view>
@@ -41,7 +42,7 @@
 				upcount: 0,
 				scroll: 0,
 				dark_mode: 'light',
-				edit: false,
+				edit_mode: false,
 				input_mode: 'min',
 				client_y: 0
 			}
@@ -72,9 +73,9 @@
 			}
 		},
 		computed:{
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow',
-				'userKey', 'userName']),
-			...mapState('setting', ['entityId']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'userKey', 
+			'userName']),
+			...mapState('setting', ['darkMode', 'entityId']),
 			...mapState('dialogue', ['historylist'])
 		},
 		methods:{
@@ -141,6 +142,9 @@
 				//console.log(mode);
 				this.input_mode = mode;
 				this.toBtm();
+			},
+			changeEditMode(mode){
+				this.edit_mode = mode;
 			},
 			handleTouchStart(e){
 				//console.log(e);

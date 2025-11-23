@@ -123,8 +123,8 @@
 			this.init();
 		},
 		computed:{
-			...mapState('setting', ['customPrompt', 'promptSelect']),
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow', 'userGroup']),
+			...mapState('setting', ['customPrompt', 'darkMode', 'promptSelect']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'userGroup']),
 			dynamicStyle(){
 				return this.darkMode == 'light' ? {backgroundColor: '#fff', color: '#333'} : 
 					{backgroundColor: '#1f1f1f', color: '#999'};

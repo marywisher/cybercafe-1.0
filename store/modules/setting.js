@@ -14,6 +14,7 @@ export default {
 		chatPattern: 1,
 		customApi: [],
 		customPrompt: [],
+		darkMode: 'light',
 		editContent: {}, //编辑的内容,{entityId: txt,}
 		entityId: 1,
 		fontColor: ['rgb(52,52,52)', 'rgb(52,52,52)'],

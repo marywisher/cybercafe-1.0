@@ -4,6 +4,7 @@ export default {
 		//主要放置非应用时使用的setting属性，用于bubble跨组件设置
 		bubbleColor1: '',
 		bubbleColor2: '',
+		bubbleRefresh: false, //用于刷新前端样式
 		cssPrev: '<style>',
 		cssAfter: '</style>',
 		displayCss: '',
@@ -22,8 +23,8 @@ export default {
 		patternRange: [],
 		patternStatus: 4,//1下载 4草稿 6上架
 		previewCss: '',
-		sampleTextLeft: '这里是羁绊聊天内容效果预览',
-		sampleTextRight: '没错，想预览羁绊聊天内容效果就在这里',
+		sampleTextLeft: '这里是容器聊天内容效果预览',
+		sampleTextRight: '没错，想预览容器聊天内容效果就在这里',
 		searchKey: [],
 		showCode: false,
 	},

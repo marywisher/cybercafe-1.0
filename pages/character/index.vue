@@ -61,8 +61,8 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
-			...mapState('setting', ['entityId']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['darkMode', 'entityId']),
 			dynamicImg() {
 				return this.darkMode == 'light' ?
 				`background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.1) 80%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 1)), url('${this.character_image}');` : 

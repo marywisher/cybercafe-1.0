@@ -59,8 +59,8 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
-			...mapState('setting', ['entityId']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['darkMode', 'entityId']),
 			dynamicImg() {
 				return function(entity_image) {
 					if(entity_image){

@@ -57,8 +57,9 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['darkMode', 'modalData', 'modalPageId', 'modalShow']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 			...mapState('dialogue', ['selectedEntityId']),
+			...mapState('setting', ['darkMode']),
 			dynamicImg() {
 				return this.darkMode == 'light' ?
 				`background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.1) 80%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 1)), url('${this.character_image}');` : 
@@ -68,6 +69,7 @@
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
+			...mapMutations('setting', ['getSettingData']),
 			afterLoad(param){
 				this.character_image = param.image;
 				//this.character_key = param.key;

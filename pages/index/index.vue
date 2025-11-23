@@ -53,10 +53,12 @@
 				if(network_type == 'none') return;
 				
 				sqlite.initTable();
+				await handleFun.initSetting();
+				
 				//每日随机一个tip options.msg
 				//console.log(options)
 				setTimeout(() =>{
-					handleFun.beforeInit();
+					handleFun.beforeInit('index');
 				}, 500);
 			}
 		},

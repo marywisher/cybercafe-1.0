@@ -8,12 +8,15 @@ export default {
 		userGroup: 1,
 		powerLevel: 0,//用于限制提交本地崽的等级，非后台用户等级
 		tag: '',
+		tagLevel: 0,
+		hasChecked: false,
+		checkinCount: 0,//已签总次数
 		
 		latestVersion: '',
-		darkMode: 'light',
 		totalReward: 0,
 		newMsgCount: 0,
 		settingOpen: {global: true, bubble: true},
+		deviceInfo: '',
 		
 		lastTimestampAd: 0,
 		lastTimestampAccount: 0, 
