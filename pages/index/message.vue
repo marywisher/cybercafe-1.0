@@ -19,6 +19,7 @@
 			</view>
 		</cybercafe-view>
 		<view class="hint text-center btm-hint" v-if="message_list.length == 0">—— 收件箱空空如也 ——</view>
+		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
 
@@ -60,7 +61,8 @@
 			messageHeader
 		},
 		computed: {
-			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'newMsgCount']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'newMsgCount',
+				'tagLevel']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -92,15 +94,29 @@
 				else 
 					this.message_list[index].show = false;
 				this.$forceUpdate();
-				//未读改已读
+				//未读改已读 随机米粒奖励
 				let _self = this;
 				if(this.message_list[index].message_status == 4){
 					request.post("messageController/setMessages", 'message',
 						{'message_id': this.message_list[index].message_id,
-						'message_status': 1}).then(res => {
+						'message_status': 1,
+						'level': this.tagLevel,
+						'old_status': 4}).then(res => {
 						if (res.code == 200) {
 							_self.message_list[index].message_status = 1;
 							_self.setUserData({'newMsgCount': _self.newMsgCount - 1});
+							if(res.result.reward > 0){
+								_self.setUserData({
+									'modalData': {
+										'title': "恭喜",
+										'content': "获得" + res.result.reward + "米粒",
+										'confirmText': '',
+										'cancelText': "OK",
+									},
+									'modalShow': true,
+									'modalPageId': 'message'
+								})
+							}
 						}else{
 							uni.showToast({
 								title: res.msg,
