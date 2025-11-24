@@ -40,7 +40,8 @@
 			cybercafeCard2
 		},
 		computed:{
-			...mapState('user', ['checkinCount', 'hasChecked', 'userGroup']),
+			...mapState('user', ['checkinCount', 'hasChecked', 'modalData', 'modalPageId', 
+				'modalShow',  'userGroup']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -61,17 +62,24 @@
 				let _self = this;
 				request.post("userController/setCheckin", 'globalSetting').then(res => {
 					if (res.code == 200) {
-						store.commit('user/setUserData', {
-							'modalData': {
-								content: res.result.message,
-								confirmText: '',
-								cancelText: 'OK',
-								success: function (res) {
-								}
-							},
-							'modalShow': true,
-							'modalPageId': 'globalSetting'
-						});
+						if(res.result.message == '签到成功'){
+							uni.showToast({
+								title: res.result.message,
+								icon: 'success'
+							})
+						}else{
+							store.commit('user/setUserData', {
+								'modalData': {
+									content: res.result.message,
+									confirmText: '',
+									cancelText: 'OK',
+									success: function (res) {
+									}
+								},
+								'modalShow': true,
+								'modalPageId': 'globalSetting'
+							});
+						}						
 						if(_self.finish_count == 7){
 							_self.$emit('afterCheckin');
 						}
