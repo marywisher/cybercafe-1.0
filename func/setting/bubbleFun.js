@@ -17,6 +17,7 @@ export default {
 			if (local_pattern_data[i].pattern_updated_at > time_param) time_param = local_pattern_data[i].pattern_updated_at;
 		}
 		//console.log(key_arr);
+		if(key_arr.length == 0) return;
 		let _self = this;
 		request.post("settingController/getPatternByKey", 'decorateSetting', {
 			keys: key_arr.join(),

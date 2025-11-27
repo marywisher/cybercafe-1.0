@@ -147,8 +147,8 @@ export default{
 				}).then(res => {
 					console.log(res.result);
 					if(res.code == 200){
-						let return_code = res.result.choices[0].message.content;
-						resolve(return_code);
+						let return_content = res.result.choices[0].message.content;
+						resolve(return_content);
 					}else {
 						//console.error(res.msg);
 						uni.showToast({

@@ -37,7 +37,7 @@
 		},
 		watch:{
 			entityId(newValue){
-				this.getDetailCount();
+				//this.getDetailCount();
 			}
 		},
 		computed: {

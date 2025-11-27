@@ -4,10 +4,11 @@
 		<view class="hint display-flex display-line" @tap="gotoPromptSetting">
 			<view class="iconfont icon-shezhi"></view> 提示词设置
 		</view>
-		<view class="list-item display-flex display-line sp-between">
-			<view v-if="list.length > 0">{{default_title}}</view>
+		<view v-if="list.length > 0" class="list-item display-flex display-line sp-between">
+			<view>{{default_title}}</view>
 		</view>
-		<cybercafe-draggableList ref="osDragList" :list="list"></cybercafe-draggableList>		
+		<cybercafe-draggableList v-if="list.length > 0" ref="osDragList" :list="list"></cybercafe-draggableList>		
+		<view v-else class="hint">暂无提示词，请先设置或导入</view>
 	</cybercafe-view>
 </template>
 

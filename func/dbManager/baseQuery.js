@@ -252,14 +252,10 @@ export default {
 					_self.insertDataByKey('cybercafe_setting', settingData);
 				}
 				
-				uni.showToast({
-					title: '',
-					icon: 'success'
-				})
 				store.commit('user/setUserData', {
 					'modalData': {
 						title: '温馨提示',
-						content: '下载完成请重启',
+						content: '下载已完成，请重启',
 						confirmText: '',
 						cancelText: 'OK'
 					},

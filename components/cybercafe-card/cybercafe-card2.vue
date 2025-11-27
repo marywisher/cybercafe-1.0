@@ -51,72 +51,72 @@
 	.card-btn {
 		padding: $uni-spacing-base $uni-width-none;
 	}
-	.past{
+	.future{
 		border-color: $uni-text-color-placeholder;
 		color: $uni-bg-color-grey;
 		background-color: $uni-text-color-placeholder;
 	}
-	.past .card-btn{
+	.future .card-btn{
 		background-color: $uni-color-dark-main;
 		color: $uni-text-color;
 	}
-	.wait{
+	.done{
 		border-color: $uni-color-main;
 		color: $uni-color-main;
 	}
-	.wait .card-btn{
+	.done .card-btn{
 		background-color: $uni-color-main;
 		color: $uni-bg-color-hover;
 	}
-	.done{
+	.wait{
 		border-color: $uni-color-main;
 		color: $uni-bg-color-grey;
 		background-color: $uni-color-main;
 	}
-	.done .card-btn{
+	.wait .card-btn{
 		background-color: $uni-color-secondary;
 		color: $uni-text-color-grey;
 	}
-	.future{
+	.past{
 		border-color: $uni-text-color-grey;
 		color: $uni-text-color-grey;
 	}
-	.future .card-btn{
+	.past .card-btn{
 		background-color: $uni-text-color-grey;
 		color: $uni-text-color-grey;
 	}
 	@media (prefers-color-scheme: dark) {
-		.past{
+		.future{
 			border-color: $uni-text-color;
 			color: $uni-text-color-placeholder;
 			background-color: $uni-text-color;
 		}
-		.past .card-btn{
-			background-color: $uni-color-dark-main;
-			color: $uni-text-color;
-		}
-		.wait{
-			border-color: $uni-color-dark-main;
-			color: $uni-color-dark-main;
-		}
-		.wait .card-btn{
+		.future .card-btn{
 			background-color: $uni-color-dark-main;
 			color: $uni-text-color;
 		}
 		.done{
 			border-color: $uni-color-dark-main;
-			color: $uni-text-color;
-			background-color: $uni-color-dark-main;
+			color: $uni-color-dark-main;
 		}
 		.done .card-btn{
 			background-color: $uni-color-dark-main;
 			color: $uni-text-color;
 		}
-		.future{
+		.wait{
+			border-color: $uni-color-dark-main;
+			color: $uni-text-color;
+			background-color: $uni-color-dark-main;
+		}
+		.wait .card-btn{
+			background-color: $uni-color-dark-main;
+			color: $uni-text-color;
+		}
+		.past{
 			border-color: $uni-text-color-placeholder;
 			color: $uni-text-color-placeholder;
 		}
-		.future .card-btn{
+		.past .card-btn{
 			background-color: $uni-text-color-placeholder;
 			color: $uni-text-color;
 		}

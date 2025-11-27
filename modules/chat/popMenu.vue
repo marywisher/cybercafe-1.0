@@ -82,9 +82,11 @@
 		},
 		computed:{
 			...mapState('dialogue', ['ai', 'aiRange', 'aiSelect']),
+			...mapState('setting', ['entityId']),
 		},
 		methods:{
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
+			...mapMutations('setting', ['getSettingData']),
 			init(){
 				this.$refs.aiSettingView.closeView();
 				this.$refs.rightMenuPop.closeView();
@@ -103,6 +105,13 @@
 				this.routerFun('/pages/setting/promptSetting');
 			},
 			gotoEntitySetting(){
+				if(this.entityId == 0){
+					uni.showToast({
+						title: '尚无容器，不可编辑',
+						icon: 'none'
+					})
+					return;
+				}
 				this.routerFun('/pages/entity/index');
 			},
 			delEntity(){
