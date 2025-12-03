@@ -13,7 +13,7 @@ export default {
 		chatHtml: '<div class="chat-bubble {{side}}">{{text}}</div>',
 		chatPattern: 1,
 		customApi: [],
-		customPrompt: [],
+		customPrompt: [{"系统提示词": "你是一个高智商人类，善于深度揣测人心。按照故事背景、人物性格等设定续写故事，主动创造戏剧冲突推进剧情。你的角色叫{{char}}。", "输出限制": "不要替{{char}}以外的角色思考或说话", "输出格式": "（{{char}}的细腻动作描写、神态描写，{{char}}的心理描写，周遭的景物描写）{{char}}的对话内容（推动剧情发展的其它描写）"}],
 		darkMode: 'light',
 		editContent: {}, //编辑的内容,{entityId: txt,}
 		entityId: 1,

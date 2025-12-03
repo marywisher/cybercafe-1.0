@@ -68,7 +68,7 @@
 								icon: 'success'
 							})
 						}else{
-							store.commit('user/setUserData', {
+							_self.setUserData({
 								'modalData': {
 									content: res.result.message,
 									confirmText: '',

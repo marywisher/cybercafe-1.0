@@ -4,6 +4,8 @@
 		<view >
 			<text class="gradient-text">{{slogan}}</text>
 		</view>
+		<cybercafe-button v-if="network_type == 'none'" class="retry-btn"
+			btnName="点击重试" btnFun="init"></cybercafe-button>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
@@ -21,7 +23,8 @@
 		data() {
 			return {
 				slogan: 'CyberCafe',
-				loading_flag: false
+				loading_flag: false,
+				network_type: 'none'
 			}
 		},
 		watch:{
@@ -49,8 +52,8 @@
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			async init(){
 				//获取APP网络信息，不含H5
-				let network_type = await request.checkNetwork('index');
-				if(network_type == 'none') return;
+				this.network_type = await request.checkNetwork('index');
+				if(this.network_type == 'none') return;
 				
 				sqlite.initTable();
 				await handleFun.initSetting();
@@ -83,5 +86,9 @@
 	.modal-view{
 		z-index: 999;
 		top: 20vh;
+	}
+	.retry-btn{
+		width: 50vw;
+		margin: 30vh auto;
 	}
 </style>

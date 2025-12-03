@@ -74,6 +74,9 @@
 					this.sending = false;
 				}, 2000);
 				this.$emit('inputModeChange', this.input_mode);
+				uni.showLoading({
+					'title': '保存中...',
+				})
 				//敏感审核
 				let response_feedback = await responseFun.toolRequest('sensitive', this.chat_input.trim(), 'chat');
 				if(response_feedback == 200){
@@ -92,7 +95,9 @@
 						}, 500);
 					}
 					this.chat_input = '';
+					uni.hideLoading();
 				}else{
+					uni.hideLoading();
 					this.setUserData({
 						'modalData': {
 							title: "温馨提示",

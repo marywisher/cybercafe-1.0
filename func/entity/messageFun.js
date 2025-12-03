@@ -136,19 +136,16 @@ export default{
 		});
 		uni.hideLoading();
 		
-		//总结剧情
-		let summarize_content = await responseFun.toolRequest('summarize', content, 'chat');
-		if(common.isJsonString(summarize_content)){
-			let json_summarize = JSON.parse(summarize_content);
-			if(json_summarize.hasOwnProperty('summary')){
-				summarize_content = json_summarize.summary;
-			}
-		}
-		baseQuery.updateDataByKey('cybercafe_message', {
-			'message_summary': summarize_content,
+		let new_summary = await this.summarizeFun(content);
+		let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
+			'entity_id': store.state.setting.entityId
+		})
+		let new_description = crt_entity_data[0].extra_description;
+		baseQuery.updateDataByKey('cybercafe_entity', {
+			'extra_description': new_description + ' ' + new_summary
 		},{
-			'message_time': store.state.dialogue.messageTime
-		});
+			'entity_id': store.state.setting.entityId
+		})
 	},
 	async updateMessage(operation, content_index) {//修改文本
 		baseQuery.updateDataByKey('cybercafe_message', {
@@ -176,18 +173,26 @@ export default{
 		});
 		//console.log(store.state.dialogue.historylist);
 		uni.hideLoading();
-		//总结剧情
-		let summarize_content = await responseFun.toolRequest('summarize', store.state.dialogue.optionFirst, 'chat');
-		if(common.isJsonString(summarize_content)){
-			let json_summarize = JSON.parse(summarize_content);
-			if(json_summarize.hasOwnProperty('summary')){
-				summarize_content = json_summarize.summary;
-			}
-		}baseQuery.updateDataByKey('cybercafe_message', {
-			'message_summary': summarize_content,
-		},{
+		
+		let crt_message = await baseQuery.getDataByKey('cybercafe_message', {
 			'message_time': store.state.dialogue.messageTime
-		});
+		})
+		let old_summary = crt_message[0].message_summary;
+		let new_summary = await this.summarizeFun(store.state.dialogue.optionFirst);
+		let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
+			'entity_id': store.state.setting.entityId
+		})
+		let new_description = crt_entity_data[0].extra_description;
+		if(old_summary.length > 0 && crt_entity_data[0].extra_description.includes(old_summary)){
+			new_description = crt_entity_data[0].extra_description.replace(old_summary, new_summary);
+		}else{
+			new_description = crt_entity_data[0].extra_description + ' ' + new_summary;
+		}
+		baseQuery.updateDataByKey('cybercafe_entity', {
+			'extra_description': new_description
+		},{
+			'entity_id': store.state.setting.entityId
+		})
 	},
 	async injectPrologue(character_id) {//注入开场白，仅用在创建本地切片初始
 		console.log(character_id);
@@ -213,4 +218,20 @@ export default{
 		}
 		uni.hideLoading();
 	},
+	async summarizeFun(content){
+		//总结剧情
+		let summarize_content = await responseFun.toolRequest('summarize', content, 'chat');
+		if(common.isJsonString(summarize_content)){
+			let json_summarize = JSON.parse(summarize_content);
+			if(json_summarize.hasOwnProperty('summary')){
+				summarize_content = json_summarize.summary;
+			}
+		}
+		baseQuery.updateDataByKey('cybercafe_message', {
+			'message_summary': summarize_content,
+		},{
+			'message_time': store.state.dialogue.messageTime
+		});
+		return summarize_content;
+	}
 }

@@ -2,7 +2,7 @@
 	<view>
 		<view class="entity-bg" :style="dynamicImg(entity_image)"></view>
 		<view class="view-for-tap" @tap="showMoreImg"></view>
-		<entityHeader ref="eEHP" :bg_opacity="bg_opacity" :enterable="character_in_entity.length > 0"></entityHeader>
+		<entityHeader ref="eEHP" :bgOpacity="bg_opacity" :enterable="character_in_entity.length > 0"></entityHeader>
 		<detailPart class="entity-des" ref="eDP" @afterLoad="afterLoad" @selectCharacter="openCharacterList"></detailPart>
 		<characterList class="character-list" ref="eCL" :exceptIds="character_in_entity"
 			@addCharacter="addCharacterFun"></characterList>
