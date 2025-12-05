@@ -53,7 +53,9 @@
 			},
 			openView(){
 				uni.$emit('closeRightMenu');
-				this.init();
+				this.$nextTick(() => {
+					this.init();
+				})
 				this.$refs.popView.openView();
 			},
 			closeView(){

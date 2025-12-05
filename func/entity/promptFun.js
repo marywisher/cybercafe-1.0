@@ -96,7 +96,11 @@ export default {
 			//console.log(store.state.setting.customPrompt);
 			if(list[i].title == '系统提示词') continue;
 			if(list[i].title == '聊天记录'){//限定长度
-				content += ' 以下是聊天记录:```{replacing_message_content}```'
+				let entity_data = await baseQuery.getDataByKey('cybercafe_entity', {'entity_id': store.state.setting.entityId});
+				if(entity_data[0].extra_description){
+					content += ' 前情概要：' + entity_data[0].extra_description;
+				}
+				content += ' 前文对话:```{replacing_message_content}```'
 			}else if(store.state.setting.customPrompt.length > 0 
 				&& store.state.setting.customPrompt.hasOwnProperty(store.state.setting.promptSelect)
 				&& store.state.setting.customPrompt[store.state.setting.promptSelect].hasOwnProperty(list[i].title)){
