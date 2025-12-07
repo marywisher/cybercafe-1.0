@@ -31,6 +31,7 @@ export default {
 		promptSelect: 0, //预设
 		replyMode: 'click', // 自动auto 手动点击click 回复方式
 		temperature: 0.95,
+		tips: ['升级食堂不用先卸载', '如果需要卸载食堂要记得先上传数据', '角色载入本地后数据都是在本地的'],
 		token: '',
 		tokenSetting: 4096, //用户设置的token，显示时不得大于该大模型的max_token
 		topP: 0.5,

@@ -1,11 +1,9 @@
 <template>
 	<view class="content text-center">
 		<image class="logo" src="/static/logo.png"></image>
-		<view >
-			<text class="gradient-text">{{slogan}}</text>
-		</view>
-		<cybercafe-button v-if="network_type == 'none'" class="retry-btn"
-			btnName="点击重试" btnFun="init"></cybercafe-button>
+		<view><text class="gradient-text">{{slogan}}</text></view>
+		<view class="tip hint">{{tip_str}}</view>
+		<cybercafe-button v-if="need_btn" class="retry-btn" btnName="欢迎光临" @tapBtn="enter"></cybercafe-button>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
@@ -24,7 +22,9 @@
 			return {
 				slogan: 'CyberCafe',
 				loading_flag: false,
-				network_type: 'none'
+				network_type: 'none',
+				need_btn: true,
+				tip_str: ''
 			}
 		},
 		watch:{
@@ -47,22 +47,39 @@
 		},
 		computed:{
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('setting', ['tips']),
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
+			...mapMutations('setting', ['getSettingData']),
 			async init(){
+				this.tip_str = this.tips[Math.floor(Math.random() * this.tips.length)];
+				
 				//获取APP网络信息，不含H5
 				this.network_type = await request.checkNetwork('index');
-				if(this.network_type == 'none') return;
+				if(this.network_type == 'none'){
+					this.need_btn = true;
+					return;
+				} 
 				
 				sqlite.initTable();
 				await handleFun.initSetting();
 				
 				//每日随机一个tip options.msg
 				//console.log(options)
-				setTimeout(() =>{
+				setTimeout(() => {
+					this.enter();
+				}, 5000)
+			},
+			async enter(){
+				if(this.network_type == 'none') this.network_type = await request.checkNetwork('index');
+				if(this.network_type == 'none'){
+					this.need_btn = true;
+					return;
+				} else if(this.need_btn){
+					this.need_btn = false;
 					handleFun.beforeInit('index');
-				}, 500);
+				}
 			}
 		},
 		onLoad() {
@@ -89,6 +106,9 @@
 	}
 	.retry-btn{
 		width: 50vw;
-		margin: 30vh auto;
+		margin: 5vh auto;
+	}
+	.tip{
+		margin: $uni-spacing-base auto;
 	}
 </style>

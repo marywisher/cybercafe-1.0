@@ -230,7 +230,7 @@
 				})
 				this.extra_description = '';
 				for(let i in data){
-					if(data[i].message_summary.length == 0){
+					if(data[i].message_summary.length == 0 || data[i].message_summary == 'null'){
 						let summarize_content = await responseFun.toolRequest('summarize', 
 							data[i].message_content, 'entity');
 						if(common.isJsonString(summarize_content)){

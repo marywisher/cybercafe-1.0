@@ -80,10 +80,7 @@ export default{
 		//console.log(cdata);
 		let tmp_str = '';
 		for (let i in temp_history_list) {
-			tmp_str += (temp_history_list[i].character_id > 0 ? 
-				store.state.dialogue.characterlist[temp_history_list[i].character_id].character_name
-				: store.state.dialogue.me)
-				+ ':' + temp_history_list[i].text + ' ';
+			tmp_str += temp_history_list[i].text + ' ';
 		}
 		//store.state.dialogue.history_list.push(last_message);
 		//console.log(store.state.dialogue.historylist);
@@ -136,16 +133,7 @@ export default{
 		});
 		uni.hideLoading();
 		
-		let new_summary = await this.summarizeFun(content);
-		let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
-			'entity_id': store.state.setting.entityId
-		})
-		let new_description = crt_entity_data[0].extra_description;
-		baseQuery.updateDataByKey('cybercafe_entity', {
-			'extra_description': new_description + ' ' + new_summary
-		},{
-			'entity_id': store.state.setting.entityId
-		})
+		this.summarizeFun(content);
 	},
 	async updateMessage(operation, content_index) {//修改文本
 		baseQuery.updateDataByKey('cybercafe_message', {
@@ -174,31 +162,13 @@ export default{
 		//console.log(store.state.dialogue.historylist);
 		uni.hideLoading();
 		
-		let crt_message = await baseQuery.getDataByKey('cybercafe_message', {
-			'message_time': store.state.dialogue.messageTime
-		})
-		let old_summary = crt_message[0].message_summary;
-		let new_summary = await this.summarizeFun(store.state.dialogue.optionFirst);
-		let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
-			'entity_id': store.state.setting.entityId
-		})
-		let new_description = crt_entity_data[0].extra_description;
-		if(old_summary.length > 0 && crt_entity_data[0].extra_description.includes(old_summary)){
-			new_description = crt_entity_data[0].extra_description.replace(old_summary, new_summary);
-		}else{
-			new_description = crt_entity_data[0].extra_description + ' ' + new_summary;
-		}
-		baseQuery.updateDataByKey('cybercafe_entity', {
-			'extra_description': new_description
-		},{
-			'entity_id': store.state.setting.entityId
-		})
+		this.summarizeFun(store.state.dialogue.optionFirst);
 	},
 	async injectPrologue(character_id) {//注入开场白，仅用在创建本地切片初始
-		console.log(character_id);
+		//console.log(character_id);
 		if(character_id == 0) return;
 		let detail_data = await baseQuery.getDataByKey('cybercafe_entity_detail', {'character_id': character_id});
-		console.log(detail_data);
+		//console.log(detail_data);
 		if(detail_data.length > 0){
 			let character_data = await baseQuery.getDataByKey('cybercafe_character', {'character_id': character_id});
 			if(character_data.length > 0){
@@ -213,25 +183,61 @@ export default{
 					'entityId': entity_id,
 				}
 				let message_id = await dialogueQuery.createMessage(0, content, message_time + ':creating', store_data);
-				console.log(message_id);
+				//console.log(message_id);
 			}
 		}
 		uni.hideLoading();
 	},
 	async summarizeFun(content){
-		//总结剧情
-		let summarize_content = await responseFun.toolRequest('summarize', content, 'chat');
-		if(common.isJsonString(summarize_content)){
-			let json_summarize = JSON.parse(summarize_content);
-			if(json_summarize.hasOwnProperty('summary')){
-				summarize_content = json_summarize.summary;
-			}
-		}
-		baseQuery.updateDataByKey('cybercafe_message', {
-			'message_summary': summarize_content,
-		},{
+		let crt_message = await baseQuery.getDataByKey('cybercafe_message', {
 			'message_time': store.state.dialogue.messageTime
-		});
-		return summarize_content;
+		})
+		//console.log(crt_message[0].message_summary);
+		let old_summary = (crt_message[0].message_summary || crt_message[0].message_summary != 'null') 
+			? crt_message[0].message_summary : '';
+		
+		//总结剧情
+		try{
+			let summarize_content = await responseFun.toolRequest('summarize', content, 'chat');
+			//console.log(typeof summarize_content);
+			if(typeof summarize_content == 'string' && common.isJsonString(summarize_content)){
+				let json_summarize = JSON.parse(summarize_content);
+				if(json_summarize.hasOwnProperty('summary')){
+					summarize_content = json_summarize.summary;
+				}
+			}else if(typeof summarize_content == 'object'){
+				summarize_content = summarize_content.summary;
+			}else if(typeof summarize_content != 'string'){
+				//console.log(summarize_content);
+				return;
+			}
+			//console.log(summarize_content);
+			baseQuery.updateDataByKey('cybercafe_message', {
+				'message_summary': summarize_content,
+			},{
+				'message_time': store.state.dialogue.messageTime
+			});
+			
+			let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
+				'entity_id': store.state.setting.entityId
+			})
+			let new_description = (crt_entity_data[0].extra_description || crt_entity_data[0].extra_description != 'null') 
+				? crt_entity_data[0].extra_description : '';
+			if(old_summary.length > 0 && new_description.includes(old_summary)){
+				new_description = new_description.replace(old_summary, summarize_content);
+			}else{
+				new_description = new_description + ' ' + summarize_content;
+			}
+			baseQuery.updateDataByKey('cybercafe_entity', {
+				'extra_description': new_description
+			},{
+				'entity_id': store.state.setting.entityId
+			})
+		}catch(error){
+			uni.showToast({
+				title: error,
+				icon: 'none'
+			})
+		}
 	}
 }

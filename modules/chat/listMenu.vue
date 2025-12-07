@@ -31,11 +31,15 @@
 		},
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
-			...mapState('dialogue', ['historylist']),
+			...mapState('dialogue', ['cDisplayId', 'crtCharacterId', 'historylist', 'messageTime', 
+				'optionFirst', 'options', 'prevMessageTime', 'refreshList',
+				'resetFlag']),
+			...mapState('setting', ['entityId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
+			...mapMutations('setting', ['getSettingData']),
 			showMenu(x, y, items, id, text) {
 				this.$refs.menu.showMenu(x, y);
 				this.menu_items = items;
@@ -127,10 +131,28 @@
 					})
 					return;
 				}
+				let delete_message_data = await baseQuery.getDataByKey('cybercafe_message', {
+					'message_time': delete_message.message_time
+				})
+				let summary = (delete_message_data[0].message_summary && delete_message_data[0].message_summary != 'null') 
+					? delete_message_data[0].message_summary : '';
 				baseQuery.deleteDataByKey('cybercafe_message', {'message_time': delete_message.message_time});
+				if(summary.length > 0){
+					let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
+						'entity_id': this.entityId
+					})
+					let new_description = (crt_entity_data[0].extra_description || crt_entity_data[0].extra_description != 'null') 
+						? crt_entity_data[0].extra_description : '';
+					new_description = new_description.replace(summary, '');
+					baseQuery.updateDataByKey('cybercafe_entity', {
+						'extra_description': new_description
+					},{
+						'entity_id': this.entityId
+					})
+				}
 				
 				let last_message = this.historylist[this.historylist.length - 1];
-				console.log(last_message);
+				//console.log(last_message);
 				let message_time = last_message ? last_message.message_time : 0;
 				let character_id = last_message ? last_message.character_id : 0;
 				
@@ -140,9 +162,18 @@
 				}
 				let message_id = last_message.message_id;
 				let message_data = await baseQuery.getDataByKey('cybercafe_message', {'message_id': message_id});
+				//console.log(message_data);
 				let prev_message_time = message_data[0].prev_message_time;
 				let ai_id = message_data[0].ai_id;
+				//console.log(ai_id);
 				let option_list = await responseFun.getResponseByAiId(ai_id);
+				if(option_list == false){
+					option_list = [{
+						html: common.textToHtml(last_message.text),
+						text: last_message.text,
+					}];
+				}
+				//console.log(option_list);
 				this.setDiaData({
 					'messageTime': message_time,
 					'crtCharacterId': character_id,
@@ -151,11 +182,7 @@
 					'resetFlag': true,
 					'optionFirst': last_message.text,
 					'prevMessageTime': prev_message_time,
-					'options': option_list
-				});
-						
-				//promptFun.preOperation();
-				this.setDiaData({
+					'options': option_list,
 					'refreshList': -2,
 				});
 			},

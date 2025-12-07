@@ -46,10 +46,14 @@
 		methods: {
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			async init(){
-				this.$refs.partContainer.openView();
 				//不包含当前online_id的entity
 				this.entity_list = await dialogueQuery.getSpecialEntityList(this.characterId);
 				//console.log(this.entity_list);
+				if(this.entity_list.length == 0){
+					this.goToCharacter(0);
+				}else{
+					this.$refs.partContainer.openView();
+				}
 			},
 			goToCharacter(entity_id){
 				this.setDiaData({'selectedEntityId': entity_id});

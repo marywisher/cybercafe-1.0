@@ -6,7 +6,7 @@
 				trim="both" @input="autoSaveContent" confirm-hold
 				:maxlength="-1"></textarea>
 			<view class="display-flex display-line sp-between icon-part">
-				<cybercafe-button btnClass="btn-default" v-if="options.length > 0"
+				<cybercafe-button btnClass="btn-default"
 					btnName="" class="iconfont icon-guanbi" @tapBtn="cancelFun"/>
 				<cybercafe-button btnClass="btn-default"
 					btnName="" class="iconfont icon-dagouwuquan" @tapBtn="confirmFun"/>
@@ -129,23 +129,25 @@
 			},
 			cancelFun(){
 				//console.log(this.crtIndex, this.swiper_current);
-				if(this.crtIndex == -1){
-					this.swiper_current = 0;
-				}else{
-					this.swiper_current = this.crtIndex;
-				}
-				//console.log(this.edit_text, this.options[this.swiper_current].text);
-				if(this.edit_text != this.options[this.swiper_current].text){
-					this.setDiaData({
-						'optionFirst': this.options[this.swiper_current].text
-					});
+				if(this.options.length > 0){
+					if(this.crtIndex == -1){
+						this.swiper_current = 0;
+					}else{
+						this.swiper_current = this.crtIndex;
+					}
+					//console.log(this.edit_text, this.options[this.swiper_current].text);
+					if(this.edit_text != this.options[this.swiper_current].text){
+						this.setDiaData({
+							'optionFirst': this.options[this.swiper_current].text
+						});
+					}
+					this.$emit('swiperChange', this.swiper_current);
 				}
 				this.$emit('editChange', false);
-				this.$emit('swiperChange', this.swiper_current);
 			},
 			async confirmFun(){
 				let response_feedback = await responseFun.toolRequest('sensitive', this.edit_text.trim(), 'chat');
-				if(response_feedback == 200){
+				if(response_feedback == 200){//返回值就是200
 					this.setDiaData({
 						'optionFirst': this.edit_text.trim(),
 					});

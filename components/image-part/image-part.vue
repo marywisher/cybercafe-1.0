@@ -91,7 +91,7 @@
 			cybercafeSwiperDot
 		},
 		computed: {
-			...mapState('user', ['screen']),
+			...mapState('user', ['deviceInfo']),
 			beEmpty(){
 				return this.id == 'entity' && this.originImg != this.default_image ? true : false;
 			},
@@ -114,10 +114,6 @@
 			},
 			init(){
 				//console.log(this.id)
-				if(this.originImg == this.default_image){
-					this.openCrop();
-					return;
-				}
 				//console.log(this.originImg);
 				let _self = this;
 				if(this.showOnline){
@@ -148,7 +144,7 @@
 					let sqlStr = "select * from cybercafe_images where image_type = '" + this.id 
 						+ "' and (image_status = 1 or image_status = 4) and image_src <> '" + this.originImg 
 						+ "' order by image_selected_count DESC, image_created_at DESC";
-					console.log(sqlStr);
+					//console.log(sqlStr);
 					sqlite.selectSQL(sqlStr).then(data => {
 						if(data.length > 0){
 							for(let i = 0; i < data.length; i ++){
@@ -162,6 +158,12 @@
 						console.error(e);
 					});
 				}
+				
+				setTimeout(() => {
+					if(this.originImg == this.default_image && this.images.length == 0){//若无可选则弹出选图
+						this.openCrop();
+					}
+				}, 2000);
 			},
 			swiperChange(e){
 				//console.log(e)
@@ -221,10 +223,10 @@
 			openCrop(){
 				//console.log(from);
 				if(this.id == 'entity'){
-					this.getUserData();
 					//console.log(this.entity_image);
-					this.fixedNumber[0] = uni.getSystemInfoSync().screenWidth;
-					this.fixedNumber[1] = uni.getSystemInfoSync().screenHeight;
+					let device_info = JSON.parse(this.deviceInfo);
+					this.fixedNumber[0] = device_info.screenWidth;
+					this.fixedNumber[1] = device_info.screenHeight;
 				}else{
 					this.fixedNumber = [1, 1];
 				}

@@ -51,7 +51,7 @@
 	import common from '@/func/common/common';
 	import request from '@/func/common/request';
 	import baseQuery from '@/func/dbManager/baseQuery';
-	import adPart from './adPart';
+	//import adPart from './adPart';
 	import followPart from './followPart';
 	import checkinPart from '@/modules/account/checkinPart';
 	import userFun from '@/func/user/userFun';
@@ -86,7 +86,7 @@
 			}
 		},
 		components: {
-			adPart,
+			//adPart,
 			checkinPart,
 			followPart
 		},
