@@ -38,6 +38,7 @@
 					 class="hint" :class="{'required': group_alarm}">
 					月卡有效期至：{{expiration}} 0时
 				</view>
+				<view class="hint">米粒不够？想开月卡？请联系管理员</view>
 			</cybercafe-view>
 		</cybercafe-card>
 		<image-part ref="aImgPart" :origin_img="avatar" showCreate :dark="darkMode"

@@ -36,10 +36,7 @@
 		methods: {
 			...mapMutations('user', ['getUserData']),
 			back(){
-				//uni.navigateBack();
-				uni.navigateTo({
-					url: '/pages/chat/index'
-				})
+				uni.navigateBack();
 			},
 			gotoMessageList(){
 				uni.navigateTo({

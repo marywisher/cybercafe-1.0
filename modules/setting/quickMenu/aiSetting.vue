@@ -38,27 +38,6 @@
 			}
 		},
 		watch:{
-			aiRange(newValue){
-				//console.log(newValue);
-				if(newValue != {}){
-					for(let it in newValue){
-						//console.log(it, this.aiShowInMenu[it]);
-						if(this.userGroup == 1 && it < -1) continue;
-						if(!this.aiShowInMenu[it]) continue;
-						this.range[it] = {
-							'id': newValue[it].id,
-							'name': newValue[it].name,
-							'nickName': newValue[it].nickName,
-							'price': newValue[it].price,
-							'description': newValue[it].description,
-							'crt': it == this.ai,
-							'level': it == 200 ? 2 : newValue[it].level,
-							'enabled': newValue[it].enabled
-						};
-					}
-					this.$forceUpdate();
-				}
-			},
 			ai(newValue){
 				this.select_id = -4;
 			}
@@ -82,6 +61,22 @@
 			},
 			openView(){
 				uni.$emit('closeRightMenu');
+				for(let it in this.aiRange){
+					//console.log(it, this.aiShowInMenu[it]);
+					if(this.userGroup == 1 && it < -1) continue;
+					if(!this.aiShowInMenu[it]) continue;
+					this.range[it] = {
+						'id': this.aiRange[it].id,
+						'name': this.aiRange[it].name,
+						'nickName': this.aiRange[it].nickName,
+						'price': this.aiRange[it].price,
+						'description': this.aiRange[it].description,
+						'crt': it == this.ai,
+						'level': it == 200 ? 2 : this.aiRange[it].level,
+						'enabled': this.aiRange[it].enabled
+					};
+				}
+				this.$forceUpdate();
 				this.$refs.popView.openView();
 			},
 			showModal(){

@@ -24,7 +24,9 @@ export default {
 		
 		modalShow: false,
 		modalData: {},
-		modalPageId: '' // 添加页面标识，用于确定在哪个页面显示弹窗
+		modalPageId: '' ,// 添加页面标识，用于确定在哪个页面显示弹窗
+		
+		showMessageModal: true,//弹窗消息是否跳过
 	},
 	getters: {},
 	mutations: {

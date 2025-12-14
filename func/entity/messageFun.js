@@ -10,7 +10,6 @@ export default{
 		//console.log(message_list);
 		if(message_list.length == 0) return;
 		let history_list = [];
-		let ai_id = message_list[0].ai_id;
 		message_list.reverse();
 		let message_id = message_list[0].message_id;
 		if(message_list.length > 0){
@@ -22,7 +21,9 @@ export default{
 					html: common.textToHtml(message.message_content, 
 						message.character_id == 0 ? 'right' : 'left', true),
 					text: message.message_content,
-					message_time: message.message_time
+					message_time: message.message_time,
+					prev_message_time: message.prev_message_time,
+					ai_id: message.ai_id
 				}
 			}
 			//console.log('historylist:' + JSON.stringify(history_list));
@@ -36,6 +37,8 @@ export default{
 			if(store.state.dialogue.breakpointMessageId == 0){
 				let last_history = history_list[history_list.length - 1];
 				let message_time = last_history ? last_history.message_time : 0;
+				let prev_message_time = last_history ? last_history.prev_message_time : 0;
+				let ai_id = last_history ? last_history.ai_id : 0;
 				//console.log(message_time);
 				let option_list = await responseFun.getResponseByAiId(ai_id);
 				if(option_list == false){
@@ -46,6 +49,7 @@ export default{
 				}
 				store.commit('dialogue/setDiaData', {
 					'messageTime': message_time,
+					'prevMessageTime': prev_message_time,
 					'crtCharacterId': last_history.character_id,
 					'cDisplayId': last_history.character_id,
 					'optionFirst': last_history.text,
@@ -99,6 +103,7 @@ export default{
 			last_data['text'] = content;
 			last_data['html'] = common.textToHtml(content, 
 				store.state.dialogue.crtCharacterId == 0 ? 'right' : 'left', true);
+			last_data['ai_id'] = last_data['ai_id'] + ',' + ai_id;
 			history_list[history_list.length - 1] = last_data;
 			store.commit('dialogue/setDiaData', {
 				'refreshList': -1,
@@ -112,6 +117,8 @@ export default{
 				text: content,
 				html: common.textToHtml(content, 
 					store.state.dialogue.crtCharacterId == 0 ? 'right' : 'left', true),
+				prev_message_time: store.state.dialogue.prevMessageTime,
+				ai_id: ai_id
 			};
 			//console.log(new_data);
 			history_list.push(new_data);
@@ -225,8 +232,16 @@ export default{
 				? crt_entity_data[0].extra_description : '';
 			if(old_summary.length > 0 && new_description.includes(old_summary)){
 				new_description = new_description.replace(old_summary, summarize_content);
+				uni.showToast({
+					title: old_summary + ' 被替换掉',
+					icon: 'none'
+				});
 			}else{
 				new_description = new_description + ' ' + summarize_content;
+				uni.showToast({
+					title: '追加了 ' + summarize_content,
+					icon: 'none'
+				})
 			}
 			baseQuery.updateDataByKey('cybercafe_entity', {
 				'extra_description': new_description

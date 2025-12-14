@@ -33,12 +33,12 @@
 				<view v-show="form_flag == 'login'" class="display-flex display-line sp-between">
 					<view class="hint" @tap="openReset">忘记密码？</view>
 					<view>
-						<cybercafe-button btnClass="btn-default" :btnDisable="true"
-							btnName="注册稍后开放"></cybercafe-button><!--/验证码登录-->
+						<cybercafe-button btnClass="btn-default" @tapBtn="register"
+							btnName="注册/验证码登录"></cybercafe-button>
 					</view>
 					<view>
 						<cybercafe-button btnClass="btn-primary" @tapBtn="submit('loginForm')"
-							btnName="登录"></cybercafe-button>
+							btnName="密码登录"></cybercafe-button>
 					</view>
 				</view>
 				<view v-show="form_flag == 'reset'" class="display-flex display-line sp-between">

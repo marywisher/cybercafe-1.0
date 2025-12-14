@@ -3,27 +3,39 @@
 		<cybercafe-view ref="registerView" :isAbsolute="true" :closeAble="false" viewTitle="注册/验证码登录"
 			popViewStyle="margin:20vh auto;padding: 5vw;">
 			<view class="content">
-				<label class="hint required">* 为必填项</label><br>
+				<label class="hint required">* 为必填项</label>
 				<view class="display-flex display-line sp-between register-line">
-					<label>邮箱<span class="required">*</span></label>
-					<input v-model="username"  focus placeholder="请输入注册邮箱" @input="checkEmail"
-						 :placeholder-style="placeholderStyle"/>
+					<view class="register-label">邮箱<span class="required">*</span></view>
+					<view class="register-input">
+						<input v-model="username"  focus placeholder="请输入注册邮箱" @input="checkEmail"
+							:placeholder-style="placeholderStyle"/>
+					</view>
 				</view>
 				<view class="display-flex display-line sp-between register-line">
-					<label>验证码<span class="required">*</span></label>
-					<view class="display-flex">
-						<input v-model="verify_code" maxlength="6" style="width: 158px;" @input="setVerifyCode" />
-						<cybercafe-button btnClass="btn-default" @tapBtn="sendVerify"
+					<view class="register-label">验证码<span class="required">*</span></view>
+					<view class="display-flex display-line sp-between register-input">
+						<input v-model="verify_code" maxlength="6" style="width: 60%;" @input="setVerifyCode" />
+						<cybercafe-button :btnDisable="email_check" btnClass="btn-primary" @tapBtn="sendVerify"
 							btnName="发送"></cybercafe-button>
-					</view>					
+					</view>
 				</view>
-				<view class="display-flex display-line sp-between">
-					<label>邀请码</label>
-					<input v-model="invite_code" maxlength="8" placeholder="请填写邀请码" @input="setInviteCode"
-						 :placeholder-style="placeholderStyle"/>
+				<view class="hint text-center info">—— 以下仅注册时填写 ——</view>
+				<view class="display-flex display-line sp-between register-line">
+					<view class="register-label">昵称</view>
+					<view class="register-input">
+						<input v-model="nickname" placeholder="请填写昵称（默认同邮箱名）" @input="setNickname"
+							:placeholder-style="placeholderStyle"/>
+					</view>
+				</view>
+				<view class="display-flex display-line sp-between register-line">
+					<view class="register-label">邀请码</view>
+					<view class="register-input">
+						<input v-model="invite_code" maxlength="8" placeholder="请填写邀请码" @input="setInviteCode"
+							:placeholder-style="placeholderStyle"/>
+					</view>
 				</view>
 				<view class="display-flex register-line" style="justify-content: flex-end;">
-					<view class="hint">（注册成功送1w米粒，填写邀请码再送1w米粒）</view>
+					<view class="hint">（注册成功送1w米粒，填写邀请码再送）</view>
 				</view>
 				
 				<view class="display-flex display-line sp-between">
@@ -33,7 +45,7 @@
 					</view>
 					<view>
 						<cybercafe-button btnClass="btn-primary" @tapBtn="submitRegister"
-							btnName="注册/登录"></cybercafe-button>
+							btnName="注册/验证码登录"></cybercafe-button>
 					</view>
 				</view>
 				<view class="hint text-center info" @tap="gotoInfo">—— 食堂使用说明 ——</view>
@@ -45,6 +57,7 @@
 <script>
 	import request from '@/func/common/request';
 	import handleFun from '@/func/common/handleFun';
+	import { VERSION } from "@/func/common/common";
 	import {
 		mapMutations,
 		mapState,
@@ -58,12 +71,13 @@
 				username: '',
 				invite_code: '',
 				verify_code: '',
+				nickname: '',
 				
 				email_check: false,
 			}
 		},
 		computed: {
-			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
+			...mapState('user', ['deviceInfo', 'modalData', 'modalPageId', 'modalShow']),
 			...mapState('setting', ['darkMode', 'isLogin', 'token', 'userId']),
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
@@ -96,6 +110,9 @@
 			setInviteCode(e){
 				this.invite_code = e.detail.value;
 			},
+			setNickname(e){
+				this.nickname = e.detail.value;
+			},
 			sendVerify(e){
 				if(this.username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) != this.username){
 					uni.showToast({
@@ -105,40 +122,50 @@
 					return;
 				}
 				
+				let _self = this;
 				uni.showLoading();
+				this.email_check = false;
 				request.post("userController/sendVerifyCode", 'login', {
 					name: this.username,
 				}).then(res => {
 					if (res.code == 200) {
-						uni.showToast({
-							title: res.msg,
-							icon: "success"
+						_self.setUserData({
+							'modalData': {
+								content: res.result,
+								confirmText: '',
+								cancelText: 'OK',
+								success: (res) => {}
+							},
+							'modalShow': true,
+							'modalPageId': 'login'
 						});
 					} else {
 						uni.showToast({
 							title: res.msg,
 							icon: "none"
 						});
+						_self.email_check = true;
 					}
 				}).catch(e => {
 					uni.showToast({
 						title: e.msg,
 						icon: "none"
 					});
+					_self.email_check = true;
 				}).finally(() => {
 					uni.hideLoading();
 				});
 			},
 			submitRegister() {
 				let _self = this;
-				console.log(this.invite_code.match(/^\d{6}$/))
-				/* if(this.invite_code.match(/^\d{6}$/) != this.invite_code){
+				//console.log(this.verify_code.match(/^\d{6}$/))
+				if(this.verify_code.match(/^\d{6}$/) != this.verify_code){
 					uni.showToast({
 						title: '请正确填写验证码',
 						icon: 'none'
 					})
 					return;
-				} */
+				}
 				if(this.username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) != this.username){
 					uni.showToast({
 						title: '请正确填写邮箱',
@@ -157,10 +184,13 @@
 				}
 				
 				uni.showLoading();
-				request.post("userController/newRegister", 'chat', {
+				request.post("userController/newRegister", 'login', {
 					name: this.username,
 					verify: this.verify_code,
 					code: this.invite_code,
+					nickname: this.nickname,
+					version: VERSION,
+					device: this.deviceInfo,
 				}).then(res => {
 					if (res.code == 200) {
 						//console.log(res.result);
@@ -223,6 +253,12 @@
 		margin-bottom: $uni-spacing-lg;
 	}
 	.info{
-		margin-top:20rpx;
+		margin: $uni-spacing-lg auto;
+	}
+	.register-label{
+		width: 25%;
+	}
+	.register-input{
+		width: 75%;
 	}
 </style>

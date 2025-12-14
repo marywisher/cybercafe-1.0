@@ -39,10 +39,7 @@
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			back(){
-				//uni.navigateBack();
-				uni.navigateTo({
-					url: '/pages/setting/globalSetting'
-				})
+				uni.navigateBack();
 			},
 			clearMsg(){
 				let _self = this;

@@ -143,6 +143,7 @@ export default {
 								topP: res.result.noBuilt[i].topP,
 								maxTokens: res.result.noBuilt[i].maxTokens
 							}
+							ai_show_in_menu[i] = false;
 						} 
 					}
 					//自设

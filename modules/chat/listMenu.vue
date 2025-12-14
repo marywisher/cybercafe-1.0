@@ -154,17 +154,9 @@
 				let last_message = this.historylist[this.historylist.length - 1];
 				//console.log(last_message);
 				let message_time = last_message ? last_message.message_time : 0;
+				let prev_message_time = last_message ? last_message.prev_message_time : 0;
 				let character_id = last_message ? last_message.character_id : 0;
-				
-				if(!last_message.message_id){
-					console.log('id错误');
-					return;
-				}
-				let message_id = last_message.message_id;
-				let message_data = await baseQuery.getDataByKey('cybercafe_message', {'message_id': message_id});
-				//console.log(message_data);
-				let prev_message_time = message_data[0].prev_message_time;
-				let ai_id = message_data[0].ai_id;
+				let ai_id = last_message ? last_message.ai_id : 0;
 				//console.log(ai_id);
 				let option_list = await responseFun.getResponseByAiId(ai_id);
 				if(option_list == false){
@@ -176,14 +168,14 @@
 				//console.log(option_list);
 				this.setDiaData({
 					'messageTime': message_time,
+					'prevMessageTime': prev_message_time,
 					'crtCharacterId': character_id,
 					'cDisplayId': character_id,
-					'historylist': this.historylist,
-					'resetFlag': true,
 					'optionFirst': last_message.text,
-					'prevMessageTime': prev_message_time,
 					'options': option_list,
 					'refreshList': -2,
+					'historylist': this.historylist,
+					'resetFlag': true,
 				});
 			},
 			decorateBubble(){

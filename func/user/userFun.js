@@ -32,6 +32,18 @@ export default {
 					});
 				}
 				
+				//tip
+				//console.log(store.state.setting.tips)
+				if(res.result.tip){
+					// 使用Set去除重复项，然后使用扩展运算符将Set转换回数组
+					let tip_online = res.result.tip.split(",");
+					let merged_array = [...new Set([...store.state.setting.tips, ...tip_online])];
+					//console.log(merged_array);
+					store.commit('setting/setSettingData', {
+						'tips': merged_array,
+					});
+				}
+				
 				if(res.result.info){
 					common.checkPopup(function(){
 						store.commit('user/setUserData', {
@@ -52,19 +64,20 @@ export default {
 				aiFun.getAiRange();
 				this.getUserTag();
 				
-				if(res.result.new_msg > 0 && page_id == 'index'){//消息弹窗
+				if(res.result.new_msg > 0 && page_id == 'index' && store.state.user.showMessageModal){//消息弹窗
+					uni.$emit('resetBtn', 1);//首页进入按钮显示
 					store.commit('user/setUserData', {
 						'modalData': {
 							content: '来新消息了',
 							confirmText: '去看消息',
 							cancelText: '待会儿再说',
 							success: function (res) {
-								console.log(res);
-								if(res.confirm){
+								//console.log(res);
+								if(res.confirm == true){
 									uni.navigateTo({
 										url: '/pages/index/message'
 									})
-								}else{
+								}else if(res.cancel == true){
 									uni.reLaunch({
 										url: '/pages/chat/index'
 									})
@@ -72,42 +85,14 @@ export default {
 							}
 						},
 						'modalShow': true,
-						'modalPageId': page_id
+						'modalPageId': page_id,
+						'showMessageModal': false
 					});
 				}else{
 					uni.reLaunch({
 						url: '/pages/chat/index'
 					})
 				}
-				
-				/* if(res.result.has_checkin == 0 && page_id == 'index'){//签到
-					let _self = this;
-					if(this.checkin_flag == false){
-						request.post("userController/setCheckin", 'globalSetting').then(res => {
-							if (res.code == 200) {
-								store.commit('user/setUserData', {
-									'modalData': {
-										content: res.result.message,
-										confirmText: '',
-										cancelText: 'OK',
-										success: function (res) {
-										}
-									},
-									'modalShow': true,
-									'modalPageId': page_id
-								});
-								if(res.result.count > 0){
-									_self.getRequestCount();
-								}
-							} else {
-								uni.showToast({
-									title: res.msg,
-									icon: "none"
-								});
-							}
-						});
-					}
-				} */
 			}else{
 				uni.showToast({
 					title: res.data.msg,

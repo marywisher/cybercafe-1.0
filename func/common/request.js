@@ -154,10 +154,6 @@ export default {
 			}
 		}).catch(e => {
 			console.error(e);
-			uni.showToast({
-				title: e,
-				icon: "none"
-			})
 		}).finally(() => {
 			uni.hideLoading();
 		});

@@ -43,21 +43,21 @@
 		font-size: $uni-font-size-sm;
 		text-align: center;
 		padding: $uni-spacing-sm $uni-spacing-lg;
+		line-height: calc(8 * $uni-spacing-sm);
 	}
 	.btn-default{
 		background-color: $uni-bg-color-grey;
 		color: $uni-color-main;
 		border: $uni-border-base solid $uni-color-main;
-		line-height: calc(2 * $uni-spacing-lg);
 	}
-	.btn-default.disabled, .btn-warn.disabled{
+	.btn-default.disabled, .btn-warn.disabled, .btn-primary.disabled{
 		color: $uni-text-color-disable;
 		border: $uni-border-base solid $uni-text-color-disable;
 	}
 	.btn-primary{
 		background-color: $uni-color-main;
+		border: $uni-border-base solid $uni-color-main;
 		color: $uni-bg-color-grey;
-		line-height: calc(8 * $uni-spacing-sm);
 	}
 	.btn-primary.disabled{
 		background-color: $uni-text-color-disable;
@@ -73,12 +73,14 @@
 			border: $uni-border-base solid $uni-color-dark-main;
 			background-color: $uni-bg-dark-color-gray;
 		}
-		.btn-default.disabled, .btn-warn.disabled{
+		.btn-default.disabled, .btn-warn.disabled, .btn-primary.disabled{
 			color: $uni-text-color-placeholder;
 			border: $uni-border-base solid $uni-text-color-placeholder;
 		}
 		.btn-primary{
 			background-color: $uni-color-dark-main;
+			border: $uni-border-base solid $uni-color-dark-main;
+			color: $uni-bg-dark-color-gray;
 		}
 	}
 </style>
