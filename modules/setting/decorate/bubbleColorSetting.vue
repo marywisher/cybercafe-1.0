@@ -1,9 +1,9 @@
 <template>
 	<view>
-		<label class="hint">色值支持格式：#ffffff 或 rgb(255,255,255)</label><br>
-		<label class="hint">若要气泡支持透明度：</label><br>
-		<label class="hint">{{bg_color_hint}}</label><br>
-		<label class="hint">以下灰色部分，为css内变量引用的写法</label>
+		<label class="hint tips-hint">色值支持格式：#ffffff 或 rgb(255,255,255)</label><br>
+		<label class="hint tips-hint">若要气泡支持透明度：</label><br>
+		<label class="hint tips-hint">{{bg_color_hint}}</label><br>
+		<label class="hint tips-hint">以下灰色部分，为css内变量引用的写法</label>
 		<view class="display-flex display-line">
 			<view class="bubble-setting-label">字色1：<br>
 				<label class="hint">{{param_hint_font1}}</label>
@@ -40,7 +40,7 @@
 				@blur="setPattern" @confirm="setPattern"/>
 			</view>
 		</view>
-		<label class="hint">点击输入框外空白处查看样式生效预览</label>		
+		<label class="hint tips-hint">点击输入框外空白处查看样式生效预览</label>
 	</view>
 </template>
 
@@ -117,5 +117,8 @@
 	.bubble-setting-label{
 		line-height: $uni-font-size-base;
 		width: 30vw;
+	}
+	.tips-hint{
+		line-height: calc(2 * $uni-font-size-base);
 	}
 </style>

@@ -370,11 +370,12 @@
 
 <style lang="scss">
 	input{
-		max-width: 35vw;
+		max-width: 50vw;
 	}
 	textarea{
 		line-height: calc(2 * $uni-font-size-lg);
 		margin: 0 auto;
+		width: 93%;
 	}
 	.bg-color{
 		background-color: $uni-bg-color;

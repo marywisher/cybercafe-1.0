@@ -13,8 +13,8 @@
 				<label class="hint">{{html_hint}}</label>
 			</cybercafe-view>
 			<cybercafe-view>
-				<view class="hint required">请不要使用font-family或使用第三方的字体</view>
-				<view class="hint required">css代码里的引号用"而非'</view>
+				<view class="hint tips-hint required">请不要使用font-family或使用第三方的字体</view>
+				<view class="hint tips-hint required">css代码里的引号用"而非'</view>
 				<view>{{cssPrev}}</view>
 				<textarea autoHeight v-model="pattern_css" :maxlength="-1"
 					placeholder="气泡单元css" :cursor-spacing="150"
@@ -70,10 +70,14 @@
 <style lang="scss">
 	textarea{
 		width: 63vw;
+		line-height: calc(2 * $uni-font-size-lg);
 	}
 	.edit-link{
 		color: $uni-color-main;
 		text-decoration: underline;
+	}
+	.tips-hint{
+		line-height: calc(2 * $uni-font-size-base);
 	}
 	@media (prefers-color-scheme: dark) {
 		.edit-link{

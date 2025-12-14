@@ -87,15 +87,18 @@ export default {
 								});
 							return;
 						}
+					}else if(res.data.code == 401){//推送错误自行处理，不影响使用
+						reject(res.data);
 					}else{
 						resolve(res.data);
 					}
 				},
 				fail: err => {
+					console.log(err);
 					uni.hideLoading();
 					let msg_str = err ? JSON.stringify(err) : '未知错误，请联系管理员';
 					if(err.errMsg && err.errMsg.indexOf('request:fail abort statusCode:-1') > -1){
-						msg_str = option + ' fail:这是掉线了吗？';
+						msg_str = option + ' fail:这是掉线了吗？或者AI繁忙？';
 					}
 					store.commit('user/setUserData',
 						{

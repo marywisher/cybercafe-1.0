@@ -50,7 +50,7 @@
 		color: $uni-color-main;
 		border: $uni-border-base solid $uni-color-main;
 	}
-	.btn-default.disabled, .btn-warn.disabled, .btn-primary.disabled{
+	.btn-default.disabled, .btn-warn.disabled{
 		color: $uni-text-color-disable;
 		border: $uni-border-base solid $uni-text-color-disable;
 	}
@@ -60,7 +60,9 @@
 		color: $uni-bg-color-grey;
 	}
 	.btn-primary.disabled{
+		border: $uni-border-base solid $uni-text-color-disable;
 		background-color: $uni-text-color-disable;
+		color: $uni-bg-color-grey;
 	}
 	.btn-warn{
 		background-color: $uni-color-secondary;
@@ -73,7 +75,7 @@
 			border: $uni-border-base solid $uni-color-dark-main;
 			background-color: $uni-bg-dark-color-gray;
 		}
-		.btn-default.disabled, .btn-warn.disabled, .btn-primary.disabled{
+		.btn-default.disabled, .btn-warn.disabled{
 			color: $uni-text-color-placeholder;
 			border: $uni-border-base solid $uni-text-color-placeholder;
 		}
@@ -81,6 +83,11 @@
 			background-color: $uni-color-dark-main;
 			border: $uni-border-base solid $uni-color-dark-main;
 			color: $uni-bg-dark-color-gray;
+		}
+		.btn-primary.disabled{
+			border: $uni-border-base solid $uni-text-color-placeholder;
+			color: $uni-bg-dark-color-gray;
+			background-color: $uni-text-color-placeholder;
 		}
 	}
 </style>

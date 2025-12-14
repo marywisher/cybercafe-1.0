@@ -308,6 +308,7 @@
 	}
 	textarea{
 		line-height: calc(2 * $uni-font-size-lg);
+		width: 93%;
 	}
 	.icon-jiahao{
 		color: $uni-color-main;

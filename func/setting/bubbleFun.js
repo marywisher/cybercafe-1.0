@@ -28,7 +28,7 @@ export default {
 				_self.updateData(res.result);
 			}
 		}).catch(e => {
-			console.log(e);
+			if(e.code != 401) console.log(e);
 		});
 	},
 	async updateData(data, reset_status = false) {

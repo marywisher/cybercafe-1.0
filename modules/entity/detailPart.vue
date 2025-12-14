@@ -262,6 +262,7 @@
 <style lang="scss">
 	textarea{
 		width: 93%;
+		line-height: calc(2 * $uni-font-size-lg);
 	}
 	.entity-container{
 		position: relative;
