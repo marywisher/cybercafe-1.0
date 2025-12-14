@@ -73,7 +73,7 @@
 				verify_code: '',
 				nickname: '',
 				
-				email_check: false,
+				email_check: true,
 			}
 		},
 		computed: {
@@ -99,9 +99,9 @@
 			checkEmail(e){
 				this.username = e.detail.value;
 				if(this.username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) == this.username){
-					this.email_check = true;
-				}else{
 					this.email_check = false;
+				}else{
+					this.email_check = true;
 				}
 			},
 			setVerifyCode(e){
@@ -114,17 +114,9 @@
 				this.nickname = e.detail.value;
 			},
 			sendVerify(e){
-				if(this.username.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) != this.username){
-					uni.showToast({
-						title: '请正确填写邮箱',
-						icon: 'none'
-					})
-					return;
-				}
-				
-				let _self = this;
 				uni.showLoading();
-				this.email_check = false;
+				this.email_check = true;
+				let _self = this;
 				request.post("userController/sendVerifyCode", 'login', {
 					name: this.username,
 				}).then(res => {
@@ -144,14 +136,14 @@
 							title: res.msg,
 							icon: "none"
 						});
-						_self.email_check = true;
+						_self.email_check = false;
 					}
-				}).catch(e => {
+				}).catch(err => {
 					uni.showToast({
-						title: e.msg,
+						title: err,
 						icon: "none"
 					});
-					_self.email_check = true;
+					_self.email_check = false;
 				}).finally(() => {
 					uni.hideLoading();
 				});

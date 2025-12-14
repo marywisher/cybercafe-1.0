@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<messageHeader @afterTap="refreshFun"></messageHeader>
+		<messageHeader :idArr="id_arr" :messageList="message_list" @afterTap="refreshFun"></messageHeader>
 		<view class="header-part"></view>
 		<cybercafe-view v-for="(item, index) in message_list" :key="index">
 			<view :id="item.message_id">
@@ -62,7 +62,7 @@
 		},
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'newMsgCount',
-				'tagLevel']),
+				'tagLevel', 'totalReward']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -114,7 +114,8 @@
 										'cancelText': "OK",
 									},
 									'modalShow': true,
-									'modalPageId': 'message'
+									'modalPageId': 'message',
+									'totalReward': _self.totalReward + res.result.reward
 								})
 							}
 						}else{

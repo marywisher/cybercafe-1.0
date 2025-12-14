@@ -98,7 +98,7 @@ export default {
 					uni.hideLoading();
 					let msg_str = err ? JSON.stringify(err) : '未知错误，请联系管理员';
 					if(err.errMsg && err.errMsg.indexOf('request:fail abort statusCode:-1') > -1){
-						msg_str = option + ' fail:这是掉线了吗？或者AI繁忙？';
+						msg_str = option + ' fail:请求超时，请稍后再试';
 					}
 					store.commit('user/setUserData',
 						{

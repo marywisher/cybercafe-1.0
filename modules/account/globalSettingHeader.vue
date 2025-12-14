@@ -24,7 +24,7 @@
 			newMsgCount:{
 				handler(newValue, oldValue) {
 				    //console.log(newValue);
-				    if(newValue) this.new_msg_count = newValue;
+				    this.new_msg_count = newValue;
 				},
 				immediate: true, // 立即执行一次
 				deep: true // 深度监听（可选）
