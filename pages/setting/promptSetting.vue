@@ -78,6 +78,7 @@
 
 <script>
 	import responseFun from '@/func/entity/responseFun';
+	import request from '@/func/common/request';
 	import {
 		mapMutations,
 		mapState,
@@ -294,6 +295,8 @@
 					title: '数据已保存',
 					icon: 'none'
 				})
+				
+				request.post('settingController/uploadPrompt', '', {'prompt': this.customPrompt}).then(res => {});
 			},
 			timeChange(e){
 				this.autoSave('时间感知', e.target.value);

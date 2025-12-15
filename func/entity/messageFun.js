@@ -232,16 +232,16 @@ export default{
 				? crt_entity_data[0].extra_description : '';
 			if(old_summary.length > 0 && new_description.includes(old_summary)){
 				new_description = new_description.replace(old_summary, summarize_content);
-				uni.showToast({
+				/* uni.showToast({
 					title: old_summary + ' 被替换掉',
 					icon: 'none'
-				});
+				}); */
 			}else{
 				new_description = new_description + ' ' + summarize_content;
-				uni.showToast({
+				/* uni.showToast({
 					title: '追加了 ' + summarize_content,
 					icon: 'none'
-				})
+				}) */
 			}
 			baseQuery.updateDataByKey('cybercafe_entity', {
 				'extra_description': new_description
