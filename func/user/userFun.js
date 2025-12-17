@@ -2,7 +2,7 @@ import common from "../common/common";
 import { VERSION } from "@/func/common/common";
 import store from "@/store";
 import request from "@/func/common/request";
-import incubatorFun from "@/func/incubator/incubatorFun";
+import incubatorFun from "@/func/character/incubatorFun";
 import aiFun from "@/func/setting/aiFun";
 
 export default {

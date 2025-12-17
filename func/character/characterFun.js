@@ -1,6 +1,6 @@
 import common from '@/func/common/common';
 import baseQuery from '@/func/dbManager/baseQuery';
-import entityFun from './entityFun';
+import entityFun from '@/func/entity/entityFun';
 import store from '@/store';
 import request from '../common/request';
 

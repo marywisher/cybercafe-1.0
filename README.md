@@ -6,7 +6,7 @@
 | 小红书   | [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)（目前内测0.6版本的操作说明在小红书上） |
 | B站     | 搭建中，稍后公布 |
 | QQ群    | 42094098（已满）（目前内测的0.6版APK和PC模拟器在群文件夹里） |
-| Discord | [https://discord.gg/25j4Kdhv](https://discord.gg/25j4Kdhv) （内测0.6版APK也打了分包提交在社区了） |
+| Discord | [https://discord.gg/gAX4ehhx](https://discord.gg/gAX4ehhx) （0.6版，1.0版APK均打了分包提交在社区了） |
 | 贴吧    | [赛博食堂](https://tieba.baidu.com/f?kw=赛博食堂) (刚建) |
 
 
@@ -86,14 +86,14 @@ func/                   # 功能模块
   dbManager/            # 数据库管理
     baseQuery.js        # 基础查询
     dialogueQuery.js    # 对话查询
-  entity/               # 实体类
+  character/            # 角色类   
     characterFun.js     # 角色功能
+	incubatorFun.js     # 孵化器功能
+  entity/				# 实体类
     entityFun.js        # 实体功能
     messageFun.js       # 消息功能
     promptFun.js        # 提示功能
     responseFun.js      # 响应功能
-  incubator/            # 孵化器类
-    incubatorFun.js     # 孵化器功能
   setting/              # 设置类
     aiFun.js            # AI功能
     bubbleFun.js        # 气泡功能
@@ -204,6 +204,6 @@ unpackage/              # 打包输出
 
 ## 联系我们
 - QQ: 63846152（不知名剧作家）
-- Discord: [https://discord.gg/25j4Kdhv](https://discord.gg/25j4Kdhv)
+- Discord: [https://discord.gg/gAX4ehhx](https://discord.gg/gAX4ehhx)
 - 小红书: [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)
 - 贴吧: [赛博食堂](https://tieba.baidu.com/f?kw=赛博食堂)

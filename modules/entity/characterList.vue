@@ -31,7 +31,7 @@
 	import config from '@/config.json';
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import request from '@/func/common/request';
-	import characterFun from '@/func/entity/characterFun';
+	import characterFun from '@/func/character/characterFun';
 	import dialogueQuery from '@/func/dbManager/dialogueQuery';
 	import entityFun from '@/func/entity/entityFun';
 	import {

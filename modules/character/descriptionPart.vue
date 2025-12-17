@@ -141,7 +141,7 @@
 	import baseQuery from '@/func/dbManager/baseQuery';
 	import request from '@/func/common/request';
 	import responseFun from '@/func/entity/responseFun';
-	import characterFun from '@/func/entity/characterFun';
+	import characterFun from '@/func/character/characterFun';
 	import {
 		mapMutations,
 		mapState,

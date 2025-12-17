@@ -32,6 +32,8 @@
 			 </view>
 		</cybercafe-view>
 		<view class="text-center hint">—— 没有更多了，粮袋见底了 ——</view>
+		
+		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
 
@@ -41,7 +43,7 @@
 	
 	import common from '@/func/common/common';
 	import request from '@/func/common/request';
-	import characterFun from '@/func/entity/characterFun';
+	import characterFun from '@/func/character/characterFun';
 	import {
 		mapMutations,
 		mapState,

@@ -207,8 +207,8 @@
 									content: res.result.msg,
 									confirmText: '',
 									cancelText: 'OK',
-									success: (res) => {
-										if (res.cancel && res.result.msg == '密码已更新，请重新登录'){
+									success: (res2) => {
+										if (res2.cancel && res.result.msg == '密码已更新，请重新登录'){
 											_self.form_flag = 'login';
 											_self.$forceUpdate()
 										}
