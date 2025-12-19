@@ -91,6 +91,7 @@
 			},
 			afterLoad(param){
 				this.character_image = param.image;
+				if(!this.character_id) this.character_id = param.id;
 				//this.character_key = param.key;
 				this.$forceUpdate();
 			},
@@ -128,7 +129,7 @@
 				})
 			}else if(option.hasOwnProperty('online_id')){
 				this.character_id = 0;
-				//console.log(option.online_id, option.entity_id);
+				//console.log(option.online_id);
 				this.$nextTick(() => {
 					this.$refs.cDP.createCharacter(option.online_id);
 				})

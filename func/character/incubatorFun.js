@@ -6,7 +6,8 @@ import characterFun from "./characterFun";
 
 export default {
 	feedback,
-	parseData
+	parseData,
+	createCharacter
 }
 
 function feedback(){//初始化时，数据回填
@@ -38,20 +39,20 @@ function feedback(){//初始化时，数据回填
 }
 
 function parseData(result_data){
-	console.log(result_data);
+	//console.log(result_data);
 	let character_data = {
 		'incubator_id': result_data.incubator_id,
 		'character_name': result_data.character_name,
-		'character_img': result_data.character_img,
+		'character_gender': result_data.character_gender ? result_data.character_gender : 0,
 		'character_prologue': result_data.character_prologue ? result_data.character_prologue : '',
-		'character_created_at': result_data.character_created_at,
 		'character_story': result_data.character_memo ? result_data.character_memo : '',
+		'character_img': result_data.character_img,
+		'character_tag': result_data.character_tag,
 		'character_status': result_data.character_status ? result_data.character_status : 0,
-		'character_gender': result_data.character_gender ? result_data.character_gender : 0
 	};
 	
 	let description_data = result_data.character_description;
-	//console.log(description_data.substr(0, 1));
+	//console.log(description_data);
 	if(!common.isJsonString(description_data)){
 	//if(description_data.substr(0, 1) != '{'){
 		//原数据结构
@@ -88,7 +89,49 @@ function parseData(result_data){
 			if(description_data.副本.hasOwnProperty('开场白')) character_data.character_prologue = description_data.副本.开场白;
 		}
 	}
+	
+	switch(result_data.character_status){
+		default://6
+		character_data.character_status_cn = '通过审核';
+		break;
+		case 4:
+		character_data.character_status_cn = '本地草稿';
+		break;
+		case 5:
+		character_data.character_status_cn = '审核中';
+		break;
+		case 7:
+		character_data.character_status_cn = '审核不通过';
+		break;
+	}
+	
 	//console.log(character_data);
 	return character_data;
+}
+
+async function createCharacter(online_id){
+	let _self = this;
+	try {
+		let incubator_data = await baseQuery.getDataByKey('cybercafe_incubator', {'incubator_id': online_id.substr(1)});
+		if(incubator_data.length > 0){
+			let character_id = await characterFun.previewToDb(incubator_data[0]);
+			let character_data = {
+				'character_id': character_id,
+				'character_img': incubator_data[0].character_img
+			};
+			return character_data;
+		}else{
+			uni.showToast({
+				title: '创建角色失败',
+				icon: "none"
+			});
+		}
+	} catch (error) {
+		console.error('创建角色失败:', error);
+		uni.showToast({
+			title: '创建角色失败',
+			icon: "none"
+		});
+	}
 }
 	

@@ -46,12 +46,20 @@
 				"navigationStyle": "custom"
 			}
 		},
-		/* {
-			"path": "pages/chat/incubator",
+		{
+			"path": "pages/character/incubator",
 			"style": {
-				"navigationBarTitleText": "本地角色"
+				//"navigationBarTitleText": "本地角色"
+				"navigationStyle": "custom"
 			}
-		}, */
+		},
+		{
+			"path": "pages/character/incubatorList",
+			"style": {
+				//"navigationBarTitleText": "本地角色列表"
+				"navigationStyle": "custom"
+			}
+		},
 		{
 			"path": "pages/login/login",
 			"style": {

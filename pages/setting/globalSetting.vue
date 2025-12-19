@@ -10,6 +10,12 @@
 				</view>
 			</cybercafe-view>
 			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="gotoIncubatorList">
+					<view class="global-setting-label">本地角色</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
+			<cybercafe-view>
 				<view class="display-flex sp-between display-line" @tap="gotoEntityList">
 					<view class="global-setting-label">查看容器</view>
 					<span class="iconfont icon-xiayibu"></span>
@@ -57,6 +63,11 @@
 				<view class="display-flex sp-between display-line" @tap="downloadData">
 					<view class="global-setting-label">下载数据</view>
 					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
+			<cybercafe-view>
+				<view class="display-flex sp-between display-line">
+					<view class="global-setting-label">需要导出聊天记录请联系管理员</view>
 				</view>
 			</cybercafe-view>
 			<cybercafe-view v-if="userId == 1">
@@ -233,6 +244,11 @@
 			gotoEntityList(){
 				uni.navigateTo({
 					url: '/pages/entity/entityList'
+				})
+			},
+			gotoIncubatorList(){
+				uni.navigateTo({
+					url: '/pages/character/incubatorList'
 				})
 			}
 		},

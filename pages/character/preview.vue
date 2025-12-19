@@ -4,11 +4,11 @@
 		<previewHeader :bgOpacity="bg_opacity" :img="character_image" 
 			:imgOpacity="avatar_opacity" @tapDownload="downloadFun"></previewHeader>
 		
-		<previewDescriptionPart class="character-des" ref="ppdp" @afterLoad="afterLoad"></previewDescriptionPart>
-		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
-		
+		<previewDescriptionPart class="character-des" ref="ppdp" @afterLoad="afterLoad"></previewDescriptionPart>		
 		<previewEntityPart class="ppep-view" ref="ppep" :characterId="character_id" 
 			@cancel="cancelFun"></previewEntityPart>
+		
+		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
 

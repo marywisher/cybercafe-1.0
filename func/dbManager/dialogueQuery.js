@@ -123,6 +123,11 @@ export default{
 			});
 		});
 	},
+	deleteCharacterByEntityId(){
+		sqlite.executeSQL('delete from cybercafe_character where character_id in'
+			+ ' ( select character_id from cybercafe_entity_detail where entity_id = "' 
+			+ store.state.setting.entityId + '" );');
+	},
 	deleteMessageByMessageId(selected_id){
 		//取出本条记录的时间戳
 		sqlite.selectSQL('select * from cybercafe_message where message_id = "' + selected_id + '";')

@@ -56,7 +56,7 @@
 			</cybercafe-view>
 			<cybercafe-view>
 				<view class="display-flex sp-between display-line">
-					<view><input v-model="basic_key" placeholder="请输入角色补充项" class="bg-color" 
+					<view><input v-model="basic_key" placeholder="请输入角色补充项" class="bg-color item-key" 
 						:placeholder-style="placeholderStyle"
 						confirm-type="done"  @confirm="toggleTaFun('basic', 'show')"/></view>
 					<view v-if="basic_ta_show == false" class="iconfont icon-jiahao" @tap="toggleTaFun('basic', 'show')"></view>
@@ -97,7 +97,7 @@
 			</cybercafe-view>
 			<cybercafe-view>
 				<view class="display-flex sp-between display-line">
-					<view><input v-model="extend_key" placeholder="请输入角色限定项" class="bg-color"  
+					<view><input v-model="extend_key" placeholder="请输入角色限定项" class="bg-color item-key"  
 						:placeholder-style="placeholderStyle"
 						confirm-type="done"  @confirm="toggleTaFun('extend', 'show')" /></view>
 					<view v-if="extend_ta_show == false" class="iconfont icon-jiahao" @tap="toggleTaFun('extend', 'show')"></view>
@@ -137,11 +137,10 @@
 <script>
 	import config from '@/config.json';
 	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
-	import common from '@/func/common/common';
 	import baseQuery from '@/func/dbManager/baseQuery';
-	import request from '@/func/common/request';
 	import responseFun from '@/func/entity/responseFun';
 	import characterFun from '@/func/character/characterFun';
+	import incubatorFun from '@/func/character/incubatorFun';
 	import {
 		mapMutations,
 		mapState,
@@ -180,6 +179,7 @@
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 			...mapState('setting', ['darkMode']),
+			//...mapState('dialogue', ['selectedEntityId']),
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
 			}
@@ -187,6 +187,7 @@
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
+			//...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			async init(character_id){
 				//console.log(character_id);
 				this.character_id = character_id;
@@ -210,7 +211,8 @@
 				
 				let character_image = character_data[0].character_img ? character_data[0].character_img : this.default_image;
 				this.$emit('afterLoad', 
-					{'image': character_image});//,'key': character_key
+					{'image': character_image,
+					'id': this.character_id});//新建完成后,'key': character_key
 			},
 			async autoSave(kind, value){
 				//检测
@@ -345,8 +347,16 @@
 			},
 			async createCharacter(online_id){
 				let _self = this;
-				//console.log(online_id, entity_id);
-				let character_data = await characterFun.createCharacter(online_id, 'character');
+				//console.log(online_id, this.selectedEntityId);
+				let character_data;
+				let page_id = 'character';
+				if(online_id > 0){
+					//console.log('characterFun');
+					character_data = await characterFun.createCharacter(online_id, page_id);
+				}else{//本地崽
+					//console.log('incubatorFun');
+					character_data = await incubatorFun.createCharacter(online_id);
+				}
 				this.init(character_data.character_id);
 				this.setUserData({
 					'modalData': {
@@ -356,12 +366,12 @@
 						confirmText: "立即聊天",
 						success: (res) => {
 							if (res.confirm) {
-								_self.$emit('afterCreate', character_data.character_id);
+								_self.$emit('afterCreate', character_id);
 							}
 						},
 					},
 					'modalShow': true,
-					'modalPageId': 'character'
+					'modalPageId': page_id
 				})
 			}
 		}
@@ -370,12 +380,15 @@
 
 <style lang="scss">
 	input{
-		max-width: 50vw;
+		width: 30vw;
 	}
 	textarea{
 		line-height: calc(2 * $uni-font-size-lg);
 		margin: 0 auto;
 		width: 93%;
+	}
+	input.item-key{
+		width: 50vw;
 	}
 	.bg-color{
 		background-color: $uni-bg-color;

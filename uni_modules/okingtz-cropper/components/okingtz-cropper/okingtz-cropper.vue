@@ -1164,5 +1164,18 @@
 		.cropper-config{
 			background-color: $uni-bg-dark-color-gray;
 		}
+		.cropper-choose{
+			background-color: $uni-bg-dark-color-gray;
+			color: $uni-color-dark-main;
+			border-color: $uni-color-dark-main;
+		}
+		.cropper-confirm{
+			background-color: $uni-color-dark-main;
+			color: $uni-bg-dark-color-gray;
+		}
+		.cropper-primary{
+			background-color: $uni-color-dark-secondary;
+			color: $uni-color-dark-main;
+		}
 	}
 </style>

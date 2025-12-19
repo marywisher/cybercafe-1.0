@@ -92,11 +92,15 @@ export default{
 		}
 		let db_data = {
 			'character_name': result_data.character_name,
-			'character_img': result_data.img[0].img_url,
 			'character_description': character_description,
 			'character_prologue': result_data.character_prologue,
-			'character_online_id': result_data.character_id,
 			'character_created_at': result_data.character_created_at
+		}
+		if(result_data.hasOwnProperty('character_id')){
+			db_data.character_img = result_data.img[0].img_url;
+			db_data.character_online_id = result_data.character_id;
+		}else if(result_data.hasOwnProperty('incubator_id')){
+			db_data.character_online_id = -1 * result_data.incubator_id;
 		}
 		//console.log(db_data);
 		let character_id = await baseQuery.insertDataByKey('cybercafe_character', db_data, true);

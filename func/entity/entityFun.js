@@ -1,6 +1,6 @@
-import baseQuery from "../dbManager/baseQuery";
-import dialogueQuery from "../dbManager/dialogueQuery";
-import request from "../common/request";
+import baseQuery from "@/func/dbManager/baseQuery";
+import dialogueQuery from "@/func/dbManager/dialogueQuery";
+import request from "@/func/common/request";
 import store from "@/store";
 import common from '@/func/common/common';
 
@@ -87,7 +87,7 @@ export default{
 		//let _self = this;
 		store.commit('user/setUserData', {
 			'modalData': {
-				title: '解散容器后，本容器记录将全部删除，无法恢复',
+				content: '解散容器后，本容器记录将全部删除，无法恢复',
 				confirmText: '确定解散',
 				cancelText: '再想想',
 				success: function (res) {

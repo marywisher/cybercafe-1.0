@@ -10,7 +10,7 @@
 
 <script>
 	export default{
-		name: 'entityHeader',
+		name: 'entityListHeader',
 		methods: {
 			back(){
 				uni.navigateBack();
