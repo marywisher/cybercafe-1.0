@@ -212,7 +212,8 @@
 				let character_image = character_data[0].character_img ? character_data[0].character_img : this.default_image;
 				this.$emit('afterLoad', 
 					{'image': character_image,
-					'id': this.character_id});//新建完成后,'key': character_key
+					'id': this.character_id,
+					'name': this.character_name});//新建完成后,'key': character_key
 			},
 			async autoSave(kind, value){
 				//检测
@@ -383,7 +384,7 @@
 		width: 30vw;
 	}
 	textarea{
-		line-height: calc(2 * $uni-font-size-lg);
+		line-height: $uni-font-size-huge;
 		margin: 0 auto;
 		width: 93%;
 	}

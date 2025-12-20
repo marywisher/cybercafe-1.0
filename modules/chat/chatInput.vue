@@ -40,10 +40,26 @@
 				sending: false,
 			}
 		},
+		watch: {
+			editMode: {
+				handler(newValue, oldValue) {
+				    if(newValue){
+						if(this.replyMode == 'auto') {
+							this.$emit('autoSpeak');
+							this.setDiaData({
+								'editMode': false
+							})
+						}
+					}
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
+			}
+		},
 		computed: {
 			...mapState('setting', ['editContent', 'entityId', 'replyMode']),
-			...mapState('dialogue', ['crtCharacterId', 'messageTime', 'optionFlag', 'optionFirst', 
-				'options', 'prevMessageTime']),
+			...mapState('dialogue', ['crtCharacterId', 'editMode', 'messageTime', 'optionFlag', 
+				'optionFirst', 'options', 'prevMessageTime']),
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 		},
 		methods: {
@@ -89,11 +105,6 @@
 						'options': []
 					});
 					await messageFun.saveMessage(0, this.optionFirst, this.messageTime + ':option.writing');
-					if(this.replyMode == 'auto') {
-						setTimeout(() => {
-							this.$emit('autoSpeak');
-						}, 500);
-					}
 					this.chat_input = '';
 					uni.hideLoading();
 				}else{

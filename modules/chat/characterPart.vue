@@ -134,7 +134,7 @@
 				//console.log(this.crt_character_id);
 				if(character_id > 0) this.setCrtCharacter(character_id);
 				let message_time = common.getCurrentTimeStampStr(true);
-				if(message_time == this.messageTime) message_time += '1';
+				if(message_time == this.messageTime && character_id > 0) message_time += '1';//防止自动流程过快，messageTime没有刷新
 				this.setDiaData({
 					'crtCharacterId': this.crt_character_id,
 					'prevMessageTime': this.messageTime,
