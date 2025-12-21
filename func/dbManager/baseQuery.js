@@ -103,7 +103,7 @@ export default {
 			});
 		});
 	},
-	updateDataByKey(tableName, updateArr, whereArr){
+	updateDataByKey(tableName, updateArr, whereArr, insertId = false){
 		return new Promise((resolve, reject) => {
 			if(!tableName) reject('tableName: ' + tableName);
 			let sql_str = `update ` + tableName + ` set `;
@@ -167,7 +167,24 @@ export default {
 						insert_str += sqlKey + ` ) values (` + sqlValue + `) `;
 						//console.log(insert_str);
 						sqlite.executeSQL(insert_str).then(() => {
-							resolve('inserted');
+							if(insertId){
+								sqlite.selectSQL("select last_insert_rowid() as id;").then(res => {
+									if (res && res.length > 0) {
+										resolve(res[0].id);
+									}else {
+										reject('Failed to retrieve inserted ID');
+									}
+								}).catch(e => {
+									console.error(e);
+									uni.showToast({
+										title: e,
+										icon: "none"
+									})
+									reject(e);
+								});
+							}else{
+								resolve('inserted');
+							}
 						}).catch(e => {
 							reject(e);
 						});

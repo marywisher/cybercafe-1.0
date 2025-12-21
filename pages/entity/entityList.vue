@@ -51,17 +51,37 @@
 		components:{
 			entityListHeader
 		},
+		watch:{
+			modalShow: {
+				handler(newValue, oldValue) {
+				    //console.log(newValue);
+				    if(newValue && this.modalPageId == 'entityList'){
+				    	this.$nextTick(() => {
+				    		this.$refs.cModal.show(this.modalData);
+						});
+				    	this.setUserData({
+				    		'modalShow': false,
+				    		'modalPageId': ''
+				    	})
+				    }
+				},
+				immediate: true, // 立即执行一次
+				deep: true // 深度监听（可选）
+			}
+		},
 		computed:{
 			...mapState('setting', ['entityId']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 		},
 		methods: {
 			...mapMutations('setting', ['setSettingData']),
+			...mapMutations('user', ['getUserData', 'setUserData']),
 			async init(){
 				this.entity_list = await dialogueQuery.getAllEntityList();
 			},
 			async gotoEntity(entity_id){
 				this.setSettingData({'entityId': entity_id});
-				entityFun.enterEntity();
+				entityFun.enterEntity('entityList');
 			},
 			gotoEntitySetting(entity_id){
 				this.setSettingData({'entityId': entity_id});

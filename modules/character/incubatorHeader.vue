@@ -72,7 +72,11 @@
 									title: '删除成功',
 									icon: 'success'
 								});
-								uni.navigateBack();
+								setTimeout(() => {
+									uni.navigateTo({
+										url: '/pages/character/incubatorList'
+									})
+								}, 500)
 							}
 						},
 					},

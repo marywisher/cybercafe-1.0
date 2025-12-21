@@ -16,7 +16,7 @@ export default {
 		prevMessageTime: '0', //上一个时间戳
 		optionFlag: false, //用于optionFirst的刷新，及“消息提示”显示
 		optionFirst: '', //最后一条记录
-		editMode: false, //旧版用途已废弃，改为侦听单条消息保存流程完成，方便AI自动流程
+		editMode: 0, //旧版用途已废弃，改为侦听单条手动消息保存流程完成，方便AI自动流程执行 0关闭侦听 1开启侦听 2执行状态开
 		blankMode: false, //是否纯手写模式
 		resetFlag: false, //是否编辑框初始化
 		refreshList: 0, //刷新chat列表 0续写回复，-1重说，n已知序号修改，-2页面初始化未知位置， -3不刷

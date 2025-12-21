@@ -82,7 +82,7 @@
 			async loadList(){
 				//let sql_str = 'select * from cybercafe_incubator where character_status > 3';
 				let incubator_data = await baseQuery.getDataByKey('cybercafe_incubator');
-				for (let i in incubator_data) {
+				for (let i in incubator_data.reverse()) {
 					if(incubator_data[i].character_status < 3) continue;
 					//console.log(incubator_data[i]);
 					this.incubator_list.push(incubatorFun.parseData(incubator_data[i]));

@@ -43,11 +43,11 @@
 		watch: {
 			editMode: {
 				handler(newValue, oldValue) {
-				    if(newValue){
+				    if(newValue == 2){
 						if(this.replyMode == 'auto') {
 							this.$emit('autoSpeak');
 							this.setDiaData({
-								'editMode': false
+								'editMode': 0
 							})
 						}
 					}
@@ -102,7 +102,8 @@
 						'prevMessageTime': this.messageTime,
 						'messageTime': common.getCurrentTimeStampStr(true),
 						'optionFlag': true,
-						'options': []
+						'options': [],
+						'editMode': 1
 					});
 					await messageFun.saveMessage(0, this.optionFirst, this.messageTime + ':option.writing');
 					this.chat_input = '';

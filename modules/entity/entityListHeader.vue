@@ -13,7 +13,10 @@
 		name: 'entityListHeader',
 		methods: {
 			back(){
-				uni.navigateBack();
+				//uni.navigateBack();
+				uni.redirectTo({ // 或者使用uni.reLaunch({...})
+				    url: '/pages/chat/index'
+				});
 			},
 			gotoCharacterList(){
 				uni.navigateTo({

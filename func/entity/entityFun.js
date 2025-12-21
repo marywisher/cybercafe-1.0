@@ -84,7 +84,7 @@ export default{
 	},
 	delEntity(pageId){
 		if(store.state.setting.entityId == 0) return;
-		//let _self = this;
+		let _self = this;
 		store.commit('user/setUserData', {
 			'modalData': {
 				content: '解散容器后，本容器记录将全部删除，无法恢复',
@@ -121,6 +121,9 @@ export default{
 									'resetFlag': true
 								});	
 								
+								//若该entity_id不是删除id，则用，否则线上同步修改id
+								_self.getEntityId();
+								
 								uni.redirectTo({
 									url: '/pages/entity/entityList'
 								});
@@ -142,8 +145,8 @@ export default{
 			'modalPageId': pageId
 		});
 	},
-	updateEntityData(){
-		request.post("entityController/changeEntity", 'entityList', {
+	updateEntityData(page_id){
+		request.post("entityController/changeEntity", page_id, {
 			entity_id: store.state.setting.entityId
 		}).then(res => {
 			if (res.code != 200) {
@@ -169,7 +172,7 @@ export default{
 		request.post("entityController/createEntity", 'character', {
 			'entity_id': entity_id,
 			'ai_select': 1,
-			'mode': 'chat'
+			'mode': store.state.dialogue.entityMode
 		}).then(res => {
 			if (res.code == 200) {
 				uni.showToast({
@@ -189,8 +192,8 @@ export default{
 			{'detail_status': detail_status},
 			{'entity_id': store.state.dialogue.selectedEntityId, 'character_id': character_id});
 	},
-	enterEntity(){
-		this.updateEntityData();
+	enterEntity(page_id){
+		this.updateEntityData(page_id);
 		uni.navigateBack({
 		    delta: 1, // 返回上一级页面
 		    success: () => {

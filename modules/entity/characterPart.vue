@@ -1,6 +1,6 @@
 <template>
 	<view class="character-container">
-		<image mode="aspectFill" class="item-character" :src="characterImg"></image>
+		<image mode="aspectFill" class="item-character" :src="characterImg" @tap="gotoCharacter"></image>
 		<view v-if="characterType != 'default'" class="iconfont red-point" @tap="operation" 
 			:class="{'icon-jiahao': characterType == 'in', 'icon-jianhao': characterType == 'out'}"></view>
 	</view>
@@ -33,9 +33,11 @@
 		},
 		computed:{
 			...mapState('setting', ['entityId']),
+			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 		},
 		methods: {
 			...mapMutations('setting', ['getSettingData']),
+			...mapMutations('user', ['getUserData', 'setUserData']),
 			operation(){
 				if(this.entityId == 0 || this.characterId == 0 || this.characterType == 'default') return;
 				let status = 0;
@@ -50,6 +52,27 @@
 					icon: 'none'
 				})
 				this.$emit('afterTap', this.characterId);
+			},
+			gotoCharacter(){
+				console.log(this.characterId);
+				let _self = this;
+				this.setUserData({
+					'modalData': {
+						title: "温馨提醒",
+						content: "即将跳转到角色切片页？",
+						confirmText: '前往角色切片页',
+						cancelText: '手滑了',
+						success: (res) => {
+							if(res.confirm == true){
+								uni.navigateTo({
+									url: '/pages/character/index?id=' + _self.characterId
+								})
+							}
+						},
+					},
+					'modalShow': true,
+					'modalPageId': 'entity'
+				})
 			}
 		}
 	}

@@ -191,6 +191,8 @@ export default{
 				}
 				let message_id = await dialogueQuery.createMessage(0, content, message_time + ':creating', store_data);
 				//console.log(message_id);
+				
+				this.summarizeFun(content);
 			}
 		}
 		uni.hideLoading();
@@ -218,7 +220,7 @@ export default{
 				//console.log(summarize_content);
 				return;
 			}
-			//console.log(summarize_content);
+			console.log(summarize_content, store.state.dialogue.messageTime);
 			baseQuery.updateDataByKey('cybercafe_message', {
 				'message_summary': summarize_content,
 			},{
@@ -237,7 +239,7 @@ export default{
 					icon: 'none'
 				}); */
 			}else{
-				new_description = new_description + ' ' + summarize_content;
+				new_description = new_description ? (new_description + ' ' + summarize_content) : summarize_content;
 				/* uni.showToast({
 					title: '追加了 ' + summarize_content,
 					icon: 'none'
@@ -248,6 +250,15 @@ export default{
 			},{
 				'entity_id': store.state.setting.entityId
 			})
+			if(store.state.dialogue.editMode == 1 && store.state.setting.replyMode == 'auto'){
+				store.commit('dialogue/setDiaData', {
+					'editMode': 2
+				})
+			}else{
+				store.commit('dialogue/setDiaData', {
+					'editMode': 0
+				})
+			}
 		}catch(error){
 			uni.showToast({
 				title: error,

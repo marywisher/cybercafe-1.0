@@ -279,6 +279,8 @@
 								icon: 'none'
 							})
 						}
+						
+						this.$emit('afterLoad', {'name': this.character_name});
 					}else{
 						this.setUserData({
 							'modalData': {
@@ -367,7 +369,7 @@
 						confirmText: "立即聊天",
 						success: (res) => {
 							if (res.confirm) {
-								_self.$emit('afterCreate', character_id);
+								_self.$emit('afterCreate', character_data.character_id);
 							}
 						},
 					},

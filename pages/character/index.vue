@@ -3,7 +3,7 @@
 		<view class="character-bg" :style="dynamicImg"></view>
 		<view class="view-for-tap" @tap="showMoreImg"></view>
 		<characterHeader :bgOpacity="bg_opacity" :img="character_image" 
-			:imgOpacity="avatar_opacity" ref="cCH"
+			:imgOpacity="avatar_opacity" ref="cCH" :characterName="character_name"
 			@tapEnter="gotoEntity"></characterHeader>
 		
 		<descriptionPart class="character-des" ref="cDP" @afterLoad="afterLoad"
@@ -33,6 +33,7 @@
 			return {
 				character_image: configData.avatarImg,
 				character_id: 0,
+				character_name: '',
 				bg_opacity: 0,
 				avatar_opacity: 0,
 				//character_key: '',//由character转过来不改，仅于线上提交后更新
@@ -90,27 +91,28 @@
 				}
 			},
 			afterLoad(param){
-				this.character_image = param.image;
-				if(!this.character_id) this.character_id = param.id;
+				if(param.hasOwnProperty('image')) this.character_image = param.image;
+				if(!this.character_id && param.hasOwnProperty('id')) this.character_id = param.id;
+				if(param.hasOwnProperty('name')) this.character_name = param.name;
 				//this.character_key = param.key;
 				this.$forceUpdate();
 			},
 			async gotoEntity(character_id = 0){
-				console.log(character_id);
+				//console.log(character_id);
 				if(character_id > 0){
 					this.character_id = character_id;
 				}
 				//开场白注入
 				let message_count = await dialogueQuery.getMessageByCharacterId(this.character_id);
 				//console.log(message_count);
-				if(message_count[0].message_count == 0) messageFun.injectPrologue(this.character_id);
+				if(message_count[0].message_count == 0) await messageFun.injectPrologue(this.character_id);
 				this.$refs.cCH.init(this.character_id);
 				let detail_data = await baseQuery.getDataByKey('cybercafe_entity_detail',
 					{'character_id': this.character_id});
 				if(detail_data){
-					console.log(detail_data[0].entity_id);
+					//console.log(detail_data[0].entity_id);
 					this.setSettingData({'entityId': detail_data[0].entity_id});
-					entityFun.enterEntity();
+					entityFun.enterEntity('character');
 				}else{
 					uni.showToast({
 						title: '请重新载入数据或联系管理员',
