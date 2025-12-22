@@ -4,7 +4,7 @@
 		<view class="hint loading-view text-center" @tap="moreMessage">{{loading_text}}</view>
 		<view :class="'message' + item.message_id" v-for="(item, index) in history_list" :key="index" 
 				v-show="index < history_list.length - 1">
-			<view :id="item.message_id" @tap="hideMenu" @longpress="handleLongPress">
+			<view :id="item.message_id" :mtype="item.prev_message_time" @tap="hideMenu" @longpress="handleLongPress">
 				<view v-if="entityMode == 'novel'" class="novel-line" 
 					:class="{ 'novel-subject': !item.character_id, 'deep-cell': index % 2 }" 
 					:style="dynamicNovelStyle(item.character_id)">
@@ -31,7 +31,7 @@
 		</view>
 		
 		<view v-if="history_list.length > 0">
-			<view id="0" @longpress="handleLongPress">
+			<view id="0" :mtype="prevMessageTime" @longpress="handleLongPress">
 				<view v-if="entityMode == 'novel'" class="novel-line" 
 					:class="{ 'deep-cell': (history_list.length - 1) % 2 }" 
 					:style="dynamicNovelStyle(cDisplayId)">
@@ -189,7 +189,8 @@
 		},
 		computed: {
 			...mapState('dialogue', ['cDisplayId', 'characterlist',  'entityMode', 'historylist', 
-				'messageTime', 'optionFirst', 'options', 'refreshList']),
+				'messageTime', 'optionFirst', 'options', 'prevMessageTime',
+				'refreshList']),
 			...mapState('setting', ['bubbleAlign', 'bubbleColor', 'bubbleOpacity', 
 				'chatCss', 'chatPattern', 'darkMode',
 				'fontColor', 'fontSize', 'imgWidth', 'imgRadius']),
@@ -296,14 +297,11 @@
 						{ label: '复制', value: 'copy', icon: 'fuzhi' },
 						{ label: '删除', value: 'delete', icon: 'shanchu' }
 					];
-					if(event.currentTarget.id != 0){//开场白不可删
-						let message_data = await baseQuery.getDataByKey('cybercafe_message', {'message_id': event.currentTarget.id});
-						if(message_data && message_data[0].prev_message_time == 0){
-							menu_items = [
-								{ label: '气泡', value: 'bubble', icon: 'ziyuan' },
-								{ label: '复制', value: 'copy' },
-							];
-						}
+					if(event.currentTarget.mtype == '0'){//开场白不可删
+						menu_items = [
+							{ label: '气泡', value: 'bubble', icon: 'ziyuan' },
+							{ label: '复制', value: 'copy' },
+						];						
 					}
 					
 					this.$refs.customMenu.showMenu(this.menu_x * 0.32, pageY - 40, menu_items, event.currentTarget.id, this.option_first_text);

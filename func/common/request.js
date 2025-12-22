@@ -218,6 +218,7 @@ export default {
 					if (res.networkType == 'none') {
 						// 没有网络连接
 						console.log('当前无网络连接');
+						uni.hideLoading();
 						store.commit('user/setUserData',
 							{
 								'refreshFlag': 'fail',
@@ -243,6 +244,7 @@ export default {
 					if(err.errMsg && err.errMsg.indexOf('request:fail abort statusCode:-1') > -1){
 						msg_str = '盲猜一个，掉线了';
 					}
+					uni.hideLoading();
 					store.commit('user/setUserData',
 						{
 							'refreshFlag': 'fail',

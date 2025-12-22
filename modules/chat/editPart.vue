@@ -18,7 +18,7 @@
 					@tapDot="clickItem" :swiperCurrent="swiper_current"></cybercafe-swiper-dot>
 			</view>
 			<view class="display-flex display-line icon-part">
-				<cybercafe-button v-if="cDisplayId > 0 && swiper_current > -1" btnClass="btn-default" 
+				<cybercafe-button v-if="cDisplayId > 0 && swiper_current > -1 && prevMessageTime != '0'" btnClass="btn-default" 
 					btnName="" class="iconfont icon-shuaxin" @tapBtn="respeakFun"/>
 				<cybercafe-button btnClass="btn-default" btnName="" class="iconfont icon-dianping" 
 					@tapBtn="changeToEdit" />

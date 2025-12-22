@@ -70,10 +70,9 @@
 			...mapState('setting', ['darkMode']),
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
 			dynamicImg() {
-				/* return this.darkMode == 'light' ?
+				return this.darkMode == 'light' ?
 					`background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.1) 80%, rgba(255, 255, 255, 0.5) 90%, rgba(255, 255, 255, 1)), url('${this.character_image}');` : 
-					`background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(31, 31, 31, 0.1) 80%, rgba(31, 31, 31, 0.5) 90%, rgba(31, 31, 31, 1)), url('${this.character_image}');`; */
-				return `background-image: url('${this.character_image}');`;
+					`background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(31, 31, 31, 0.1) 80%, rgba(31, 31, 31, 0.5) 90%, rgba(31, 31, 31, 1)), url('${this.character_image}');`;
 			}
 		},
 		methods: {
@@ -120,7 +119,7 @@
 		},
 		onLoad(option) {
 			this.incubator_id = option.id < 0 ? -1 * parseInt(option.id) : option.id;
-			//console.log(this.incubator_id);
+			console.log(this.incubator_id);
 			this.init();
 		},
 		onPageScroll(e) {
