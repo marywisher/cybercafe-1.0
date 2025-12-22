@@ -50,7 +50,7 @@
 				this.$refs.menu.hideMenu();
 			},
 			handleClick(item) {
-				this.$emit('menu-click', item, this.selected_id);
+				//this.$emit('menu-click', item, this.selected_id);
 				//console.log(item);
 				switch(item.value){
 					case 'copy':
@@ -70,7 +70,9 @@
 				//this.getDiaData();
 				//console.log( this.selected_id)
 				let text = '';
-				if(this.selected_id == 0){
+				if(this.selected_id == '-1'){
+					text = this.historylist[0].text;
+				}else if(this.selected_id == 0){
 					text = this.selected_text;
 				}else{
 					for(let i in this.historylist){
@@ -105,7 +107,7 @@
 				//console.log('用户点击确定' + this.selected_id);
 				if(this.selected_id == 0){//option first
 					this.deleteOptionFirst();
-				}else{//history list
+				}else if(this.selected_id != '-1'){//history list
 					for(let i in this.historylist){
 						//console.log(this.historylist[i]);
 						if(this.historylist[i].message_id == this.selected_id){

@@ -4,7 +4,7 @@
 		<view class="hint loading-view text-center" @tap="moreMessage">{{loading_text}}</view>
 		<view :class="'message' + item.message_id" v-for="(item, index) in history_list" :key="index" 
 				v-show="index < history_list.length - 1">
-			<view :id="item.message_id" :mtype="item.prev_message_time" @tap="hideMenu" @longpress="handleLongPress">
+			<view :id="item.prev_message_time == '0' ? '-1' : item.message_id" @tap="hideMenu" @longpress="handleLongPress">
 				<view v-if="entityMode == 'novel'" class="novel-line" 
 					:class="{ 'novel-subject': !item.character_id, 'deep-cell': index % 2 }" 
 					:style="dynamicNovelStyle(item.character_id)">
@@ -63,7 +63,7 @@
 		</view>
 		<view :class="{'input-mode': viewMode == 'min', 'textarea-mode': viewMode == 'max'}" v-html="entity_css"></view>
 		
-		<listMenu ref="customMenu" @menu-click="handleMenuClick"></listMenu>
+		<listMenu ref="customMenu"></listMenu>
 	</view>
 </template>
 
@@ -297,10 +297,10 @@
 						{ label: '复制', value: 'copy', icon: 'fuzhi' },
 						{ label: '删除', value: 'delete', icon: 'shanchu' }
 					];
-					if(event.currentTarget.mtype == '0'){//开场白不可删
+					if(event.currentTarget.id == '-1' || (this.history_list.length == 1)){//开场白不可删
 						menu_items = [
 							{ label: '气泡', value: 'bubble', icon: 'ziyuan' },
-							{ label: '复制', value: 'copy' },
+							{ label: '复制', value: 'copy', icon: 'fuzhi' },
 						];						
 					}
 					
