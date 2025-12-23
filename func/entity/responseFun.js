@@ -7,11 +7,6 @@ import request from '@/func/common/request';
 import promptFun from '@/func/entity/promptFun';
 
 export default{
-	data() {
-	    return {
-	      last_called: 0, // 存储上一次调用的时间戳
-	    };
-	},
 	async getResponseByAiId(ai_id){
 		//console.log(ai_id);
 		if(ai_id != '0'){
@@ -143,15 +138,7 @@ export default{
 	async toolRequest(task, data, page_id){
 		return new Promise((resolve, reject) => {
 			try{
-				if(data.length == 0) return;
-				const now = Date.now();
-				if(now - this.last_called < 2000){
-					uni.showToast({
-						title: '请降低修改频率',
-						icon: "none"
-					})
-					return;
-				}
+				if(data.length == 0) reject('发送内容不能为空');
 				request.post('aiController/tool', page_id, {
 					'key': store.state.user.userKey,
 					'task': task,
@@ -171,7 +158,6 @@ export default{
 						reject(res.msg);
 					}
 				});
-				this.last_called = now;
 			}catch(err){
 				console.log(err);
 				reject('检测工具问题，请修改后再试' + err);
