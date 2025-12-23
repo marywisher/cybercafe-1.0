@@ -23,7 +23,7 @@
 		<view class="character-line">
 			<view class="hint">简介</view>
 			<cybercafe-view>
-				<view class="long-text">{{short_description}}</view>
+				<view class="long-text" v-html="short_description"></view>
 			</cybercafe-view>
 		</view>
 		<view class="character-line"></view>
@@ -38,7 +38,7 @@
 		<cybercafe-view v-if="Object.keys(basic_description).length > 0">
 			<view v-for="(item, basic_index) in basic_description" :key="basic_index" class="character-line">
 				<view class="hint">{{basic_index}}</view>
-				<view class="character-line">{{basic_description[basic_index]}}</view>
+				<view class="character-line" v-html="basic_description[basic_index]"></view>
 			</view>
 		</cybercafe-view>
 		<view v-if="Object.keys(basic_description).length > 0" class="character-line"></view>
@@ -47,7 +47,7 @@
 		<view class="character-line after-tag">
 			<view class="hint">故事背景</view>
 			<cybercafe-view>
-				<view class="long-text">{{full_description}}</view>
+				<view class="long-text" v-html="full_description"></view>
 			</cybercafe-view>
 		</view>
 		<view class="character-line"></view>
@@ -56,7 +56,7 @@
 		<cybercafe-view v-if="Object.keys(extend_description).length > 0">
 			<view v-for="(item2, extend_index) in extend_description" :key="extend_index" class="character-line">
 				<view class="hint">{{extend_index}}</view>
-				<view class="character-line">{{extend_description[extend_index]}}</view>
+				<view class="character-line" v-html="extend_description[extend_index]"></view>
 			</view>
 		</cybercafe-view>
 		<view class="character-line"></view>
@@ -67,7 +67,7 @@
 		<view v-if="character_story.length > 0" class="character-line after-tag">
 			<view class="hint">前情提要</view>
 			<cybercafe-view>
-				<view class="long-text">{{character_story}}</view>
+				<view class="long-text" v-html="character_story"></view>
 			</cybercafe-view>
 		</view>
 		<view class="character-line"></view>
@@ -75,7 +75,7 @@
 		<view v-if="character_prologue.length > 0" class="character-line after-tag">
 			<view class="hint">开场白</view>
 			<cybercafe-view>
-				<view class="long-text">{{character_prologue}}</view>
+				<view class="long-text" v-html="character_prologue"></view>
 			</cybercafe-view>
 		</view>
 		<view class="character-line"></view>
@@ -83,8 +83,6 @@
 </template>
 
 <script>
-	import config from '@/config.json';
-	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import common from '@/func/common/common';
 	import request from '@/func/common/request';
 	import characterFun from '@/func/character/characterFun';
@@ -137,19 +135,19 @@
 						//console.log(character_data);
 						_self.character_name = character_data.character_name;
 						_self.character_gender = character_data.character_gender;
-						_self.short_description = character_data.short_description;
-						_self.full_description = character_data.full_description;
-						_self.character_story = character_data.character_story;
-						_self.character_prologue = character_data.character_prologue;
+						_self.short_description = common.textToHtml(character_data.short_description);
+						_self.full_description = common.textToHtml(character_data.full_description);
+						_self.character_story = common.textToHtml(character_data.character_story);
+						_self.character_prologue = common.textToHtml(character_data.character_prologue);
 						_self.character_tag = character_data.character_tag;
 						_self.character_key = character_data.character_key;
 						_self.character_view_count = character_data.character_view_count;
 						_self.character_link_count = character_data.character_link_count;
 						_self.user_nickname = character_data.user_nickname;
 						if(character_data.hasOwnProperty('basic_description'))
-							_self.basic_description = character_data.basic_description;
+							_self.basic_description = common.textToHtml(character_data.basic_description);
 						if(character_data.hasOwnProperty('extend_description')) 
-							_self.extend_description = character_data.extend_description;
+							_self.extend_description = common.textToHtml(character_data.extend_description);
 						_self.$emit('afterLoad',
 							{'image': res.result.img[0].img_url});
 						_self.$forceUpdate();
