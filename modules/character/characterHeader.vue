@@ -2,8 +2,8 @@
 	<cybercafe-header :bgOpacity="bgOpacity">
 		<view class="iconfont icon-xiayibu iconback menu-icon-left" @tap="back"></view>
 		<view class="header-right display-flex display-line">
-			<view v-if="character_id > 0" class="iconfont icon-chatou" @tap="enterEntity"></view>
-			<label v-if="character_id > 0" class="hint" @tap="enterEntity">进入容器</label>
+			<view class="iconfont icon-chatou" @tap="enterEntity"></view>
+			<label class="hint" @tap="enterEntity">进入容器</label>
 			<view v-if="enable_save" class="iconfont icon-geren" @tap="saveAsIncubator"></view>
 			<label v-if="enable_save" class="hint" @tap="saveAsIncubator">存为本地角色</label><!-- :img="img" :imgOpacity="imgOpacity" -->
 		</view>
@@ -70,7 +70,7 @@
 				this.$emit('tapEnter');
 			},
 			async saveAsIncubator(){
-				console.log(this.incubator_id);
+				//console.log(this.incubator_id);
 				if(!this.character_id) return;
 				let character_data = await baseQuery.getDataByKey('cybercafe_character', 
 					{'character_id': this.character_id});
@@ -103,6 +103,7 @@
 				this.incubator_id = await baseQuery.updateDataByKey('cybercafe_incubator', 
 					incubator_data, {'character_name': this.characterName}, true);
 				this.enable_save = false;
+				//console.log(this.incubator_id);
 				//弹窗跳转
 				let _self = this;
 				this.setUserData({

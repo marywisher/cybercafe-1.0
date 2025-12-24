@@ -100,6 +100,7 @@ export default{
 			db_data.character_img = result_data.img[0].img_url;
 			db_data.character_online_id = result_data.character_id;
 		}else if(result_data.hasOwnProperty('incubator_id')){
+			db_data.character_img = result_data.character_img;
 			db_data.character_online_id = -1 * result_data.incubator_id;
 		}
 		//console.log(db_data);

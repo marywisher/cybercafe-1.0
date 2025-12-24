@@ -145,9 +145,9 @@
 						_self.character_link_count = character_data.character_link_count;
 						_self.user_nickname = character_data.user_nickname;
 						if(character_data.hasOwnProperty('basic_description'))
-							_self.basic_description = common.textToHtml(character_data.basic_description);
+							_self.basic_description = character_data.basic_description;
 						if(character_data.hasOwnProperty('extend_description')) 
-							_self.extend_description = common.textToHtml(character_data.extend_description);
+							_self.extend_description = character_data.extend_description;
 						_self.$emit('afterLoad',
 							{'image': res.result.img[0].img_url});
 						_self.$forceUpdate();
