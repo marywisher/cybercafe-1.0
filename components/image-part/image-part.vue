@@ -296,6 +296,7 @@
 	.ipimg{
 		width: 100vw;
 		min-height: 100vw;
+		margin-top: $page-header-height;
 	}
 	.upload-btn{
 		position: absolute;

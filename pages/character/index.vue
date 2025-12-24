@@ -36,6 +36,7 @@
 				character_name: '',
 				bg_opacity: 0,
 				avatar_opacity: 0,
+				online_id: 0,
 				//character_key: '',//由character转过来不改，仅于线上提交后更新
 			}
 		},
@@ -94,6 +95,7 @@
 				if(param.hasOwnProperty('image')) this.character_image = param.image;
 				if(!this.character_id && param.hasOwnProperty('id')) this.character_id = param.id;
 				if(param.hasOwnProperty('name')) this.character_name = param.name;
+				if(param.hasOwnProperty('online_id')) this.online_id = param.online_id;
 				//this.character_key = param.key;
 				this.$forceUpdate();
 			},
@@ -134,6 +136,7 @@
 				//console.log(option.online_id);
 				this.$nextTick(() => {
 					this.$refs.cDP.createCharacter(option.online_id);
+					this.online_id = option.online_id;
 				})
 			}
 		},

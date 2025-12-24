@@ -41,7 +41,7 @@
 				<view class="hint">米粒不够？想开月卡？请联系管理员</view>
 			</cybercafe-view>
 		</cybercafe-card>
-		<image-part ref="aImgPart" :origin_img="avatar" showCreate :dark="darkMode"
+		<image-part ref="aImgPart" :originImg="avatar" showCreate :dark="darkMode"
 			showLocal :showOnline="false" @afterClick="uploadAvatar"></image-part>
 	</view>
 </template>
@@ -64,10 +64,6 @@
 	export default {
 		name: "userinfo",
 		props: {
-			/*aimId: {
-				type: Number,
-				default: 0
-			},*/
 		},
 		data() {
 			return {
@@ -125,24 +121,6 @@
 				//console.log(this.ippos);
 				//console.log(this.aimId);
 				let _self = this;
-				if(this.aimId == this.userId && this.userAvatar){
-					//console.log(this.userAvatar);
-					uni.getFileInfo({
-						filePath: this.userAvatar,
-						success: function (info) {
-							_self.avatar = _self.userAvatar;
-						},
-						fail: function (error) {
-							if (error.errMsg.includes('file not found')) {
-								console.log('文件不存在');
-								// 文件不存在的处理逻辑
-							} else {
-								// 其他错误处理
-							}
-						}
-					});
-				}
-				
 				if(this.aimId > 0){
 					let data = {
 						'aim_id': this.aimId
@@ -157,8 +135,9 @@
 							_self.follow_num = res.result.follow_num;
 							_self.avatar = res.result.avatar ? res.result.avatar : _self.default_avatar;
 							//console.log(res.result.avatar);
-							if(_self.aimId != _self.userId) _self.$refs.acFollowPart.init();
-							else _self.$refs.acCheckinPart.init();
+							//if(_self.aimId != _self.userId) _self.$refs.acFollowPart.init();
+							//else 
+							_self.$refs.acCheckinPart.init();
 							//_self.$emit('afterInit', res.result.character_num, res.result.character_fans_num);
 						} else {
 							uni.showToast({
@@ -189,9 +168,6 @@
 					
 					if(this.tag != '') this.tags = this.tag.split(',');
 				}
-				
-				//获取ip
-				//request.getIp();
 			},
 			changeAvatar(){
 				if(this.aimId != this.userId) return;

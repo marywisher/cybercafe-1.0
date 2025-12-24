@@ -213,7 +213,8 @@
 				this.$emit('afterLoad', 
 					{'image': character_image,
 					'id': this.character_id,
-					'name': this.character_name});//新建完成后,'key': character_key
+					'name': this.character_name,
+					'online_id': character_data[0].online_id});//新建完成后,'key': character_key
 			},
 			async autoSave(kind, value){
 				//检测
