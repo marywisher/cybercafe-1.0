@@ -6,14 +6,15 @@ import request from '../common/request';
 
 export default{
 	parseData(result_data, is_local = false){
-		//console.log(result_data);
+		console.log(result_data);
 		let character_data = {
 			'character_id': result_data.character_id,
 			'character_name': result_data.character_name,
 			'character_img': result_data.img_url,
 			'character_prologue': result_data.character_prologue ? result_data.character_prologue : '',
 			'character_created_at': result_data.character_created_at,
-			'character_story': result_data.character_memo ? result_data.character_memo : ''
+			'character_story': result_data.character_memo ? result_data.character_memo : '',
+			'character_online_id': result_data.character_online_id
 		};
 		if(!is_local){
 			let tag_list = [];
@@ -27,8 +28,6 @@ export default{
 			character_data['character_link_count'] = result_data.character_link_count;
 			character_data['character_creater_id'] = result_data.character_creater_id;
 			character_data['user_nickname'] = result_data.user_nickname;
-		}else{
-			character_data['character_online_id'] = result_data.character_online_id;
 		}
 		
 		let description_data = result_data.character_description;

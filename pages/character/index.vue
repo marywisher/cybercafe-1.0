@@ -75,8 +75,8 @@
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['setSettingData']),
 			showMoreImg(){
-				//console.log('show gallery');
-				this.$refs.cImgPart.openBox(this.character_id.toString());
+				console.log(this.online_id);
+				this.$refs.cImgPart.openBox(this.online_id.toString());
 			},
 			async afterSelectImg(e){
 				this.character_image = e;

@@ -214,7 +214,7 @@
 					{'image': character_image,
 					'id': this.character_id,
 					'name': this.character_name,
-					'online_id': character_data[0].online_id});//新建完成后,'key': character_key
+					'online_id': return_data.character_online_id});//新建完成后,'key': character_key
 			},
 			async autoSave(kind, value){
 				//检测

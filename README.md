@@ -6,7 +6,7 @@
 | 小红书   | [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)（目前内测0.6版本的操作说明在小红书上） |
 | B站     | 搭建中，稍后公布 |
 | QQ群    | 42094098（已满）（目前内测的0.6版APK和PC模拟器在群文件夹里） |
-| Discord | [https://discord.gg/gAX4ehhx](https://discord.gg/gAX4ehhx) （0.6版，1.0版APK均打了分包提交在社区了） |
+| Discord | [https://discord.gg/qe3Rf9GS](https://discord.gg/qe3Rf9GS) （0.6版，1.0版APK均打了分包提交在社区了） |
 | 贴吧    | [赛博食堂](https://tieba.baidu.com/f?kw=赛博食堂) (刚建) |
 
 
@@ -204,6 +204,6 @@ unpackage/              # 打包输出
 
 ## 联系我们
 - QQ: 63846152（不知名剧作家）
-- Discord: [https://discord.gg/gAX4ehhx](https://discord.gg/gAX4ehhx)
+- Discord: [https://discord.gg/qe3Rf9GS](https://discord.gg/qe3Rf9GSv)
 - 小红书: [不知名剧作家](https://www.xiaohongshu.com/user/profile/609a8cf700000000010004c3)
 - 贴吧: [赛博食堂](https://tieba.baidu.com/f?kw=赛博食堂)
