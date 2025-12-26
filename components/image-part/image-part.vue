@@ -170,19 +170,21 @@
 				this.swiper_current = e.detail.current;
 			},
 			selectImg(){
+				let img_index = this.swiper_current;
+				if(this.originImg != this.default_image) img_index = this.swiper_current - 1;
 				let _self = this;
 				if(this.showCreate){
 					let sqlStr = "update cybercafe_images set image_selected_count = image_selected_count + 1 ";
-					let whereStr = " where image_type = '" + this.id + "' and image_src = '" + this.images[this.swiper_current - 1] + "'";
-					if(this.images[this.swiper_current - 1].substr(0, 6) == 'file:/'){//原本地相册图片转存成base64
-						//以下代码为异步操作，可能有后端报错，暂不修改，如遇则联系劳斯重新选择相册图片生成						
+					let whereStr = " where image_type = '" + this.id + "' and image_src = '" + this.images[img_index] + "'";
+					if(this.images[img_index].substr(0, 6) == 'file:/'){//原本地相册图片转存成base64
+						//以下代码为异步操作，可能有后端报错，暂不修改，如遇则联系玩家重新选择相册图片生成						
 						uni.compressImage({
-						    src: this.images[this.swiper_current - 1], // 图片路径
+						    src: this.images[img_index], // 图片路径
 						    quality: 75, // 压缩质量，范围为0 - 100，100为不压缩
 						    success: function (res) {
 						        // 压缩成功，返回压缩后的图片路径 tempFilePath
 								common.pathToBase64(res.tempFilePath).then(base64_image => {
-									_self.images[_self.swiper_current - 1] = base64_image;
+									_self.images[img_index] = base64_image;
 									sqlStr += ", image_src = '" + base64_image + "' " + whereStr;
 									sqlite.executeSQL(sqlStr).then(() => {
 										console.log('updated:', sqlStr);
@@ -190,7 +192,7 @@
 										console.error(e);
 									});
 									_self.closeBox();
-									_self.$emit('afterClick', _self.images[_self.swiper_current - 1]);
+									_self.$emit('afterClick', _self.images[img_index]);
 								}).catch(err => {
 									console.log('转换64报错',err);
 									_self.closeBox();
@@ -214,7 +216,7 @@
 							console.error(e);
 						});
 						this.closeBox();
-						this.$emit('afterClick', this.images[this.swiper_current - 1]);
+						this.$emit('afterClick', this.images[img_index]);
 					}
 				}else{
 					this.closeBox();

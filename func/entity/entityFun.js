@@ -162,8 +162,11 @@ export default{
 	async createEntity(entity_title = ''){
 		let crtTime = common.getCurrentTimeStampStr();
 		let entity_id = await baseQuery.insertDataByKey('cybercafe_entity', 
-			{'entity_title': entity_title, 'entity_created_at': crtTime,
-			'entity_updated_at': crtTime, 'entity_mode': 'chat'}, 
+			{'entity_title': entity_title, 
+			'entity_created_at': crtTime,
+			'entity_updated_at': crtTime, 
+			'entity_mode': 'chat',
+			'subject_img': store.state.user.userAvatar}, 
 			true);
 		//console.log(entity_id);
 		store.commit('dialogue/setDiaData', {
