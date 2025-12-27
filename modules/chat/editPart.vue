@@ -69,7 +69,8 @@
 			},
 			refreshList: {
 				handler(newValue, oldValue) {
-				    if(newValue == -2){
+					//console.log(newValue);
+				    if(newValue != -3){
 						this.option_list = this.options;
 					}
 				},
@@ -104,7 +105,7 @@
 				//this.swiper_current = this.options.length;
 			},
 			autoSaveContent(e){
-				console.log(e);
+				//console.log(e);
 				this.editContent[this.entityId] = e.value;
 				this.setSettingData({
 					'editContent': this.editContent,
