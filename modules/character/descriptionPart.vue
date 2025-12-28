@@ -193,7 +193,7 @@
 				this.character_id = character_id;
 				let character_data = await baseQuery.getDataByKey('cybercafe_character', {character_id: this.character_id});
 				//console.log(character_data);
-				//if(!character_data) return;
+				if(!character_data) return;
 				
 				let return_data = characterFun.parseData(character_data[0], true);
 				this.character_name = return_data.character_name;
@@ -204,11 +204,10 @@
 				this.full_description = return_data.full_description;
 				this.character_story = return_data.character_story;
 				this.character_prologue = return_data.character_prologue;
-				if(character_data.hasOwnProperty('basic_description'))
-					this.basic_description = character_data.basic_description;
-				if(character_data.hasOwnProperty('extend_description')) 
-					this.extend_description = character_data.extend_description;
-				
+				if(return_data.hasOwnProperty('basic_description'))
+					this.basic_description = return_data.basic_description;
+				if(return_data.hasOwnProperty('extend_description')) 
+					this.extend_description = return_data.extend_description;
 				let character_image = character_data[0].character_img ? character_data[0].character_img : this.default_image;
 				this.$emit('afterLoad', 
 					{'image': character_image,
