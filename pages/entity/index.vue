@@ -134,7 +134,13 @@
 		onLoad(option) {
 			this.$nextTick(() => {
 				this.$refs.eEHP.init();
-				this.$refs.eDP.init(option);
+				this.$refs.eDP.init();
+				
+				if(option.id == 'subject'){
+					setTimeout(() => {
+						this.showMoreImg('subject');
+					}, 1000);
+				}
 			})
 		},
 		onPageScroll(e) {

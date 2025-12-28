@@ -1,5 +1,5 @@
 <template>
-	<cybercafe-view class="entity-container" :style="dynamicTop" popViewStyle="box-shadow:none;">
+	<cybercafe-view class="entity-container" popViewStyle="box-shadow:none;">
 		<view class="hint required entity-line">* 为必填项</view>
 		<view class="flag-tag base-tag">容器信息</view>
 		<view class="after-tag display-flex entity-line display-line">
@@ -88,7 +88,6 @@
 				character_off_stage: [],
 				character_in_entity: [],
 				extra_description: '',
-				top_pos: `margin-top: 90vw;`
 			}
 		},
 		components: {
@@ -101,15 +100,12 @@
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
 			},
-			dynamicTop(){
-				return this.top_pos;
-			}
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
-			async init(option){
+			async init(){
 				//console.log(this.entityId);
 				let entity_data = await baseQuery.getDataByKey('cybercafe_entity', {'entity_id': this.entityId});
 				//console.log(entity_data);
@@ -138,10 +134,6 @@
 					{'entity_image': entity_img,
 					'character_in_entity': this.character_in_entity,
 					'subject_image': this.subject_image});
-				
-				if(option.id == 'subject'){
-					this.top_pos = `margin-top: -90vw;`;
-				} 
 				
 				this.$forceUpdate();
 			},
@@ -179,7 +171,7 @@
 				}
 			},
 			moveCharacter(character_id){
-				console.log(character_id);
+				//console.log(character_id);
 				let flag = true;
 				for(let i in this.character_on_stage){
 					if(this.character_on_stage[i].character_id == character_id){
@@ -209,7 +201,7 @@
 				this.$emit('selectCharacter');
 			},
 			addCharacter(character_data){
-				console.log(character_data);
+				//console.log(character_data);
 				this.character_on_stage.push(character_data);
 				this.$forceUpdate();
 			},
@@ -290,6 +282,7 @@
 	}
 	.entity-container{
 		position: relative;
+		margin-top: 90vw;
 	}
 	.entity-line{
 		margin-bottom: $uni-spacing-lg;

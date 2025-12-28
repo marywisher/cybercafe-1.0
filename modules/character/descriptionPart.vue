@@ -204,8 +204,10 @@
 				this.full_description = return_data.full_description;
 				this.character_story = return_data.character_story;
 				this.character_prologue = return_data.character_prologue;
-				if(return_data.hasOwnProperty('basic_description'))
+				if(return_data.hasOwnProperty('basic_description')){
 					this.basic_description = return_data.basic_description;
+					this.basic_key = '';
+				}
 				if(return_data.hasOwnProperty('extend_description')) 
 					this.extend_description = return_data.extend_description;
 				let character_image = character_data[0].character_img ? character_data[0].character_img : this.default_image;
