@@ -19,7 +19,7 @@
 							:style="dynamicImgStyle" @tap="gotoDetail(item.character_id)"></image>
 						<image v-if="item.character_id == 0"
 							:src="dynamicsImg('list-right:', item.character_id)" 
-							:style="dynamicImgStyle"></image>
+							:style="dynamicImgStyle" @tap="gotoEntity"></image>
 					</view>
 					<view class="chat-box" :style="dynamicChatBox">
 						<view class="chat-item">
@@ -46,7 +46,7 @@
 							:style="dynamicImgStyle" @tap="gotoDetail(cDisplayId)"></image>
 						<image v-if="cDisplayId == 0"
 							:src="dynamicsImg('crt_right:', cDisplayId)" 
-							:style="dynamicImgStyle"></image>
+							:style="dynamicImgStyle" @tap="gotoEntity"></image>
 					</view>
 					<view class="chat-box" :style="dynamicChatBox">
 						<view v-if="!edit_mode" class="chat-item">
@@ -354,6 +354,12 @@
 				this.hideMenu();
 				uni.navigateTo({
 					url: '/pages/character/index?id=' + character_id
+				})
+			},
+			gotoEntity(){
+				this.hideMenu();
+				uni.navigateTo({
+					url: '/pages/entity/index?id=subject'
 				})
 			},
 			swiperChange(crt_index){

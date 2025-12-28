@@ -103,7 +103,6 @@
 				})
 			},
 			deleteMessage(){
-				let _self = this;
 				//console.log('用户点击确定' + this.selected_id);
 				if(this.selected_id == 0){//option first
 					this.deleteOptionFirst();

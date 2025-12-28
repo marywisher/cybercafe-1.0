@@ -1,5 +1,5 @@
 <template>
-	<cybercafe-view class="entity-container" popViewStyle="box-shadow:none;">
+	<cybercafe-view class="entity-container" :style="dynamicTop" popViewStyle="box-shadow:none;">
 		<view class="hint required entity-line">* 为必填项</view>
 		<view class="flag-tag base-tag">容器信息</view>
 		<view class="after-tag display-flex entity-line display-line">
@@ -22,14 +22,19 @@
 				 @blur="autoSave('extra_description', extra_description)"></textarea>
 		</view>
 		<view class="flag-tag world-tag">主控信息</view>
-		<view class="after-tag display-flex entity-line display-line">
-			<view>昵称 </view>
-			<view class="hint" style="margin-left: 10rpx;">{{subject_name.length}} / 32字</view>
-		</view>
-		<view class="entity-line">
-			<input v-model="subject_name" :maxlength="32" class="bg-color" 
-			confirm-type="done" @confirm="autoSave('subject_name', subject_name)"
-			@blur="autoSave('subject_name', subject_name)"></input>
+		<view class="after-tag display-flex display-line sp-between">
+			<view style="width: 70%;">
+				<view class="display-flex entity-line display-line">
+					<view>昵称 </view>
+					<view class="hint" style="margin-left: 10rpx;">{{subject_name.length}} / 32字</view>
+				</view>
+				<view class="entity-line">
+					<input v-model="subject_name" :maxlength="32" class="bg-color" 
+					confirm-type="done" @confirm="autoSave('subject_name', subject_name)"
+					@blur="autoSave('subject_name', subject_name)"></input>
+				</view>
+			</view>
+			<image class="subject-img" :src="subject_image" @tap="changeAvatar"></image>
 		</view>
 		<view class="entity-line">
 			<view class="display-flex display-line sp-between">主控描述
@@ -59,6 +64,8 @@
 </template>
 
 <script>
+	import config from '@/config.json';
+	const configData = process.env.NODE_ENV === "development" ? config.dev : config.product;
 	import common from '@/func/common/common';
 	import baseQuery from '@/func/dbManager/baseQuery';
 	import characterPart from './characterPart';
@@ -75,11 +82,13 @@
 			return{
 				entity_title: '',
 				subject_name: '',
+				subject_image: configData.voiceOver,
 				subject_description: '',
 				character_on_stage: [],
 				character_off_stage: [],
 				character_in_entity: [],
-				extra_description: ''
+				extra_description: '',
+				top_pos: `margin-top: 90vw;`
 			}
 		},
 		components: {
@@ -91,18 +100,22 @@
 			...mapState('dialogue', ['selectedEntityId', 'title']),
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
+			},
+			dynamicTop(){
+				return this.top_pos;
 			}
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
-			async init(){
+			async init(option){
 				//console.log(this.entityId);
 				let entity_data = await baseQuery.getDataByKey('cybercafe_entity', {'entity_id': this.entityId});
 				//console.log(entity_data);
 				this.entity_title = entity_data[0].entity_title ? entity_data[0].entity_title : '';
 				this.subject_name = entity_data[0].subject_name ? entity_data[0].subject_name : '';
+				this.subject_image = entity_data[0].subject_img ? entity_data[0].subject_img : config.voiceOver;
 				this.subject_description = entity_data[0].subject_description ? entity_data[0].subject_description : '';
 				let entity_img = entity_data[0].entity_img;
 				this.extra_description = entity_data[0].extra_description ? entity_data[0].extra_description : '';
@@ -122,8 +135,13 @@
 				}
 				//console.log(this.character_in_entity);
 				this.$emit('afterLoad',
-					{'image': entity_img,
-					'character_in_entity': this.character_in_entity});
+					{'entity_image': entity_img,
+					'character_in_entity': this.character_in_entity,
+					'subject_image': this.subject_image});
+				
+				if(option.id == 'subject'){
+					this.top_pos = `margin-top: -90vw;`;
+				} 
 				
 				this.$forceUpdate();
 			},
@@ -254,6 +272,12 @@
 					title: '总结完毕',
 					icon: 'success'
 				})
+			},
+			changeAvatar(){
+				this.$emit('changeSubjectImg');
+			},
+			refreshSubjectImg(img){
+				this.subject_image = img;
 			}
 		}
 	}
@@ -266,7 +290,6 @@
 	}
 	.entity-container{
 		position: relative;
-		margin-top: 90vw;
 	}
 	.entity-line{
 		margin-bottom: $uni-spacing-lg;
@@ -285,5 +308,10 @@
 		font-size: $uni-font-size-huge;
 		text-align: center;
 		line-height: calc(2 * $uni-font-size-huge);
+	}
+	.subject-img{
+		width: $uni-img-size-huge;
+		height: $uni-img-size-huge;
+		border-radius: $uni-border-radius-base;
 	}
 </style>

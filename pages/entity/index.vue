@@ -1,9 +1,10 @@
 <template>
 	<view>
 		<view class="entity-bg" :style="dynamicImg(entity_image)"></view>
-		<view class="view-for-tap" @tap="showMoreImg"></view>
+		<view class="view-for-tap" @tap="showMoreImg('entity')"></view>
 		<entityHeader ref="eEHP" :bgOpacity="bg_opacity" :enterable="character_in_entity.length > 0"></entityHeader>
-		<detailPart class="entity-des" ref="eDP" @afterLoad="afterLoad" @selectCharacter="openCharacterList"></detailPart>
+		<detailPart class="entity-des" ref="eDP" @afterLoad="afterLoad" 
+			@selectCharacter="openCharacterList" @changeSubjectImg="showMoreImg('subject')"></detailPart>
 		<characterList class="character-list" ref="eCL" :exceptIds="character_in_entity"
 			@addCharacter="addCharacterFun"></characterList>
 		
@@ -32,7 +33,10 @@
 			return {
 				entity_image: configData.defaultImg,
 				bg_opacity: 0,
-				character_in_entity: []
+				character_in_entity: [],
+				img_type: 'entity',
+				origin_img: '',
+				subject_image: configData.avatarImg
 			}
 		},
 		components:{
@@ -78,16 +82,33 @@
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
-			showMoreImg(){
-				//console.log('show gallery');
-				this.$refs.eImgPart.openBox('entity');
+			showMoreImg(image_type){
+				//console.log(image_type);
+				this.img_type = image_type;
+				let tmp_type = '';
+				if(this.img_type == 'entity'){
+					this.origin_img = this.entity_image;
+					tmp_type = image_type;
+				}else{
+					this.origin_img = this.subject_image;
+					tmp_type = '0';
+				}
+				console.log(this.origin_img);
+				this.$refs.eImgPart.openBox(tmp_type, this.origin_img);
 			},
 			async afterSelectImg(e){
-				this.entity_image = e;
 				this.$forceUpdate();
 				let whereArr = {'entity_id': this.entityId};
-				let updateArr = {'entity_img': this.entity_image,
-					'entity_updated_at': common.getCurrentTimeStampStr()};
+				let updateArr = {'entity_updated_at': common.getCurrentTimeStampStr()};
+				//console.log(this.img_type);
+				if(this.img_type == 'entity'){
+					this.entity_image = e;
+					updateArr['entity_img'] = e;
+				}else{
+					this.subject_image = e;
+					updateArr['subject_img'] = e;
+					this.$refs.eDP.refreshSubjectImg(e);
+				}
 				let feedback = await baseQuery.updateDataByKey('cybercafe_entity', updateArr, whereArr);
 				if(feedback == 'inserted' || feedback == 'updated'){
 					//保存
@@ -99,8 +120,9 @@
 			},
 			afterLoad(param){
 				//console.log(param);
-				if(param.image) this.entity_image = param.image;
-				this.character_in_entity = param.character_in_entity;
+				if(param.entity_image) this.entity_image = param.entity_image;
+				if(param.character_in_entity) this.character_in_entity = param.character_in_entity;
+				if(param.subject_image) this.subject_image = param.subject_image;
 			},
 			openCharacterList(){
 				this.$refs.eCL.init();
@@ -109,10 +131,10 @@
 				this.$refs.eDP.addCharacter(character_data);
 			}
 		},
-		onLoad() {
+		onLoad(option) {
 			this.$nextTick(() => {
 				this.$refs.eEHP.init();
-				this.$refs.eDP.init();
+				this.$refs.eDP.init(option);
 			})
 		},
 		onPageScroll(e) {

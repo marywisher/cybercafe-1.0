@@ -3,8 +3,8 @@
 		popViewStyle="position: fixed; top: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none; color: #c0c0c0;">
 		
 		<swiper class="swiper-box" @change="swiperChange" :current="swiper_current">
-			<swiper-item v-if="originImg && originImg != default_image">
-				<image class="ipimg" mode="aspectFit" :src="originImg" @tap="closeBox"></image>
+			<swiper-item v-if="origin_image && origin_image != default_image">
+				<image class="ipimg" mode="aspectFit" :src="origin_image" @tap="closeBox"></image>
 			</swiper-item>
 			<swiper-item v-if="images.length > 0" v-for="(item, index) in images" :key="index">
 				<view class="upload-btn" v-if="item.image_status == 4">
@@ -16,12 +16,12 @@
 				<image class="ipimg" mode="aspectFit" :src="default_image" @tap="openCrop"></image>
 			</swiper-item>
 		</swiper>
-		<cybercafeSwiperDot :list="(showCreate && originImg && originImg != default_image ? images.concat(['1', '2']) : images.concat(['1']))"
+		<cybercafeSwiperDot :list="(showCreate && origin_image && origin_image != default_image ? images.concat(['1', '2']) : images.concat(['1']))"
 			@tapDot="clickItem" :swiperCurrent="swiper_current"></cybercafeSwiperDot>
 		
 		<cybercafe-view ref="popup" @maskClick="closeCrop" isAbsolute closeAble :closeType="0"
 			popViewStyle="position: fixed; bottom: 0; left: 0; width: 100vw; margin: 0; padding: 0; background-color: transparent; border: none;">
-			<okingtz-cropper :beEmpty="beEmpty && originImg" :fixedNumber="fixedNumber"
+			<okingtz-cropper :beEmpty="beEmpty && origin_image" :fixedNumber="fixedNumber"
 				:maxCropper="true" @uploadSuccess="saveImage"></okingtz-cropper>
 		</cybercafe-view>
 	</cybercafe-view>
@@ -70,6 +70,7 @@
 			return {
 				id: '0',
 				images: [],
+				origin_image: '',
 				default_image: configData.defaultImg,
 				swiper_current: 0,
 				fixedNumber: [1, 1], //裁切等比锁，头像全1:1，背景按获取的手机尺寸设置fixedNumber
@@ -85,6 +86,9 @@
 		watch: {
 			id(newValue){
 				console.log(newValue);
+			},
+			originImg(newValue){
+				this.origin_image = newValue;
 			}
 		},
 		components: {
@@ -93,7 +97,7 @@
 		computed: {
 			...mapState('user', ['deviceInfo']),
 			beEmpty(){
-				return this.id == 'entity' && this.originImg != this.default_image ? true : false;
+				return this.id == 'entity' && this.origin_image != this.default_image ? true : false;
 			},
 			dynamicViewWidth(){
 				return 'width:' + (( 2 * (this.showCreate ? this.images.length + 2 : this.images.length + 1) + 1 ) * 20) + 'rpx';//（2倍数量+1）*10
@@ -101,8 +105,9 @@
 		},
 		methods:{
 			...mapMutations('user', ['getUserData']),
-			openBox(id){
-				//console.log(this.id);
+			openBox(id, img = this.origin_image){
+				//console.log(img);
+				this.origin_image = img;
 				this.$refs.imgBox.openView();
 				this.id = id;
 				this.swiper_current = 0;
@@ -114,7 +119,7 @@
 			},
 			init(){
 				//console.log(this.id)
-				//console.log(this.originImg);
+				//console.log(this.origin_image);
 				let _self = this;
 				if(this.showOnline){
 					if(this.id != 'entity' && (parseInt(this.id) > 0 || this.ckey)){//character线上数据
@@ -126,7 +131,7 @@
 								console.log(res.result.img);
 								for(let j = 0; j < res.result.img.length; j ++){
 									if(_self.images.indexOf(res.result.img[j].img_url) == -1 
-									 && res.result.img[j].img_url != _self.originImg){
+									 && res.result.img[j].img_url != _self.origin_image){
 										_self.images.push(res.result.img[j].img_url);
 									}
 								}
@@ -142,14 +147,14 @@
 				
 				if(this.showLocal){
 					let sqlStr = "select * from cybercafe_images where image_type = '" + this.id 
-						+ "' and (image_status = 1 or image_status = 4) and image_src <> '" + this.originImg 
+						+ "' and (image_status = 1 or image_status = 4) and image_src <> '" + this.origin_image 
 						+ "' order by image_selected_count DESC, image_created_at DESC";
 					//console.log(sqlStr);
 					sqlite.selectSQL(sqlStr).then(data => {
 						if(data.length > 0){
 							for(let i = 0; i < data.length; i ++){
 								if(_self.images.indexOf(data[i].image_src) == -1 
-								 && data[i].image_src != _self.originImg){
+								 && data[i].image_src != _self.origin_image){
 									_self.images.push(data[i].image_src);
 								}
 							}
@@ -160,7 +165,7 @@
 				}
 				
 				setTimeout(() => {
-					if(this.originImg == this.default_image && this.images.length == 0){//若无可选则弹出选图
+					if(this.origin_image == this.default_image && this.images.length == 0){//若无可选则弹出选图
 						this.openCrop();
 					}
 				}, 2000);
@@ -171,7 +176,7 @@
 			},
 			selectImg(){
 				let img_index = this.swiper_current;
-				if(this.originImg != this.default_image) img_index = this.swiper_current - 1;
+				if(this.origin_image != this.default_image) img_index = this.swiper_current - 1;
 				let _self = this;
 				if(this.showCreate){
 					let sqlStr = "update cybercafe_images set image_selected_count = image_selected_count + 1 ";
