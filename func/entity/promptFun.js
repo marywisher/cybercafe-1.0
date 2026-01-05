@@ -98,7 +98,20 @@ export default {
 			if(list[i].title == '聊天记录'){//限定长度
 				let entity_data = await baseQuery.getDataByKey('cybercafe_entity', {'entity_id': store.state.setting.entityId});
 				if(entity_data[0].extra_description){
-					content += ' 前情概要：' + entity_data[0].extra_description;
+					let extra_description = entity_data[0].extra_description;
+					if(!include_option){
+						//重说去掉最后一句总结
+						let crt_message = await baseQuery.getDataByKey('cybercafe_message', {
+							'message_time': store.state.dialogue.messageTime
+						})
+						//console.log(crt_message[0].message_summary);
+						let old_summary = (crt_message[0].message_summary || crt_message[0].message_summary != 'null') 
+							? crt_message[0].message_summary : '';
+						if(old_summary.length > 0 && extra_description.includes(old_summary)){
+							extra_description.replace(old_summary, '');
+						}
+					}
+					content += ' 前情概要：' + extra_description;
 				}
 				content += ' 前文对话:```{replacing_message_content}```'
 			}else if(store.state.setting.customPrompt.length > 0 

@@ -45,10 +45,10 @@ function parseData(result_data){
 		'character_name': result_data.character_name,
 		'character_gender': result_data.character_gender ? result_data.character_gender : 0,
 		'character_prologue': result_data.character_prologue ? result_data.character_prologue : '',
-		'character_story': result_data.character_memo ? result_data.character_memo : '',
 		'character_img': result_data.character_img,
 		'character_tag': result_data.character_tag,
 		'character_status': result_data.character_status ? result_data.character_status : 0,
+		'character_memo': result_data.character_memo ? result_data.character_memo : ''
 	};
 	
 	let description_data = result_data.character_description;
@@ -88,6 +88,7 @@ function parseData(result_data){
 			if(description_data.副本.hasOwnProperty('前情提要')) character_data.character_story = description_data.副本.前情提要;
 			if(description_data.副本.hasOwnProperty('开场白')) character_data.character_prologue = description_data.副本.开场白;
 		}
+		if(description_data.hasOwnProperty('其它')) character_data.character_memo = description_data.其它;
 	}
 	
 	switch(result_data.character_status){

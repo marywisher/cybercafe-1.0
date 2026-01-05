@@ -115,7 +115,7 @@
 		<view class="character-line after-tag"></view>
 		<view class="character-line">
 			<view class="display-flex display-line sp-between">前情提要 
-				<view class="hint">{{character_story.length}} 字</view>
+				<view class="hint">{{character_story ? character_story.length : 0}} 字</view>
 			</view>
 			<textarea autoHeight v-model="character_story" :cursor-spacing="150" :maxlength="-1"
 				 class="bg-color" placeholder="请输入前情提要" adjust-position 
@@ -124,7 +124,7 @@
 		</view>
 		<view class="character-line">
 			<view class="display-flex display-line sp-between">开场白 
-				<view class="hint">{{character_prologue.length}} 字</view>
+				<view class="hint">{{character_prologue ? character_prologue.length : 0}} 字</view>
 			</view>
 			<textarea autoHeight v-model="character_prologue" :cursor-spacing="150" :maxlength="-1"
 				 class="bg-color" placeholder="请输入开场白" adjust-position 

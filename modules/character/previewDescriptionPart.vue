@@ -79,6 +79,17 @@
 			</cybercafe-view>
 		</view>
 		<view class="character-line"></view>
+		
+		<view class="flag-tag branch-memo-tag">其它内容</view>
+		<view class="character-line after-tag"></view>
+		
+		<view v-if="character_memo.length > 0" class="character-line after-tag">
+			<view class="hint">碎碎念</view>
+			<cybercafe-view>
+				<view class="long-text" v-html="character_memo"></view>
+			</cybercafe-view>
+		</view>
+		<view class="character-line"></view>
 	</cybercafe-view>
 </template>
 
@@ -103,6 +114,7 @@
 				character_prologue: '',
 				character_tag: [],
 				character_key: '',
+				character_memo: '',
 				
 				short_description: '',
 				full_description: '',
@@ -139,6 +151,7 @@
 						_self.full_description = common.textToHtml(character_data.full_description);
 						_self.character_story = common.textToHtml(character_data.character_story);
 						_self.character_prologue = common.textToHtml(character_data.character_prologue);
+						_self.character_memo = common.textToHtml(character_data.character_memo);
 						_self.character_tag = character_data.character_tag;
 						_self.character_key = character_data.character_key;
 						_self.character_view_count = character_data.character_view_count;

@@ -10,6 +10,11 @@
 <script>
 	import characterPart from '@/modules/chat/characterPart';
 	import chatInput from '@/modules/chat/chatInput';
+	import {
+		mapMutations,
+		mapState,
+		mapActions
+	} from 'vuex';
 	export default{
 		name: 'chatBottom',
 		props: {
@@ -22,7 +27,11 @@
 			characterPart,
 			chatInput,
 		},
+		computed: {
+			...mapState('dialogue', ['ai']),
+		},
 		methods:{
+			...mapMutations('dialogue', ['getDiaData']),
 			init(){
 				this.$nextTick(() =>{
 					this.$refs.chatCharPart.init();
@@ -30,8 +39,12 @@
 				});
 			},
 			autoSpeakFun(){
+				let delay = 0;
+				if(this.ai == 0) delay = 3000;
 				this.$nextTick(() => {
-					this.$refs.chatCharPart.speakFun();
+					setTimeout(() => {
+						this.$refs.chatCharPart.speakFun();
+					}, delay);
 				})
 			},
 			changeBtmPart(mode){
