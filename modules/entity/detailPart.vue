@@ -301,6 +301,7 @@
 		font-size: $uni-font-size-huge;
 		text-align: center;
 		line-height: calc(2 * $uni-font-size-huge);
+		margin: $uni-spacing-base $uni-spacing-base $uni-spacing-base $uni-width-none;
 	}
 	.subject-img{
 		width: $uni-img-size-huge;

@@ -83,7 +83,7 @@
 		position: relative;
 		width: calc(2 * $uni-font-size-huge);
 		height: calc(2 * $uni-font-size-huge);
-		margin: $uni-spacing-base $uni-spacing-base $uni-spacing-base $uni-width-none;;
+		margin: $uni-spacing-base $uni-spacing-base $uni-spacing-base $uni-width-none;
 	}
 	.item-character{
 		width: calc(2 * $uni-font-size-huge);

@@ -90,6 +90,7 @@
 			init(){
 				this.$refs.aiSettingView.closeView();
 				this.$refs.rightMenuPop.closeView();
+				this.$refs.orderSettingView.init();
 			},
 			openMenuFun(){
 				this.$refs.rightMenuPop.toggleView();

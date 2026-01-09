@@ -53,9 +53,12 @@
 			},
 			openView(){
 				uni.$emit('closeRightMenu');
-				this.$nextTick(() => {
-					this.init();
-				})
+				if(this.list.length == 0){
+					this.$nextTick(() => {
+						this.init();
+					})
+				}
+				//console.log(this.list);
 				this.$refs.popView.openView();
 			},
 			closeView(){

@@ -6,38 +6,54 @@ import messageFun from "./messageFun";
 
 export default {
 	async loadTreeOrder(){
-		let list = {};
+		let list = [];
 		//读取当前容器的设子结构，组织成list
 		//console.log(this.entityId);
 		let entity_data = await baseQuery.getDataByKey('cybercafe_entity', {'entity_id': store.state.setting.entityId});
 		//console.log(entity_data[0].entity_tree_order);
-		if(entity_data && entity_data[0].entity_tree_order) list = JSON.parse(entity_data[0].entity_tree_order);
-		else list = JSON.parse(store.state.setting.globalTreeOrder);
+		if(entity_data && entity_data[0].entity_tree_order 
+		&& entity_data[0].entity_tree_order != 'null') 
+			list = JSON.parse(entity_data[0].entity_tree_order);
+		else if(store.state.setting.globalTreeOrder)
+			list = JSON.parse(store.state.setting.globalTreeOrder);
 		//读预设
 		let prompt = store.state.setting.customPrompt[store.state.setting.promptSelect];
-		for(let key in prompt){
-			if(key == '系统提示词') continue;
-			this.addToList(key, list);
+			for(let key in prompt){
+				if(key == '系统提示词') continue;
+				this.addToList(key, list);
 		}
 		//再读切片，以防个性化设置
 		let detail_data = await baseQuery.getDataByKey('cybercafe_entity_detail', {'entity_id': store.state.setting.entityId});
-		for(let i = 0; i < detail_data.length; i ++){
-			let character_id = detail_data[i].character_id;
-			//console.log(character_id);
-			let character_data = await baseQuery.getDataByKey('cybercafe_character', {'character_id': character_id});
-			if(character_data && character_data[0].character_description 
-				&& common.isJsonString(character_data[0].character_description)){
-				//console.log(character_data[0].character_description);
-				let character_json = JSON.parse(character_data[0].character_description);
-				for(let key in character_json.基础信息){
-					//console.log(key);
-					this.addToList(key, list);
-				}
-				for(let key in character_json.扩展信息){
-					//console.log(key);
-					this.addToList(key, list);
-				}
+			for(let i = 0; i < detail_data.length; i ++){
+				let character_id = detail_data[i].character_id;
+				//console.log(character_id);
+				let character_data = await baseQuery.getDataByKey('cybercafe_character', {'character_id': character_id});
+				if(character_data && character_data[0].character_description 
+					&& common.isJsonString(character_data[0].character_description)){
+					//console.log(character_data[0].character_description);
+					let character_json = JSON.parse(character_data[0].character_description);
+						for(let key in character_json.基础信息){
+							//console.log(key);
+							this.addToList(key, list);
+						}
+						for(let key in character_json.扩展信息){
+							//console.log(key);
+							this.addToList(key, list);
+				}		
 			}
+		}
+		//最后查漏补缺，以防重要部分被遗漏
+		let origin_tree = [
+			{"id":1,"title":"故事背景","enable":true},
+			{"id":2,"title":"简介","enable":true},
+			{"id":3,"title":"补充说明","enable":true},
+			{"id":4,"title":"聊天记录","enable":false}
+		];
+		for(let key in origin_tree){
+			let key_in_arr = list.some(tree => 
+				tree.title === origin_tree[key].title
+			);
+			if(!key_in_arr)	list.push(origin_tree[key]);
 		}
 		return list;
 	},
