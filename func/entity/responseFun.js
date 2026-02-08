@@ -144,6 +144,7 @@ export default{
 					'task': task,
 					'time': common.getCurrentTimeStampStr(),
 					'messages': data,
+					'crt_ai': store.state.dialogue.ai
 				}).then(res => {
 					console.log(res.result);
 					if(res.code == 200){

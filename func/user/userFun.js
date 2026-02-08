@@ -45,17 +45,15 @@ export default {
 				}
 				
 				if(res.result.info){
-					common.checkPopup(function(){
-						store.commit('user/setUserData', {
-							'modalData': {
-								content: res.result.info,
-								confirmText: '',
-								cancelText: 'OK',
-								success: function (res) {}
-							},
-							'modalShow': true,
-							'modalPageId': page_id
-						});
+					store.commit('user/setUserData', {
+						'modalData': {
+							content: res.result.info,
+							confirmText: '',
+							cancelText: 'OK',
+							success: function (res) {}
+						},
+						'modalShow': true,
+						'modalPageId': 'chat'
 					});
 				}
 				//数据同步回填

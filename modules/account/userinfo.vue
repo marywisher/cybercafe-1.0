@@ -106,8 +106,9 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['aimId', 'checkinCount', 'newMsgCount', 'tag', 
-				'totalReward', 'userAvatar', 'userKey', 'userGroup']),
+			...mapState('user', ['aimId', 'checkinCount', 'modalData', 'modalPageId', 
+				'modalShow', 'newMsgCount', 'tag', 'totalReward', 
+				'userAvatar', 'userKey', 'userGroup']),
 			...mapState('setting', ['darkMode', 'groupExpiration', 'ippos', 'userId']),
 		},
 		methods: {
@@ -163,6 +164,16 @@
 					//console.log(daysDiff);
 					if(daysDiff < 5){
 						this.group_alarm = true;
+						this.setUserData({
+							'modalData': {
+								content: '月卡权益即将过期',
+								confirmText: '',
+								cancelText: 'OK',
+								success: function (res) {}
+							},
+							'modalShow': true,
+							'modalPageId': 'globalSetting'
+						});
 					}
 					//console.log(this.group_alarm);
 					
