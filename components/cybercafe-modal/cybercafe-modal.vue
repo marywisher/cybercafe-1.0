@@ -1,5 +1,5 @@
 <template>
-	<cybercafe-view class="modal-container" :viewTitle="title" isAbsolute closeAble ref="modal">
+	<cybercafe-view class="modal-container" :viewTitle="title" isAbsolute :closeAble="closeAble" ref="modal">
 		<view class="content-line text-center">{{content}}</view>
 		<view class="display-flex btn-line sp-between">
 			<cybercafe-button class="cancel-btn" btnClass="btn-default" v-if="cancelText"
@@ -19,6 +19,7 @@
 				content: '',
 				confirmText: '',
 				cancelText: 'OK',
+				closeAble: false,
 				success: null
 			}
 		},
@@ -45,6 +46,8 @@
 <style lang="scss">
 	.content-line{
 		padding: calc(2 * $uni-spacing-lg) $uni-spacing-lg;
+		white-space: pre-wrap;
+		word-wrap: break-word;
 	}
 	.btn-line{
 		flex-direction: row-reverse;

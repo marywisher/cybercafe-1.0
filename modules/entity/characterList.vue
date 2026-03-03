@@ -13,7 +13,7 @@
 							<view>{{item.character_name}}</view>
 							<view v-if="item.character_gender == 1" class="iconfont icon-xingbienan"></view>
 							<view v-if="item.character_gender == 2" class="iconfont icon-xingbienv"></view>
-							<view v-if="item.character_gender == 0" class="iconfont icon-WuXingBie2"></view>
+							<view v-if="item.character_gender == 0" class="iconfont icon-wuxingbie"></view>
 						</view>
 					</view>
 					<view class="display-flex item-character-line display-line hint item-description">

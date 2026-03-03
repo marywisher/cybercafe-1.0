@@ -4,7 +4,7 @@
 			<view class="character-title">{{character_name}}</view>
 			<view v-if="character_gender == 1" class="iconfont icon-xingbienan"></view>
 			<view v-if="character_gender == 2" class="iconfont icon-xingbienv"></view>
-			<view v-if="character_gender == 0" class="iconfont icon-WuXingBie2"></view>
+			<view v-if="character_gender == 0" class="iconfont icon-wuxingbie"></view>
 		</view>
 		<view class="character-line"></view>
 		

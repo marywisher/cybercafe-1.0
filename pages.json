@@ -61,6 +61,13 @@
 			}
 		},
 		{
+			"path": "pages/character/games",
+			"style": {
+				//"navigationBarTitleText": "下棋"
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/login/login",
 			"style": {
 				"navigationStyle": "custom"

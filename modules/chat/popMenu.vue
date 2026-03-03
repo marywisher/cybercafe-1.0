@@ -14,14 +14,14 @@
 			</view>
 			<view class="display-flex pop-menu-line">
 				<view class="display-flex display-line" @tap="openSetting('order')">
-					<view class="iconfont icon-shuangxiangjiantou1 menu-icon-left"></view>
+					<view class="iconfont icon-shuangxiangjiantou menu-icon-left"></view>
 					<view class="text-center menu-text">语序调整</view>
 				</view>
 				<view class="iconfont icon-shezhi menu-icon-right" @tap="gotoPromptSetting"></view>
 			</view>
 			<!-- <view class="display-flex pop-menu-line">
 				<view class="display-flex display-line">
-					<view class="iconfont icon-ziyuan menu-icon-left"></view>
+					<view class="iconfont icon-mofabang menu-icon-left"></view>
 					<view class="text-center menu-text">着色设置</view>
 				</view>
 			</view> -->

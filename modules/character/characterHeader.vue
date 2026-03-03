@@ -2,6 +2,8 @@
 	<cybercafe-header :bgOpacity="bgOpacity">
 		<view class="iconfont icon-xiayibu iconback menu-icon-left" @tap="back"></view>
 		<view class="header-right display-flex display-line">
+			<view class="iconfont icon-jingziqi" @tap="gotoGames"></view>
+			<label class="hint" @tap="gotoGames">下棋</label>
 			<view class="iconfont icon-chatou" @tap="enterEntity"></view>
 			<label class="hint" @tap="enterEntity">进入容器</label>
 			<view v-if="enable_save" class="iconfont icon-geren" @tap="saveAsIncubator"></view>
@@ -137,6 +139,26 @@
 				}else{
 					this.enable_save = true;
 				}
+			},
+			gotoGames(){
+				let _self = this;
+				this.setUserData({
+					'modalData': {
+						title: "温馨提醒",
+						content: "想开始一局井字棋吗？",
+						confirmText: '好啊',
+						cancelText: '还没准备好',
+						success: (res) => {
+							if(res.confirm == true){
+								uni.navigateTo({
+									url: '/pages/character/games?id=' + _self.character_id
+								})
+							}
+						},
+					},
+					'modalPageId': 'character',
+					'modalShow': true
+				})
 			}
 		}
 	}

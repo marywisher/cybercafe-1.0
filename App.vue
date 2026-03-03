@@ -130,7 +130,7 @@
 	.icon-xingbienv{
 		color: $uni-color-main;
 	}
-	.icon-WuXingBie2{
+	.icon-wuxingbie{
 		color: $uni-text-color-grey;
 	}
 	

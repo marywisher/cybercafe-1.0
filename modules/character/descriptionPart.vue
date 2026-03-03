@@ -14,7 +14,7 @@
 			<view @tap="showGenderView">
 				<view v-if="character_gender == 1" class="iconfont icon-xingbienan"></view>
 				<view v-if="character_gender == 2" class="iconfont icon-xingbienv"></view>
-				<view v-if="character_gender == 0" class="iconfont icon-WuXingBie2"></view>
+				<view v-if="character_gender == 0" class="iconfont icon-wuxingbie"></view>
 			</view>
 		</view>
 		<view v-show="show_gender">
@@ -24,7 +24,7 @@
 					<view class="gender-border"></view>
 					<view class="iconfont icon-xingbienv" @tap="genderChange(2)"></view>
 					<view class="gender-border"></view>
-					<view class="iconfont icon-WuXingBie2" @tap="genderChange(0)"></view>
+					<view class="iconfont icon-wuxingbie" @tap="genderChange(0)"></view>
 				</view>
 			</cybercafe-view>
 		</view>

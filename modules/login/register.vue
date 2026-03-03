@@ -30,7 +30,7 @@
 				<view class="display-flex display-line sp-between register-line">
 					<view class="register-label">邀请码</view>
 					<view class="register-input">
-						<input v-model="invite_code" maxlength="8" placeholder="请填写邀请码" @input="setInviteCode"
+						<input v-model="invite_code" maxlength="8" placeholder="请填写邀请码（选填）" @input="setInviteCode"
 							:placeholder-style="placeholderStyle"/>
 					</view>
 				</view>

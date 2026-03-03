@@ -10,7 +10,7 @@
 				<view class="list-item display-flex display-line sp-between"  @touchend="handleTouchend"
 				:class="{'dragable-item': item.enable, 'dragging': item.flag }">
 					<view>{{item.title}}</view>
-					<view v-if="item.enable" class="iconfont icon-paixu-sanheng" @touchstart="handleTouchstart($event, index)" 
+					<view v-if="item.enable" class="iconfont icon-paixu" @touchstart="handleTouchstart($event, index)" 
 					@touchmove="handleTouchmove" @touchend="handleTouchend"></view>
 				</view>
 			</view>

@@ -4,7 +4,7 @@
 		<view class="header-right display-flex display-line">
 			<view class="iconfont icon-shanchu required" @tap="delAllMsg"></view>
 			<label class="hint" @tap="delAllMsg">清空收件箱</label>
-			<view class="iconfont icon-saozhou" @tap="clearMsg"></view>
+			<view class="iconfont icon-a-saozhou1" @tap="clearMsg"></view>
 			<label class="hint" @tap="clearMsg">一键已读</label>
 		</view>
 	</cybercafe-header>
