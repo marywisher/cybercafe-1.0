@@ -1,5 +1,6 @@
 <template>
-	<cybercafe-view class="modal-container" :viewTitle="title" isAbsolute :closeAble="closeAble" ref="modal">
+	<cybercafe-view class="modal-container" :viewTitle="title" isAbsolute :closeAble="closeAble" 
+		ref="modal" popViewStyle="margin-top:30vh;">
 		<view class="content-line text-center">{{content}}</view>
 		<view class="display-flex btn-line sp-between">
 			<cybercafe-button class="cancel-btn" btnClass="btn-default" v-if="cancelText"

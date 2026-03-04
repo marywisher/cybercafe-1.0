@@ -82,12 +82,12 @@
             </view>
         </view>
         <view></view>
-        <view class="chat-bottom display-flex display-line sp-around">
+        <view class="chat-bottom">
             <view class="chat-input">
                 <input v-model="chat_input" :maxlength="-1" :placeholder="input_placeholder"
                     @input="inputChange"/>
             </view>
-            <cybercafe-button btnClass="btn-primary" :btnDisable="pre_place == '' && chat_input == ''" :btnName="btn_name" 
+            <cybercafe-button class="chat-bottom send-btn" btnClass="btn-primary" :btnDisable="pre_place == '' && chat_input == ''" :btnName="btn_name" 
                 @tapBtn="judgeResult(pre_place)"></cybercafe-button>
         </view>
         <view v-html="entity_css"></view>
@@ -133,7 +133,8 @@
                 chat_history: [], // 聊天记录
                 btn_name: '发送', // 落子，发送并落子，发送
                 input_placeholder: '吐槽对方（选填）', // 输入框占位文本
-                character_description: '' // 角色简介
+                character_description: '', // 角色简介
+                modal_message: '' // 仅在胜负已决时用到
             }
         },
         watch:{
@@ -228,6 +229,7 @@
                 console.log(this.board_data);
                 setTimeout(() => {
                     // 胜负逻辑判断
+                    let flag_msg = '';
                     if(this.board_data['A1'] != '' && (this.board_data['A1'] === this.board_data['A2'] && this.board_data['A2'] === this.board_data['A3']
                         || this.board_data['A1'] === this.board_data['B1'] && this.board_data['B1'] === this.board_data['C1']
                         || this.board_data['A1'] === this.board_data['B2'] && this.board_data['B2'] === this.board_data['C3']
@@ -239,42 +241,16 @@
                     || this.board_data['C3'] != '' && (this.board_data['C3'] === this.board_data['A3'] && this.board_data['A3'] === this.board_data['B3']
                         || this.board_data['C3'] === this.board_data['C1'] && this.board_data['C1'] === this.board_data['C2']
                     )){
-                        this.crt_status = '胜负已决';
-                        let _self = this;
-                        this.setUserData({
-                            'modalData': {
-                                title: this.crt_status,
-                                content: `${this.board_data[position]}获胜！`,
-                                confirmText: '再来一局',
-                                cancelText: '下次吧',
-                                success: (res) => {
-                                    if (res.confirm) {
-                                        _self.resetBoard();
-                                    }
-                                },
-                            },
-                            'modalPageId': 'characterGames',
-                            'modalShow': true
-                        });
+                        flag_msg = '胜负已决';
+                        this.modal_message = `${this.board_data[position]}获胜！`;
                     }else if(Object.values(this.board_data).every(value => value !== '')){
-                        this.crt_status = '胜负已决';
-                        let _self = this;
-                        this.setUserData({
-                            'modalData': {
-                                title: this.crt_status,
-                                content: '平局！',
-                                confirmText: '再来一局',
-                                cancelText: '下次吧',
-                                success: (res) => {
-                                    if (res.confirm) {
-                                        _self.resetBoard();
-                                    }
-                                },
-                            },
-                            'modalPageId': 'characterGames',
-                            'modalShow': true
-                        });
-                    }else if(this.crt_status == 'AI落子') {
+                        flag_msg = '胜负已决';
+                        this.modal_message = '平局！';
+                    }
+                    if(this.crt_status == 'AI落子') {
+                        if(flag_msg != ''){
+                            this.crt_status = flag_msg;
+                        }
                         this.responseCharacter();
                     }
                     console.log(this.crt_status);
@@ -283,6 +259,7 @@
             resetBoard(){
                 this.btn_name = '发送';
                 this.pre_place = '';
+                this.modal_message = '';
                 if(this.first_player == 'character'){
                     this.first_player = 'me';
                     this.crt_status = '玩家落子';
@@ -302,15 +279,13 @@
                     C2: '',
                     C3: ''
                 };
-                this.chat_history = [{'role': 'user',
-                        'content': '新一局'}];
                 if(this.crt_status == 'AI落子'){
                     this.chat_history.push({'role': 'user',
-                        'content': '本局' + this.character_name + '执X。'});
+                        'content': '新一局开始。本局' + this.character_name + '执X。轮到你落子了。'});
                     this.responseCharacter();
                 }else{
                     this.chat_history.push({'role': 'user',
-                        'content': '本局用户执X。'});
+                        'content': '新一局开始。本局用户执X。'});
                 }
             },
             replaceParam(){
@@ -427,6 +402,10 @@
             },
             async responseCharacter(){
                 let _self = this;
+                if(this.crt_status == '胜负已决'){
+                    this.chat_history[this.chat_history.length - 1].content += ' ' + this.modal_message;
+                }
+
                 let data = {
                     'messages': JSON.stringify(this.chat_history),
                 };
@@ -437,8 +416,8 @@
                 data.top_p = this.topP;
                 data.max_token = this.tokenSetting;
                 data.des = JSON.stringify(this.character_description) + '\r\n当前盘面状况：' + JSON.stringify(this.board_data) 
-                    + '\r\n根据当前盘面状况和对弈历史对话进行你的下一步落子选择，并在回复中以“AI回复|落子位置”的格式告诉玩家你的落子位置和符合身份的对话内容，'
-                    + '例如“妙手|A1”。如果要直接发言而不落子，可以回复“妙手”。';
+                    + '\r\n根据当前盘面状况和对弈历史对话进行你的下一步落子选择，并在回复中以“回复对话|落子位置”的格式告诉玩家你的落子位置和符合身份的对话内容，'
+                    + '举例：期望落子时回复为“妙手|A1”。如果直接发言而不落子，可以回复“妙手”。';
                 //console.log(data);
                 let response = await request.post('newAiController/games', 'games', data);
                 if(response && response.code == 200){
@@ -465,8 +444,35 @@
                     
                     _self.character_html = common.textToHtml(ai_result[0], 'left', true);
                     // AI落子逻辑
-                    if (ai_result.length > 1) {
+                    if (_self.crt_status != '胜负已决' && ai_result.length > 1) {
                         _self.judgeResult(ai_result[1]);
+                    }
+
+                    // 回复完再落幕
+                    console.log(_self.crt_status, _self.modal_message);
+                    if(_self.crt_status == '胜负已决'){
+                        setTimeout(() => {
+                            if(_self.modal_message != ''){
+                                _self.setUserData({
+                                    'modalData': {
+                                        title: _self.crt_status,
+                                        content: _self.modal_message,
+                                        confirmText: '再来一局',
+                                        cancelText: '下次吧',
+                                        success: (res) => {
+                                            _self.resetBoard();
+                                        },
+                                    },
+                                    'modalPageId': 'characterGames',
+                                    'modalShow': true
+                                });
+                            }else{
+                                _self.setUserData({
+                                    'modalShow': false
+                                });
+                                _self.resetBoard();
+                            }
+                        }, 2000);
                     }
                 } else {
                     _self.setUserData({
@@ -551,8 +557,8 @@
         height: $uni-img-size-lg;
         border-radius: 50%;
     }
-    .chat-input{
-        width: 80vw;
+    .send-btn{
+        float: right;
     }
     @media (prefers-color-scheme: dark) {
 		.game-board{
