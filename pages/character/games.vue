@@ -126,6 +126,7 @@
                     C2: '',
                     C3: ''
                 },
+                chess_count: 0,
                 first_player: '', // 本局先手的人 'character' 或 'me'
                 entity_css: '',
                 pre_place: '', // 记录上一步落子的位置，格式如 'A1'、'B2' 等
@@ -222,9 +223,11 @@
                     this.btn_name = '发送';
                     this.crt_status = 'AI落子';
                     this.board_data[position] = this.first_player === 'me' ? 'X' : 'O';
+                    this.chess_count += 1;
                 }else{
                     this.crt_status = '玩家落子';
                     this.board_data[position] = this.first_player === 'character' ? 'X' : 'O';
+                    this.chess_count += 1;
                 }
                 console.log(this.board_data);
                 setTimeout(() => {
@@ -243,23 +246,58 @@
                     )){
                         flag_msg = '胜负已决';
                         this.modal_message = `${this.board_data[position]}获胜！`;
-                    }else if(Object.values(this.board_data).every(value => value !== '')){
+                    }else if(this.chess_count >= 9){
                         flag_msg = '胜负已决';
                         this.modal_message = '平局！';
                     }
+                    
                     if(this.crt_status == 'AI落子') {
                         if(flag_msg != ''){
                             this.crt_status = flag_msg;
                         }
                         this.responseCharacter();
+                    }else{
+                        if(flag_msg != ''){
+                            this.crt_status = flag_msg;
+                            this.showFinishModal();
+                        }
                     }
                     console.log(this.crt_status);
                 }, 500);
+            },
+            showFinishModal(){
+                let _self = this;
+                setTimeout(() => {
+                    this.chess_count = 0;
+                    if(this.modal_message != ''){
+                        this.setUserData({
+                            'modalData': {
+                                title: this.crt_status,
+                                content: this.modal_message,
+                                confirmText: '再来一局',
+                                cancelText: '下次吧',
+                                success: (res) => {
+                                    if(res.confirm) {
+                                        _self.resetBoard();
+                                    }
+                                },
+                            },
+                            'modalPageId': 'characterGames',
+                            'modalShow': true
+                        });
+                    }else{
+                        this.setUserData({
+                            'modalShow': false
+                        });
+                        this.resetBoard();
+                    }
+                }, 2000);
             },
             resetBoard(){
                 this.btn_name = '发送';
                 this.pre_place = '';
                 this.modal_message = '';
+                this.chess_count = 0;
                 if(this.first_player == 'character'){
                     this.first_player = 'me';
                     this.crt_status = '玩家落子';
@@ -296,7 +334,7 @@
                     .replace(new RegExp('{{bubbleOpacity}}', 'g'), 1);
 			},
             back(){
-                if(this.crt_status == 'AI落子' || this.crt_status == '玩家落子'){
+                if(this.chess_count != 0 && this.chess_count != 9){
                     this.setUserData({
                         'modalData': {
                             title: "放弃游戏",
@@ -386,7 +424,7 @@
                                 _self.character_html = common.textToHtml(_self.character_name + '先手，正在思考中...', 'left', true);
                                 _self.chat_history.push({'role': 'user',
                                     'content': '本局' + _self.character_name + '执X。'});
-                                request.post()
+                                _self.responseCharacter();
                             } else {
                                 _self.crt_status = '玩家落子';
                                 _self.first_player = 'me';
@@ -402,6 +440,15 @@
             },
             async responseCharacter(){
                 let _self = this;
+                uni.showLoading({
+                    title: '对方思考ing...'
+                });
+
+                // 限制chat_history最多保留最新的90条数据
+                if(this.chat_history.length > 90) {
+                    this.chat_history = this.chat_history.slice(-90);
+                }
+                
                 if(this.crt_status == '胜负已决'){
                     this.chat_history[this.chat_history.length - 1].content += ' ' + this.modal_message;
                 }
@@ -419,7 +466,7 @@
                     + '\r\n根据当前盘面状况和对弈历史对话进行你的下一步落子选择，并在回复中以“回复对话|落子位置”的格式告诉玩家你的落子位置和符合身份的对话内容，'
                     + '举例：期望落子时回复为“妙手|A1”。如果直接发言而不落子，可以回复“妙手”。';
                 //console.log(data);
-                let response = await request.post('newAiController/games', 'games', data);
+                let response = await request.post('newAiController/games', 'characterGames', data);
                 if(response && response.code == 200){
                     console.log(response.result);
                     if(!response.result.hasOwnProperty('choices') || 
@@ -451,28 +498,7 @@
                     // 回复完再落幕
                     console.log(_self.crt_status, _self.modal_message);
                     if(_self.crt_status == '胜负已决'){
-                        setTimeout(() => {
-                            if(_self.modal_message != ''){
-                                _self.setUserData({
-                                    'modalData': {
-                                        title: _self.crt_status,
-                                        content: _self.modal_message,
-                                        confirmText: '再来一局',
-                                        cancelText: '下次吧',
-                                        success: (res) => {
-                                            _self.resetBoard();
-                                        },
-                                    },
-                                    'modalPageId': 'characterGames',
-                                    'modalShow': true
-                                });
-                            }else{
-                                _self.setUserData({
-                                    'modalShow': false
-                                });
-                                _self.resetBoard();
-                            }
-                        }, 2000);
+                        _self.showFinishModal();
                     }
                 } else {
                     _self.setUserData({
@@ -486,6 +512,7 @@
                         'modalShow': true
                     })
                 }
+                uni.hideLoading();
             }
         },
         onLoad(option) {//切片
