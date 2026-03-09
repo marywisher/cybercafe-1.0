@@ -91,6 +91,12 @@
 				</view>
 			</cybercafe-view>
 			<cybercafe-view>
+				<view class="display-flex sp-between display-line" @tap="changeEmail">
+					<view class="global-setting-label">修改邮箱</view>
+					<span class="iconfont icon-xiayibu"></span>
+				</view>
+			</cybercafe-view>
+			<cybercafe-view>
 				<view class="display-flex sp-between display-line" @tap="gotoLogin">
 					<view class="global-setting-label">退出账号</view>
 					<span class="iconfont icon-xiayibu"></span>
@@ -102,6 +108,9 @@
 			<cybercafe-button v-show="latestVersion > my_version" btnClass="btn-primary" 
 				btnName="更新版本" @tapBtn="beforeUpdateVersion"></cybercafe-button>
 		</cybercafe-view>
+		
+		<changeEmail ref="gsEmail"></changeEmail>
+		
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
@@ -110,6 +119,7 @@
 	import baseQuery from '@/func/dbManager/baseQuery';
 	import userinfo from '@/modules/account/userinfo';
 	import globalSettingHeader from '@/modules/account/globalSettingHeader';
+	import changeEmail from '@/modules/account/changeEmail';
 	import {
 		mapMutations,
 		mapState,
@@ -124,7 +134,8 @@
 		},
 		components:{
 			userinfo,
-			globalSettingHeader
+			globalSettingHeader,
+			changeEmail
 		},
 		watch:{
 			modalShow: {
@@ -250,6 +261,9 @@
 				uni.navigateTo({
 					url: '/pages/character/incubatorList'
 				})
+			},
+			changeEmail(){
+				this.$refs.gsEmail.open();
 			}
 		},
 		onLoad() {

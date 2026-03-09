@@ -320,10 +320,12 @@
                 if(this.crt_status == 'AI落子'){
                     this.chat_history.push({'role': 'user',
                         'content': '新一局开始。本局' + this.character_name + '执X。轮到你落子了。'});
+                    this.character_html = common.textToHtml('新一局开始。本局我先手。', 'left', true);
                     this.responseCharacter();
                 }else{
                     this.chat_history.push({'role': 'user',
                         'content': '新一局开始。本局用户执X。'});
+                    this.character_html = common.textToHtml('新一局开始。本局你先手。', 'left', true);
                 }
             },
             replaceParam(){
@@ -462,9 +464,8 @@
                 data.temperature = this.temperature;
                 data.top_p = this.topP;
                 data.max_token = this.tokenSetting;
-                data.des = JSON.stringify(this.character_description) + '\r\n当前盘面状况：' + JSON.stringify(this.board_data) 
-                    + '\r\n根据当前盘面状况和对弈历史对话进行你的下一步落子选择，并在回复中以“回复对话|落子位置”的格式告诉玩家你的落子位置和符合身份的对话内容，'
-                    + '举例：期望落子时回复为“妙手|A1”。如果直接发言而不落子，可以回复“妙手”。';
+                data.des = JSON.stringify(this.character_description);
+				data.board = JSON.stringify(this.board_data);
                 //console.log(data);
                 let response = await request.post('newAiController/games', 'characterGames', data);
                 if(response && response.code == 200){

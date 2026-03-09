@@ -1,79 +1,5 @@
 <template>
 	<view>
-		<!-- <view class="content">
-			<uni-row class="demo-uni-row">
-				<uni-col v-if="!incubator_id || !(incubator_id > 0)" :span="5" :offset="14">
-					<cybercafe-button btnClass="btn-primary" :btnDisable="submit_mode === false"
-						@tapBtn="operation" btnName="创建"></cybercafe-button>
-				</uni-col>
-				<uni-col v-else :span="5">
-					<cybercafe-button btnClass="btn-primary" :btnDisable="submit_mode === false"
-						@tapBtn="operation" btnName="保存"></cybercafe-button>
-				</uni-col>
-			</uni-row>
-		</view>
-		<view v-if="on_line && incubator_id && incubator_id > 0 && show_menu" 
-			class="submit-pop" :style="{ top: `${position.y}px`, right: `20px` }">
-			<view class="submit-btn" id="save" style="border-bottom: 1px solid #999;" @tap="operation">仅保存</view>
-			<view class="submit-btn" id="submit" @tap="operation">提交线上发布</view>
-		</view>
-		
-		<view class="content" v-if="powerLevel > 0"><label class="required">注意：简介+详细介绍字数+开场白 > 200 方可提交发布</label></view>
-		<view class="content" v-if="powerLevel > 0" style="margin-left: 76rpx;margin-bottom: 20rpx;">
-			<label class="required">每1小时可提交1次，请确保提交内容为原创</label>
-		</view>
-		<view class="content" v-else style="margin-bottom: 20rpx;">
-			<label class="required">当前等级无法提交线上发布本地角色，请多多使用</label><br>
-			<label class="required">仅保存在本地的，请无视以上内容</label>
-		</view>
-		<view class="content"><label class="required">* 为必填项</label></view>
-		<view class="group-item">
-			<view><label>头像</label></view>
-			<image class="rimg" mode="aspectFit" :src="character_image" @tap="showMore('subject')"></image>
-			<uni-row class="demo-uni-row">
-				<uni-col :span="16">
-					<view><label class="required">*</label><label>昵称</label> {{character_name.length}} / 16</view>
-					<uni-easyinput v-model="character_name" maxlength="16" :styles="dynamicStyle" @blur="requireSet"></uni-easyinput>
-				</uni-col>
-				<uni-col :span="7" :offset="1">
-					<view><label>性别</label></view>
-					<picker class="genderPick" @change="genderChange" :value="character_gender" :range="gender">
-						<view>{{gender[character_gender]}}</view>
-					</picker>
-				</uni-col>
-			</uni-row>			
-			<view><label class="required">*</label><label>简介（用于列表显示，会传AI）</label> {{short_description.length}} / 100</view>
-			<uni-easyinput type="textarea" autoHeight v-model="short_description" maxlength="100" :cursor-spacing="150"
-				 :styles="dynamicStyle" placeholder="请输入简短介绍" adjust-position  @blur="requireSet"></uni-easyinput>
-			<view class="content" v-html="hint"></view>
-			<view><label>详细（简介的部分不用重复，会传AI）</label> {{full_description.length}} / 2000</view>
-			<uni-easyinput type="textarea" autoHeight v-model="full_description" maxlength="2000" :cursor-spacing="150"
-				 :styles="dynamicStyle" placeholder="详细介绍" adjust-position @blur="requireSet"></uni-easyinput>
-			<view><label>开场白</label> {{character_prologue.length}} / 500</view>
-			<uni-easyinput type="textarea" autoHeight v-model="character_prologue" maxlength="500" :cursor-spacing="150"
-				 :styles="dynamicStyle" placeholder="开场白" adjust-position @blur="requireSet"></uni-easyinput>
-			<view class="display-flex tags">
-				<view style="margin-right: 20rpx;">角色tag</view>
-				<view class="tag-item" v-for="(item, index) in tag" :key="index">{{item}}</view>
-			</view>
-			<view><label>给玩家的话（不发送给AI）</label> {{character_memo.length}} / 200</view>
-			<uni-easyinput type="textarea" autoHeight v-model="character_memo" maxlength="200" :cursor-spacing="150"
-				 :styles="dynamicStyle" placeholder="题外话" adjust-position @blur="requireSet"></uni-easyinput>
-		</view>
-		
-		<uni-popup ref="popup" :is-mask-click="false" mask-background-color="rgba(0,0,0,0.8)">
-			<view class="group-item upload-pop">
-				<view v-if="!show_btn" class="text-center" style="color:red">--提交过程中，请勿关闭或退出--</view>
-				<uni-steps :options="upload_process" active-icon="circle" :active="active" direction="column"/>
-				<cybercafe-button btnClass="btn-primary" btnName="提交未通过，请修改后再提交"
-					@tapBtn="closePop" v-if="show_btn && active < 4" 
-					btnStyle="position: absolute;right: 20px;bottom: 20px;"></cybercafe-button>
-				<cybercafe-button btnClass="btn-primary" btnName="提交通过，请静候审核结果"
-					@tapBtn="closePop" v-if="show_btn && active == 4"
-					btnStyle="position: absolute;right: 20px;bottom: 20px;"></cybercafe-button>
-			</view>
-		</uni-popup>-->
-		
 		<cybercafe-view class="character-container" popViewStyle="box-shadow:none;">
 			<view class="hint required character-line">* 为必填项</view>
 			<view class="flag-tag base-tag">基础信息</view>
@@ -89,7 +15,7 @@
 				<view @tap="showGenderView">
 					<view v-if="character_gender == 1" class="iconfont icon-xingbienan"></view>
 					<view v-if="character_gender == 2" class="iconfont icon-xingbienv"></view>
-					<view v-if="character_gender == 0" class="iconfont icon-WuXingBie2"></view>
+					<view v-if="character_gender == 0" class="iconfont icon-wuxingbie"></view>
 				</view>
 			</view>
 			<view v-show="show_gender">
@@ -99,7 +25,7 @@
 						<view class="gender-border"></view>
 						<view class="iconfont icon-xingbienv" @tap="genderChange(2)"></view>
 						<view class="gender-border"></view>
-						<view class="iconfont icon-WuXingBie2" @tap="genderChange(0)"></view>
+						<view class="iconfont icon-wuxingbie" @tap="genderChange(0)"></view>
 					</view>
 				</cybercafe-view>
 			</view>
@@ -206,6 +132,15 @@
 					 :placeholder-style="placeholderStyle"
 					 @blur="autoSave('character_prologue', character_prologue)"></textarea>
 			</view>
+			<view class="flag-tag branch-memo-tag">其它内容</view>
+			<view class="character-line after-tag"></view>
+			<view class="character-line">
+				<view class="display-flex display-line sp-between">碎碎念（不发送给AI）</view>
+				<textarea autoHeight v-model="character_memo" :cursor-spacing="150" :maxlength="-1"
+					 class="bg-color" placeholder="请输入题外话" adjust-position 
+					 :placeholder-style="placeholderStyle"
+					 @blur="autoSave('character_memo', character_memo)"></textarea>
+			</view>
 		</cybercafe-view>
 	</view>
 </template>
@@ -227,12 +162,13 @@
 			return{
 				incubator_id: 0,
 				character_name: '',
-				default_image: configData.defaultImg,
+				default_image: configData.avatarImg,
 				character_gender: 0,
 				gender_cn: '未知',
 				description_data: '', //字段数据
 				character_story: '',
 				character_prologue: '',
+				character_memo: '',
 				
 				short_description: '',
 				full_description: '',
@@ -250,22 +186,6 @@
 				show_gender: false,
 				
 				character_status: 0,
-				
-				submit_mode: false,
-				on_line: false,
-				
-				edit_flag: false,//编辑后退出提醒
-				tag: [],
-				
-				position: {
-					x: 0,
-					y: 0
-				},
-				show_menu: false,
-				upload_process: [{title:'语义检测',desc:'未完成'}, {title:'标签提取',desc:'未完成'},
-					{title:'内容上传',desc:'未完成'},{title:'图片上传',desc:'未完成'},{title:'完成提交',desc:''}],
-				active: 0,
-				show_btn: false,
 			}
 		},
 		computed: {
@@ -300,17 +220,20 @@
 				this.full_description = return_data.full_description;
 				this.character_story = return_data.character_story;
 				this.character_prologue = return_data.character_prologue;
-				if(character_data.hasOwnProperty('basic_description'))
-					this.basic_description = character_data.basic_description;
-				if(character_data.hasOwnProperty('extend_description')) 
-					this.extend_description = character_data.extend_description;
+				this.character_memo = return_data.character_memo;
+				if(return_data.hasOwnProperty('basic_description')){
+					this.basic_description = return_data.basic_description;
+					this.basic_key = '';
+				}
+				if(return_data.hasOwnProperty('extend_description')) 
+					this.extend_description = return_data.extend_description;
 				
 				let character_image = character_data[0].character_img ? character_data[0].character_img : this.default_image;
 				this.$emit('afterLoad', 
 					{'image': character_image});//,'key': character_key
 				
 				if(this.character_tag.length > 0){
-					this.upload_process[1].desc = this.character_tag;
+					//this.upload_process[1].desc = this.character_tag;
 					this.tag = this.character_tag.split('|');
 				}
 				this.character_status = character_data[0].character_status;
@@ -356,7 +279,8 @@
 						'副本': {
 							'前情提要': this.character_story,
 							'开场白': this.character_prologue
-						}
+						},
+						'其它': this.character_memo,
 					};
 					for(let key in this.basic_description){
 						this.description_data.基础信息[key] = this.basic_description[key];
@@ -448,304 +372,6 @@
 				}
 				this.$forceUpdate();
 			},
-			
-			
-			
-			
-			/* showMore(){
-				this.$refs.cImgPart.openBox((this.incubator_id > 0 ? ('-' + this.incubator_id) : this.incubator_id).toString());
-			},
-			requireSet(from = ''){
-				this.submit_mode = true;
-				if(this.character_name.trim() == '' || 
-					(this.short_description.trim() + this.full_description.trim()) == ''){
-						this.submit_mode = false;
-				}
-				
-				if(from != 'init') this.edit_flag = true;
-			},
-			operation(event){
-				let _self = this;
-				const now = Date.now();
-				let tmstp = 0;
-				let flag = false;
-				//console.log(this.character_image);
-				if(this.lastTimestampSubmit 
-				&& this.lastTimestampSubmit[this.incubator_id]) 
-					tmstp = this.lastTimestampSubmit[this.incubator_id];
-				//console.log(this.powerLevel);
-				if(event.target.id == ''){//button没有id
-					if(this.powerLevel > 0 && this.on_line && this.incubator_id && this.incubator_id > 0 
-					&& (this.character_status == 4 || this.character_status == 6)
-					&& this.short_description.length + this.full_description.length > 200 
-					&& (now - tmstp) > (60 * 60 * 1000)
-					&& (this.character_image.substr(0, 4) == 'http' || this.character_image.substr(0, 6) == 'file:/' 
-						|| this.character_image.substr(0, 10) == 'data:image')){
-						this.position.x = event.detail.x - 50;
-						this.position.y = event.detail.y + 20;
-						this.show_menu = true;
-					}else{
-						this.edit_flag = false;
-						relationHandle.saveIncubator(this, '你', 'incubator', 'save').then(value => {
-							flag = value;
-							if(flag != false) this.incubator_id = flag;
-							console.log(this.incubator_id);
-						});
-					}
-				}else if(event.target.id == 'save'){
-					this.show_menu = false;
-					relationHandle.saveIncubator(this, '你', 'incubator', 'save').then(value => {
-						flag = value;
-						if(flag != false) this.incubator_id = flag;
-						console.log(this.incubator_id);
-					});
-				}else{
-					this.setUserData({
-						'modalData': {
-							title: '提交提醒',
-							content: '确认消耗本次提交机会，并确认提交的图文均为原创？',
-							confirmText: '确认提交',
-							cancelText: '再想想',
-							success: function (res) {
-								if (res.confirm) {
-									let tmp = _self.lastTimestampSubmit;
-									tmp[_self.incubator_id] = now;
-									_self.setUserData({'lastTimestampSubmit': tmp});
-									_self.updateProgress();
-								} else{
-									relationHandle.saveIncubator(_self, '你', 'incubator', 'save');
-								}
-							}
-						},
-						'modalShow': true,
-					});
-				}
-			},
-			async updateProgress(){
-				uni.showLoading();
-				
-				this.active = 0;
-				this.$refs.popup.open('center');
-					
-				this.show_menu = false;
-				this.edit_flag = false;
-				try{
-					await relationHandle.saveIncubator(this, '你', 'incubator', 'upload', 4).then(flag => {
-						if(flag == false) throw new Error('录入问题，请修改后再试');
-					});
-					//语义检测
-					await this.toolRequest('verification', 8);
-					console.log('finish verification');
-					//tag提取
-					await this.toolRequest('tag', 13);
-					console.log('finish tag');
-					//上传数据
-					await this.uploadData();
-					console.log('finish data upload');
-					//上传图片
-					await this.uploadImage();
-					console.log('finish image upload');
-				}catch (error) {
-					// 捕获并处理错误
-					console.error(error);
-				}finally{
-					uni.hideLoading();
-					await relationHandle.saveIncubator(this, '你', 'incubator', 'upload', this.active < 4 ? 4 : 6);
-					console.log('finish save incubator');
-					this.show_btn = true;
-				}
-			},
-			
-			afterSelectImg(e){
-				this.character_image = e;
-			},
-			back() {
-				common.back(this.edit_flag);
-			},
-			async toolRequest(task, ai_type){
-				let _self = this;
-				let messages = [
-					{'role': 'system'},
-					{'role': 'user',
-					'content': this.character_name + "\r\n" + this.short_description + "\r\n"
-						+ this.full_description + "\r\n" + this.character_prologue
-					}
-				];
-				return new Promise((resolve, reject) => {
-					try{
-						request.post('aiController/tool', 'incubator', {
-							'type': ai_type,
-							'key': this.userKey,
-							'task': task,
-							'time': common.getCurrentTimeStampStr(),
-							'messages': messages,
-						}).then(res => {
-							//console.log(res.result);
-							if(res.code == 200){
-								switch(task){
-								case 'tag':
-									_self.character_tag = res.result.choices[0].message.content ? res.result.choices[0].message.content : '';
-									_self.tag = _self.character_tag.split('|');
-									_self.upload_process[1].desc = _self.character_tag;
-									_self.active += 1;
-									resolve();
-								break;
-								default: //'verification'
-									let return_json = '';
-									if(res.result.choices[0].message.content.substr(0, 3) == '```'){
-										return_json = JSON.parse(res.result.choices[0].message.content.replace(/```/g, '').substr(4));
-									}else{
-										return_json = JSON.parse(res.result.choices[0].message.content);
-									}
-									
-									_self.upload_process[0].desc = '得分：' + return_json.score + '，' + return_json.description;
-									if(return_json.score > 1){
-										_self.setUserData({
-											'modalData': {
-												title: '语义检测结果',
-												content: return_json.description,
-												confirmText: '',
-												cancelText: 'OK',
-												success: function (res) {
-													if (res.confirm) {
-														//console.log('用户点击确定');
-														reject('语义检测问题，请修改后再试：' + return_json.score);
-													} 
-												}
-											},
-											'modalShow': true,
-											'modalPageId': 'incubator'
-										});
-									}
-									_self.active += 1;
-									resolve();
-								break;
-								}
-								reject('检测工具问题，请修改后再试');
-							}else {
-								//console.error(res.msg);
-								uni.showToast({
-									title: res.msg,
-									icon: "none"
-								})
-								reject(res.msg);
-							}
-						});
-					}catch(err){
-						console.log(err);
-						reject('检测工具问题，请修改后再试' + err);
-					}
-				});
-			},
-			async uploadData(){
-				let _self = this;
-				let data = {
-					'inc_id': this.incubator_id,
-					'name': this.character_name,
-					'gender': this.character_gender,
-					'description': this.short_description + "\r\n" + this.full_description,
-					'prologue': this.character_prologue,
-					'tag': this.character_tag,
-					'on_id': this.incubator_id,
-					'verification': this.upload_process[0].desc,
-				};
-				
-				return new Promise((resolve, reject) => {
-					request.post('characterController/submitCharacter', 'incubator', data).then(res => {
-						//console.log(res.result);
-						if(res.code == 200){
-							baseQuery.updateDataByKey('cybercafe_incubator',{
-								character_status: res.result.status,
-								//character_key: res.result.key
-							},{
-								incubator_id: _self.incubator_id
-							});
-							_self.character_key = res.result.key;
-							_self.upload_process[_self.active].desc = '上传完成';
-							_self.active += 1;
-							resolve();
-						}else {
-							//console.error(res.msg);
-							uni.showToast({
-								title: res.msg,
-								icon: "none"
-							})
-							reject('数据上传问题，请修改后再试' + res.msg);
-						}
-					}).catch(err => {
-						console.log(err);
-						reject('数据上传问题，请修改后再试' + err);
-					});
-				});
-			},
-			async uploadImage(){
-				let _self = this;
-				let return_value = 'fail';
-				
-				return new Promise((resolve, reject) => {
-					//console.log(this.character_image);
-					try{
-						if(this.character_image.substr(0, configData.domain.length) == configData.domain){
-							this.upload_process[this.active].desc = '无需上传';
-							this.active += 1;
-							resolve();
-						}else if(this.character_image.substr(0, 6) == 'file:/'){//之前版本存在相册里的图，要做base64处理
-							console.log(typeof this.character_image);
-							relationHandle.pathToBase64(this.character_image).then(base64_image => {
-								_self.character_image = base64_image;
-								resolve(_self.uploadImg());
-							}).catch(err=>{
-								console.log('转换64报错',err)
-								reject(err);
-							});
-						}else{//已经是base64的图，直接上传
-							resolve(this.uploadImg());
-						}
-					}catch(err){
-						reject(err);
-					}
-				});
-			},
-			uploadImg(){
-				let _self = this;
-				try{
-					//console.log(typeof this.character_image);
-					request.post('characterController/submitImage', 'incubator', {
-						file: this.character_image,
-						key: this.character_key
-					}).then(res => {
-						if(res.code == 200){
-							//本地图片路径更新
-							baseQuery.updateDataByKey('cybercafe_images',{
-								image_src: res.result.src
-							},{
-								image_src: _self.character_image
-							});
-							
-							_self.character_image = res.result.src;
-							baseQuery.updateDataByKey('cybercafe_incubator',{
-								character_img: res.result.src
-							},{
-								incubator_id: _self.incubator_id
-							});
-							_self.upload_process[_self.active].desc = '上传完成';
-							_self.active += 1;
-						}else {
-							//console.error(res.msg);
-							uni.showToast({
-								title: res.msg,
-								icon: "none"
-							})
-							throw res.msg;
-						}
-					});
-				}catch(err){
-					throw err;
-				}
-			},
-			closePop(){
-				this.$refs.popup.close();
-			} */
 		},
 	}
 </script>
