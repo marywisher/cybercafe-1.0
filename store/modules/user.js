@@ -1,6 +1,7 @@
 export default {
 	namespaced: true,
 	state: {
+		userEmail: '',
 		userName: '',
 		userKey: '',
 		userAvatar: '',

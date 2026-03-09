@@ -19,6 +19,7 @@ export default {
 					'groupExpiration': res.result.expiration,
 				});
 				store.commit('user/setUserData', {
+					userEmail: res.result.email,
 					userGroup: res.result.group,
 					powerLevel: res.result.power_level,
 					newMsgCount: res.result.new_msg,

@@ -195,6 +195,7 @@
 							'isLogin': true
 						})
 						let data = {
+							userEmail: res.result.email,
 							userName: res.result.name,//Base64.decode(res.result.name),
 							userKey: res.result.key,
 							userGroup: res.result.group,

@@ -1,7 +1,10 @@
 <template>
 	<cybercafe-view ref="emailView" isAbsolute closeAble viewTitle="修改邮箱">
-		<view class="required">* 重要提醒：如果需要更换手机，请务必先上传数据，至新手机下载</view>
+		<view class="required">* 重要提醒：如果需要更换手机，请务必先上传数据，至新手机下载<br/><br/>
+		若有合并账号需要，请联系管理员<br/><br/>
+	    请注意将cybercafe.app@foxmail.com添加到您的邮箱白名单中，以确保能接收到验证码。</view>
 		<cybercafe-view>
+			<view class="display-flex display-line sp-between register-line">旧邮箱：{{user_email}}</view>
 			<view class="display-flex display-line sp-between register-line">
 				<view>新邮箱<span class="required">*</span></view>
 				<input v-model="email_str" :maxlength="-1" style="width: 70%;" @input="emailCheck"/>
@@ -31,16 +34,20 @@
 				email_str: '',
 				email_code: '',
 				is_email_correct: true,
-				is_code_correct: true
+				is_code_correct: true,
+				user_email: ''
 			}
 		},
 		computed:{
 			...mapState('setting', ['token', 'userId']),
+			...mapState('user', ['userEmail']),
 		},
 		methods: {
 			...mapMutations('setting', ['setSettingData', 'getSettingData']),
+			...mapMutations('user', ['getUserData']),
 			open(){
 				this.$refs.emailView.openView();
+				this.user_email = this.userEmail;
 			},
 			emailCheck(e){
 				this.email_str = e.detail.value;
