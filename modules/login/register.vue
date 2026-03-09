@@ -123,7 +123,7 @@
 					if (res.code == 200) {
 						_self.setUserData({
 							'modalData': {
-								content: res.result,
+								content: res.result + "\r\n\r\n* 请注意将 cybercafe.app@foxmail.com 添加到您的邮箱白名单中，以确保能接收到验证码。",
 								confirmText: '',
 								cancelText: 'OK',
 								success: (res) => {}
