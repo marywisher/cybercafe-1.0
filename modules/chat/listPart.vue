@@ -293,13 +293,13 @@
 					const { pageX, pageY } = event.touches[0];
 					let menu_items = [
 						/* { label: '帮写', value: 'ai', icon: 'dengpao' }, */
-						{ label: '气泡', value: 'bubble', icon: 'ziyuan' },
+						{ label: '气泡', value: 'bubble', icon: 'mofabang' },
 						{ label: '复制', value: 'copy', icon: 'fuzhi' },
 						{ label: '删除', value: 'delete', icon: 'shanchu' }
 					];
 					if(event.currentTarget.id == '-1' || (this.history_list.length == 1)){//开场白不可删
 						menu_items = [
-							{ label: '气泡', value: 'bubble', icon: 'ziyuan' },
+							{ label: '气泡', value: 'bubble', icon: 'mofabang' },
 							{ label: '复制', value: 'copy', icon: 'fuzhi' },
 						];						
 					}

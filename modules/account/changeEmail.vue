@@ -12,10 +12,10 @@
 			</view>
 			<view class="display-flex display-line sp-between register-line">
 				<input v-model="email_code" :maxlength="6" style="width: 60%;" @input="codeCheck"/>
-				<cybercafe-button btnClass="btn-default" :btnDisable="is_email_correct"
+				<cybercafe-button btnClass="btn-default" :btnDisable="code_btn_disable"
 					@tapBtn="sendCode" btnName="获取验证码"></cybercafe-button>
 			</view>
-			<cybercafe-button btnClass="btn-primary" :btnDisable="is_code_correct"
+			<cybercafe-button btnClass="btn-primary" :btnDisable="change_btn_disable"
 					@tapBtn="changeEmail" btnName="修改邮箱"></cybercafe-button>
 		</cybercafe-view>
 	</cybercafe-view>
@@ -29,13 +29,13 @@
 		mapActions
 	} from 'vuex';
 	export default{
-		name: 'chageEmail',
+		name: 'changeEmail',
 		data(){
 			return{
 				email_str: '',
 				email_code: '',
-				is_email_correct: true,
-				is_code_correct: true,
+				code_btn_disable: true,
+				change_btn_disable: true,
 				user_email: ''
 			}
 		},
@@ -49,20 +49,18 @@
 			open(){
 				this.$refs.emailView.openView();
 				this.user_email = this.userEmail;
-				this.email_str = '';
-				this.email_code = '';
 			},
 			emailCheck(e){
 				this.email_str = e.detail.value;
 				if(this.email_str.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) == this.email_str){
-					this.is_email_correct = false;
+					this.code_btn_disable = false;
 				}else{
-					this.is_email_correct = true;
+					this.code_btn_disable = true;
 				}
 			},
 			sendCode(){
 				uni.showLoading();
-				this.is_email_correct = true;
+				this.code_btn_disable = true;
 				let _self = this;
 				request.post("userController/sendVerifyCode", 'globalSetting', {
 					name: this.email_str,
@@ -83,14 +81,14 @@
 							title: res.msg,
 							icon: "none"
 						});
-						_self.is_email_correct = false;
+						_self.code_btn_disable = false;
 					}
 				}).catch(err => {
 					uni.showToast({
 						title: err,
 						icon: "none"
 					});
-					_self.is_email_correct = false;
+					_self.code_btn_disable = false;
 				}).finally(() => {
 					uni.hideLoading();
 				});
@@ -98,9 +96,9 @@
 			codeCheck(e){
 				this.email_code = e.detail.value;
 				if(this.email_code.match(/^\d{6}$/) != this.email_code){
-					this.is_code_correct = true;
+					this.change_btn_disable = true;
 				}else{
-					this.is_code_correct = false;
+					this.change_btn_disable = false;
 				}
 			},
 			changeEmail(){
@@ -145,6 +143,8 @@
 						_self.user_email = _self.email_str;
 						_self.email_str = '';
 						_self.email_code = '';
+						_self.code_btn_disable = true;
+						_self.change_btn_disable = true;
 						_self.$refs.emailView.closeView();
 					} else {
 						uni.showToast({
