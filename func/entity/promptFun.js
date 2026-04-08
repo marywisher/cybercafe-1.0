@@ -153,11 +153,13 @@ export default {
 			//console.log(content);
 		}
 		content = content.replace(new RegExp('{{char}}', 'g'), character_name)
-			.replace(new RegExp('{{user}}', 'g'), store.state.dialogue.me);
+			.replace(new RegExp('{{user}}', 'g'), store.state.dialogue.me)
+			.replace(new RegExp('{{me}}', 'g'), store.state.dialogue.me);
 		if(extra_content.length > 0)
 			extra_content = store.state.dialogue.me + ':' 
 				+ extra_content.replace(new RegExp('{{char}}', 'g'), character_name)
-				.replace(new RegExp('{{user}}', 'g'), store.state.dialogue.me);
+				.replace(new RegExp('{{user}}', 'g'), store.state.dialogue.me)
+				.replace(new RegExp('{{me}}', 'g'), store.state.dialogue.me);
 		let content_length = content.length + sys_prompt.length + extra_content.length;
 		store.commit('setting/setSettingData',{
 			'promptLength': content_length

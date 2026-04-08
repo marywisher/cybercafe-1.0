@@ -90,12 +90,12 @@ export default{
 		//console.log(store.state.dialogue.historylist);
 		return tmp_str;
 	},
-	async saveMessage(ai_id, content, operation) {//新消息或重说，主控说
+	async saveMessage(ai_id, content, operation, entity_id) {//新消息或重说，主控说
 		//存消息
 		//let content = response.choices[0].message.content;
 		//console.log('ai_id:' + JSON.stringify(ai_id));
 		//console.log('crtCharacterId:' + store.state.dialogue.crtCharacterId);
-		let message_id = await dialogueQuery.createMessage(ai_id, content, operation);
+		let message_id = await dialogueQuery.createMessage(ai_id, content, operation, entity_id);
 		//console.log(message_id);
 		let history_list = store.state.dialogue.historylist;
 		if(message_id == 'update'){//重说
@@ -104,10 +104,12 @@ export default{
 			last_data['html'] = common.textToHtml(content, 
 				store.state.dialogue.crtCharacterId == 0 ? 'right' : 'left', true);
 			last_data['ai_id'] = last_data['ai_id'] + ',' + ai_id;
-			history_list[history_list.length - 1] = last_data;
-			store.commit('dialogue/setDiaData', {
-				'refreshList': -1,
-			});
+			if(entity_id == store.state.setting.entityId){
+				history_list[history_list.length - 1] = last_data;
+				store.commit('dialogue/setDiaData', {
+					'refreshList': -1,
+				});
+			}
 		}else{//新消息
 			//整理数据
 			let new_data = {
@@ -121,20 +123,24 @@ export default{
 				ai_id: ai_id
 			};
 			//console.log(new_data);
-			history_list.push(new_data);
-			store.commit('dialogue/setDiaData', {
-				'cDisplayId': store.state.dialogue.crtCharacterId,
-				'refreshList': 0
-			});
+			if(entity_id == store.state.setting.entityId){
+				history_list.push(new_data);
+				store.commit('dialogue/setDiaData', {
+					'cDisplayId': store.state.dialogue.crtCharacterId,
+					'refreshList': 0
+				});
+			}
 			//console.log(history_list);
 		}
-		store.commit('dialogue/setDiaData', {
-			'historylist': history_list,
-			'optionFirst': content,
-		});
+		if(entity_id == store.state.setting.entityId){
+			store.commit('dialogue/setDiaData', {
+				'historylist': history_list,
+				'optionFirst': content,
+			});
+		}
 		//console.log(store.state.dialogue.optionFirst);
 		let tmp_content = store.state.setting.editContent;
-		tmp_content[store.state.setting.entityId] = '';
+		tmp_content[entity_id] = '';
 		store.commit('setting/setSettingData', {
 			'editContent': tmp_content
 		});
@@ -189,8 +195,11 @@ export default{
 					'crtCharacterId': character_id,
 					'entityId': entity_id,
 				}
-				let message_id = await dialogueQuery.createMessage(0, content, message_time + ':creating', store_data);
+				let message_id = await dialogueQuery.createMessage(0, content, message_time + ':creating', entity_id, store_data);
 				//console.log(message_id);
+				store.commit('setting/setSettingData', {
+					'editContent': tmp_content
+				});
 				
 				this.summarizeFun(content);
 			}
@@ -198,13 +207,6 @@ export default{
 		uni.hideLoading();
 	},
 	async summarizeFun(content){
-		let crt_message = await baseQuery.getDataByKey('cybercafe_message', {
-			'message_time': store.state.dialogue.messageTime
-		})
-		//console.log(crt_message[0].message_summary);
-		let old_summary = (crt_message[0].message_summary || crt_message[0].message_summary != 'null') 
-			? crt_message[0].message_summary : '';
-		
 		//总结剧情
 		try{
 			let summarize_content = await responseFun.toolRequest('summarize', content, 'chat');
@@ -221,30 +223,13 @@ export default{
 				return;
 			}
 			console.log(summarize_content, store.state.dialogue.messageTime);
-			baseQuery.updateDataByKey('cybercafe_message', {
-				'message_summary': summarize_content,
-			},{
-				'message_time': store.state.dialogue.messageTime
-			});
 			
 			let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
 				'entity_id': store.state.setting.entityId
 			})
 			let new_description = (crt_entity_data[0].extra_description || crt_entity_data[0].extra_description != 'null') 
 				? crt_entity_data[0].extra_description : '';
-			if(old_summary.length > 0 && new_description.includes(old_summary)){
-				new_description = new_description.replace(old_summary, summarize_content);
-				/* uni.showToast({
-					title: old_summary + ' 被替换掉',
-					icon: 'none'
-				}); */
-			}else{
-				new_description = new_description ? (new_description + ' ' + summarize_content) : summarize_content;
-				/* uni.showToast({
-					title: '追加了 ' + summarize_content,
-					icon: 'none'
-				}) */
-			}
+			new_description = new_description ? (new_description + ' ' + summarize_content) : summarize_content;
 			baseQuery.updateDataByKey('cybercafe_entity', {
 				'extra_description': new_description
 			},{

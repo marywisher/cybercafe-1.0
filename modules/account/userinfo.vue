@@ -84,7 +84,6 @@
 		},
 		components: {
 			//adPart,
-			checkinPart,
 			followPart
 		},
 		watch: {
@@ -109,7 +108,8 @@
 			...mapState('user', ['aimId', 'checkinCount', 'modalData', 'modalPageId', 
 				'modalShow', 'newMsgCount', 'tag', 'totalReward', 
 				'userAvatar', 'userKey', 'userGroup']),
-			...mapState('setting', ['darkMode', 'groupExpiration', 'ippos', 'userId']),
+			...mapState('setting', ['darkMode', 'groupDaysLeft', 'groupExpiration', 'ippos', 
+				'userId']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -138,7 +138,6 @@
 							//console.log(res.result.avatar);
 							//if(_self.aimId != _self.userId) _self.$refs.acFollowPart.init();
 							//else 
-							_self.$refs.acCheckinPart.init();
 							//_self.$emit('afterInit', res.result.character_num, res.result.character_fans_num);
 						} else {
 							uni.showToast({
@@ -159,10 +158,8 @@
 					this.expiration = tmp_date.getFullYear() + '年' + (tmp_date.getMonth() + 1) + '月' 
 						+ tmp_date.getDate() + '日';
 						
-					const today = new Date();
-					const daysDiff = Math.ceil((tmp_date.getTime() - today.getTime()) / (1000 * 3600 * 24));
 					//console.log(daysDiff);
-					if(daysDiff < 5){
+					if(this.groupDaysLeft < 0){
 						this.group_alarm = true;
 						this.setUserData({
 							'modalData': {
@@ -237,9 +234,7 @@
 				if(param){
 					this.card_title = '';
 					this.$nextTick(() => {
-						//if(this.aimId != this.userId) this.$refs.acFollowPart.init();
-						//else 
-						this.$refs.acCheckinPart.show();
+						this.$refs.acWeekCard.init();
 					})
 				}else{
 					this.card_title = '账号信息';

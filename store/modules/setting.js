@@ -20,6 +20,7 @@ export default {
 		fontColor: ['rgb(52,52,52)', 'rgb(52,52,52)'],
 		fontSize: 14,
 		globalTreeOrder: '[{"id":1,"title":"故事背景","enable":true},{"id":2,"title":"简介","enable":true},{"id":3,"title":"补充说明","enable":true},{"id":4,"title":"聊天记录","enable":false}]',
+		groupDaysLeft: 0,
 		groupExpiration: '',
 		imgRadius: 20,
 		imgWidth: 40,
@@ -30,6 +31,7 @@ export default {
 		promptLength: 0,//基础提示词长度
 		promptSelect: 0, //预设
 		replyMode: 'click', // 自动auto 手动点击click 回复方式
+		summarizingData: {}, // 待总结内容 {messageTime: content}
 		temperature: 0.95,
 		tips: ['升级食堂不用先卸载', '如果需要卸载食堂要记得先上传数据', '角色载入本地后数据都是在本地的'],
 		token: '',

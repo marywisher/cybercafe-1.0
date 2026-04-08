@@ -17,6 +17,7 @@ export default {
 				store.commit('setting/setSettingData', {
 					'token': res.result.token,
 					'groupExpiration': res.result.expiration,
+					'groupDaysLeft': res.result.days_left
 				});
 				store.commit('user/setUserData', {
 					userEmail: res.result.email,

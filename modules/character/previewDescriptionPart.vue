@@ -142,14 +142,14 @@
 				request.post("characterController/getCharacterDetail", 'characterPreview',
 					{'character_id': character_id}).then(res => {
 					if (res.code == 200) {
-						//console.log(res.result);
+						console.log(res.result);
 						let character_data = characterFun.parseData(res.result);
-						//console.log(character_data);
+						console.log(character_data);
 						_self.character_name = character_data.character_name;
 						_self.character_gender = character_data.character_gender;
 						_self.short_description = common.textToHtml(character_data.short_description);
 						_self.full_description = common.textToHtml(character_data.full_description);
-						_self.character_story = common.textToHtml(character_data.character_story);
+						if(character_data.character_story) _self.character_story = common.textToHtml(character_data.character_story);
 						_self.character_prologue = common.textToHtml(character_data.character_prologue);
 						_self.character_memo = common.textToHtml(character_data.character_memo);
 						_self.character_tag = character_data.character_tag;
@@ -178,7 +178,7 @@
 
 <style lang="scss">
 	.bg-color{
-		backgroundColor: $uni-bg-color;
+		background-color: $uni-bg-color;
 		color: $uni-text-color;
 	}
 	.character-container{
@@ -212,7 +212,7 @@
 	}
 	@media (prefers-color-scheme: dark) {
 		.bg-color{
-			backgroundColor: $uni-bg-dark-color-gray;
+			background-color: $uni-bg-dark-color-gray;
 			color: $uni-text-color-grey;
 		}
 	}

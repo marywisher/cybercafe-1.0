@@ -44,6 +44,7 @@ export default{
 			if('choices' in rel.value.content){
 				let usage = rel.value.content.usage;
 				let model = rel.value.content.model;
+				let entity_id = rel.value.content.entity_id;//不一定和现在store里的一致
 				let optionList = store.state.dialogue.options;
 				
 				//console.log(model);
@@ -70,7 +71,7 @@ export default{
 						'options': optionList
 					});
 				}
-				this.insertResponse(db_content, content, model);
+				this.insertResponse(db_content, content, model, entity_id);
 			}
 		}
 		catch(err) {
@@ -90,12 +91,12 @@ export default{
 			uni.hideLoading();
 		}
 	},
-	async insertResponse(db_content, content, model){
+	async insertResponse(db_content, content, model, entity_id){
 		let aiId = await baseQuery.insertDataByKey('cybercafe_ai_response', {
 				'api_return': JSON.stringify(db_content),
 				'ai_content': content.toString(),
 				'api_created_at': common.getCurrentTimeStampStr(),
-				'entity_id': store.state.setting.entityId,
+				'entity_id': entity_id,
 				'ai_type': model
 			}, true);
 		//console.log(aiId);
@@ -113,7 +114,7 @@ export default{
 			+ ':' + model;
 		//console.log(operation);
 		//console.log(store.state.dialogue.optionFlag);
-		messageFun.saveMessage(aiId, content[0], operation);
+		messageFun.saveMessage(aiId, content[0], operation, entity_id);
 	},
 	async chat(flag = true){
 		await promptFun.preOperation(flag);

@@ -86,13 +86,13 @@ export default{
 			});
 		});
 	},
-	createMessage(ai_id, content, operation, store_data = {}) {
+	createMessage(ai_id, content, operation, entity_id, store_data = {}) {
 		return new Promise((resolve, reject) => {
 			if(!store_data.hasOwnProperty('messageTime')){
 				store_data.messageTime = store.state.dialogue.messageTime;
 				store_data.prevMessageTime = store.state.dialogue.prevMessageTime;
 				store_data.crtCharacterId = store.state.dialogue.crtCharacterId;
-				store_data.entityId = store.state.setting.entityId;
+				store_data.entityId = entity_id;// 不一定和当前store内值一致
 			} 
 			sqlite.selectSQL("select * from `cybercafe_message` where `message_time` = '" 
 				+ store_data.messageTime + "'")
