@@ -31,7 +31,7 @@ export default {
 		promptLength: 0,//基础提示词长度
 		promptSelect: 0, //预设
 		replyMode: 'click', // 自动auto 手动点击click 回复方式
-		summarizingData: {}, // 待总结内容 {messageTime: content}
+		summarizingData: {}, // 待总结内容 {entity_id: {'0': messageTime, messageTime: content}}
 		temperature: 0.95,
 		tips: ['升级食堂不用先卸载', '如果需要卸载食堂要记得先上传数据', '角色载入本地后数据都是在本地的'],
 		token: '',

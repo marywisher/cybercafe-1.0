@@ -146,7 +146,7 @@ export default{
 		});
 		uni.hideLoading();
 		
-		this.summarizeFun(content);
+		this.addToSummarizingData(content);
 	},
 	async updateMessage(operation, content_index) {//修改文本
 		baseQuery.updateDataByKey('cybercafe_message', {
@@ -175,7 +175,7 @@ export default{
 		//console.log(store.state.dialogue.historylist);
 		uni.hideLoading();
 		
-		this.summarizeFun(store.state.dialogue.optionFirst);
+		this.addToSummarizingData(store.state.dialogue.optionFirst);
 	},
 	async injectPrologue(character_id) {//注入开场白，仅用在创建本地切片初始
 		//console.log(character_id);
@@ -197,16 +197,18 @@ export default{
 				}
 				let message_id = await dialogueQuery.createMessage(0, content, message_time + ':creating', entity_id, store_data);
 				//console.log(message_id);
+				let tmp_content = store.state.setting.editContent;
+				tmp_content[entity_id] = '';
 				store.commit('setting/setSettingData', {
 					'editContent': tmp_content
 				});
 				
-				this.summarizeFun(content);
+				this.addToSummarizingData(content, message_time);
 			}
 		}
 		uni.hideLoading();
 	},
-	async summarizeFun(content){
+	async summarizeFun(content, message_times){
 		//总结剧情
 		try{
 			let summarize_content = await responseFun.toolRequest('summarize', content, 'chat');
@@ -223,7 +225,7 @@ export default{
 				return;
 			}
 			console.log(summarize_content, store.state.dialogue.messageTime);
-			
+			//更新entity表
 			let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
 				'entity_id': store.state.setting.entityId
 			})
@@ -235,20 +237,132 @@ export default{
 			},{
 				'entity_id': store.state.setting.entityId
 			})
-			if(store.state.dialogue.editMode == 1 && store.state.setting.replyMode == 'auto'){
-				store.commit('dialogue/setDiaData', {
-					'editMode': 2
-				})
-			}else{
-				store.commit('dialogue/setDiaData', {
-					'editMode': 0
-				})
-			}
+
+			//保存入summary表
+			baseQuery.updateDataByKey('cybercafe_summary_message', {
+				'message_times': message_times,
+				'summary_content': summarize_content,
+				'entity_id': store.state.setting.entityId
+			});
 		}catch(error){
 			uni.showToast({
 				title: error,
 				icon: 'none'
 			})
+		}
+	},
+	async getSummary(){//初始化加载没总结的消息
+		let summary_list = await dialogueQuery.getSummaryMessageByEntityId();
+		//获取当前已总结的时间戳
+		let last_summary_time = '';
+		if(summary_list.length > 0){
+			let last_summary_times = summary_list[summary_list.length - 1].message_times;
+			let last_summary_time_list = last_summary_times.split(',')
+			if(last_summary_time_list.length > 0)
+				last_summary_time = last_summary_time_list[last_summary_time_list.length - 1];
+		}
+
+		let summarizing_data = store.state.setting.summarizingData;
+		if(!summarizing_data){
+			summarizing_data = {};
+		}
+		if(!summarizing_data[store.state.setting.entityId]){
+			summarizing_data[store.state.setting.entityId] = {};
+		}
+		if(summarizing_data[store.state.setting.entityId]){
+			if((last_summary_time.length > 0 && summarizing_data[store.state.setting.entityId]['0'].length > 0 
+				&& BigInt(last_summary_time) < BigInt(summarizing_data[store.state.setting.entityId]['0']))
+			|| (last_summary_time.length == 0 && summarizing_data[store.state.setting.entityId]['0'].length > 0)){
+				last_summary_time = summarizing_data[store.state.setting.entityId]['0'];
+			}
+		}
+
+		//由这个时间戳以后的消息加载入store
+		let message_list = [];
+		if(last_summary_time.length > 0){
+			message_list = await dialogueQuery.getMessageAfterMessageTime(last_summary_time);
+		}else{
+			message_list = await dialogueQuery.getMessageAfterMessageTime('0');
+		}
+
+		message_list.forEach(message => {
+			summarizing_data[store.state.setting.entityId][message.message_time] = message.message_content;
+			summarizing_data[store.state.setting.entityId]['0'] = message.message_time;
+		});
+		store.commit('setting/setSettingData', {
+			'summarizingData': summarizing_data
+		});
+
+		if(Object.keys(summarizing_data[store.state.setting.entityId]).length > 101){
+			this.judgeSummary();
+		}
+	},
+	async judgeSummary(){
+		//计算summarizingData对应值长度
+		let summary_length = 0;
+		let summarizing_data = store.state.setting.summarizingData;
+		let entity_id = store.state.setting.entityId;
+		let entity_summary_data = summarizing_data[entity_id];
+		let content = '';
+		let message_time_list = [];
+		for(let message_time in entity_summary_data){
+			if(message_time == '0') continue;
+			if(summary_length >= store.state.setting.maxToken) break;
+			content += entity_summary_data[message_time];
+			summary_length += entity_summary_data[message_time].length;
+			message_time_list.push(message_time);
+		};
+		let message_times = message_time_list.join(',');
+		//取超出部分进行总结
+		await this.summarizeFun(content, message_times);
+
+		//从summarizingData移除对应部分
+		message_time_list.forEach(message_time => {
+			this.removeSummarizingData(message_time, summarizing_data, false);
+		})
+		store.commit('setting/setSettingData', {
+			'summarizingData': summarizing_data
+		});
+	},
+	addToSummarizingData(content, message_time = store.state.dialogue.messageTime){
+		let summarizing_data = store.state.setting.summarizingData;
+		if(!summarizing_data){
+			summarizing_data = {};
+		}
+		if(!summarizing_data[store.state.setting.entityId]){
+			summarizing_data[store.state.setting.entityId] = {};
+		}
+		summarizing_data[store.state.setting.entityId][message_time] = content;
+		summarizing_data[store.state.setting.entityId]['0'] = message_time;
+		store.commit('setting/setSettingData', {
+			'summarizingData': summarizing_data
+		});
+	},
+	removeSummarizingData(message_time, 
+		summarizing_data = null,
+		need_save = true){
+		if(!summarizing_data){
+			summarizing_data = store.state.setting.summarizingData;
+		}
+		let entity_id = store.state.setting.entityId;
+		if(summarizing_data[entity_id] && summarizing_data[entity_id][message_time]){
+			delete summarizing_data[entity_id][message_time];
+			// 如果删除的是最新的，需要更新 '0'
+			if(summarizing_data[entity_id]['0'] == message_time){
+				// 找出剩余的最大时间戳
+				let max_time = '0';
+				for(let key in summarizing_data[entity_id]){
+					if(key != '0' && key > max_time){
+						max_time = key;
+					}
+				}
+				summarizing_data[entity_id]['0'] = max_time;
+			}
+		}
+		if(need_save){
+			store.commit('setting/setSettingData', {
+				'summarizingData': summarizing_data
+			});
 		}
 	}
 }

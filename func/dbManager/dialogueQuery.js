@@ -180,4 +180,29 @@ export default{
 			});
 		});
 	},
+	getSummaryMessageByEntityId(){
+		return new Promise((resolve, reject) => {
+			let query_str = "select * from cybercafe_summary_message where entity_id = '" 
+				+ store.state.setting.entityId + "' order by summary_id;";
+			
+			sqlite.selectSQL(query_str).then(summaryList => {
+				resolve(summaryList);
+			}).catch(e => {
+				reject(e);
+			});
+		});
+	},
+	getMessageAfterMessageTime(message_time = '0'){
+		return new Promise((resolve, reject) => {
+			let query_str = "select * from `cybercafe_message` where `message_time` > '" 
+				+ message_time + "' and entity_id = '" 
+				+ store.state.setting.entityId + "' order by message_id;";
+			
+			sqlite.selectSQL(query_str).then(messageList => {
+				resolve(messageList);
+			}).catch(e => {
+				reject(e);
+			});
+		});
+	},
 }

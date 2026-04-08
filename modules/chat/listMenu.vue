@@ -14,6 +14,7 @@
 	import common from '@/func/common/common';
 	import dialogueQuery from '@/func/dbManager/dialogueQuery';
 	import responseFun from '@/func/entity/responseFun';
+	import messageFun from '@/func/entity/messageFun';
 	//import promptFun from '@/func/entity/promptFun';
 	import {
 		mapMutations,
@@ -26,7 +27,8 @@
 			return {
 				menu_items: [],
 				selected_id: 0,
-				selected_text: ''
+				selected_text: '',
+				selected_message_time: ''
 			};
 		},
 		computed: {
@@ -34,17 +36,20 @@
 			...mapState('dialogue', ['cDisplayId', 'crtCharacterId', 'historylist', 'messageTime', 
 				'optionFirst', 'options', 'prevMessageTime', 'refreshList',
 				'resetFlag']),
-			...mapState('setting', ['entityId']),
+			...mapState('setting', ['entityId', 'summarizingData']),
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
-			...mapMutations('setting', ['getSettingData']),
-			showMenu(x, y, items, id, text) {
+			...mapMutations('setting', ['getSettingData', 'setSettingData']),
+			async showMenu(x, y, items, id, text) {
 				this.$refs.menu.showMenu(x, y);
 				this.menu_items = items;
 				this.selected_id = id;
 				this.selected_text = text;
+
+				let message_data  = await baseQuery.getDataByKey('cybercafe_message', {'message_id': id});
+				if(message_data.length > 0) this.selected_message_time = message_data[0].message_time;
 			},
 			hideMenu() {
 				this.$refs.menu.hideMenu();
@@ -103,6 +108,7 @@
 				})
 			},
 			deleteMessage(){
+				messageFun.removeSummarizingData(this.selected_message_time);
 				//console.log('用户点击确定' + this.selected_id);
 				if(this.selected_id == 0){//option first
 					this.deleteOptionFirst();
@@ -116,7 +122,6 @@
 								'historylist': this.historylist,
 								'refreshList': -2,
 							});
-							//promptFun.preOperation();
 							break;
 						}
 					}

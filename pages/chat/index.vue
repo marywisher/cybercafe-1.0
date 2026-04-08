@@ -98,6 +98,8 @@
 					this.$refs.chatNewUserPart.init();
 					this.$refs.chatBottomPart.init();
 				})
+
+				await messageFun.getSummary();
 			},
 			afterUpdateList(){//非锁定状态时，自动下滑到底部
 				//console.log(this.in_pull_down_mode)
