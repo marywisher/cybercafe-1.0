@@ -95,7 +95,7 @@
 					this.$refs.chatHeaderPart.init();
 					//console.log(this.entityId);
 					//console.log(this.historylist);
-					this.$refs.chatNewUserPart.init();
+					if(this.historylist.length == 0) this.$refs.chatNewUserPart.init();
 					this.$refs.chatBottomPart.init();
 				})
 

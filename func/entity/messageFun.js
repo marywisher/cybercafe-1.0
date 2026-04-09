@@ -211,7 +211,14 @@ export default{
 	async summarizeFun(content, message_times){
 		//总结剧情
 		try{
-			let summarize_content = await responseFun.toolRequest('summarize', content, 'chat');
+			let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
+				'entity_id': store.state.setting.entityId
+			});
+			
+			let summarize_content = await responseFun.toolRequest('summarize2', {
+				'des': crt_entity_data[0].extra_description,
+				'content': content
+			}, 'chat');//summarize2和原方法区分，向后兼容
 			//console.log(typeof summarize_content);
 			if(typeof summarize_content == 'string' && common.isJsonString(summarize_content)){
 				let json_summarize = JSON.parse(summarize_content);
@@ -226,9 +233,6 @@ export default{
 			}
 			console.log(summarize_content, store.state.dialogue.messageTime);
 			//更新entity表
-			let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
-				'entity_id': store.state.setting.entityId
-			})
 			let new_description = (crt_entity_data[0].extra_description || crt_entity_data[0].extra_description != 'null') 
 				? crt_entity_data[0].extra_description : '';
 			new_description = new_description ? (new_description + ' ' + summarize_content) : summarize_content;
@@ -253,6 +257,7 @@ export default{
 	},
 	async getSummary(){//初始化加载没总结的消息
 		let summary_list = await dialogueQuery.getSummaryMessageByEntityId();
+		//console.log(summary_list);
 		//获取当前已总结的时间戳
 		let last_summary_time = '';
 		if(summary_list.length > 0){
@@ -261,22 +266,26 @@ export default{
 			if(last_summary_time_list.length > 0)
 				last_summary_time = last_summary_time_list[last_summary_time_list.length - 1];
 		}
-
-		let summarizing_data = store.state.setting.summarizingData;
-		if(!summarizing_data){
-			summarizing_data = {};
+		//console.log(last_summary_time);
+		let summarizing_data = {};
+		if(store.state.setting.hasOwnProperty("summarizingData")){
+			summarizing_data = store.state.setting.summarizingData;
 		}
-		if(!summarizing_data[store.state.setting.entityId]){
+		//console.log(summarizing_data);
+		if(!summarizing_data.hasOwnProperty(store.state.setting.entityId)){
 			summarizing_data[store.state.setting.entityId] = {};
 		}
+		//console.log(summarizing_data[store.state.setting.entityId]);
 		if(summarizing_data[store.state.setting.entityId]){
-			if((last_summary_time.length > 0 && summarizing_data[store.state.setting.entityId]['0'].length > 0 
+			if((last_summary_time.length > 0 && summarizing_data[store.state.setting.entityId].hasOwnProperty('0') 
+				&& summarizing_data[store.state.setting.entityId]['0'].length > 0 
 				&& BigInt(last_summary_time) < BigInt(summarizing_data[store.state.setting.entityId]['0']))
-			|| (last_summary_time.length == 0 && summarizing_data[store.state.setting.entityId]['0'].length > 0)){
+			|| (last_summary_time.length == 0 && summarizing_data[store.state.setting.entityId].hasOwnProperty('0')
+				&& summarizing_data[store.state.setting.entityId]['0'].length > 0)){
 				last_summary_time = summarizing_data[store.state.setting.entityId]['0'];
 			}
 		}
-
+		//console.log(summarizing_data);
 		//由这个时间戳以后的消息加载入store
 		let message_list = [];
 		if(last_summary_time.length > 0){
@@ -292,14 +301,15 @@ export default{
 		store.commit('setting/setSettingData', {
 			'summarizingData': summarizing_data
 		});
-
-		if(Object.keys(summarizing_data[store.state.setting.entityId]).length > 101){
+		//console.log(summarizing_data);
+		if(Object.keys(summarizing_data[store.state.setting.entityId]).length > 100){
 			this.judgeSummary();
 		}
 	},
 	async judgeSummary(){
 		//计算summarizingData对应值长度
 		let summary_length = 0;
+		let summary_count = 0;
 		let summarizing_data = store.state.setting.summarizingData;
 		let entity_id = store.state.setting.entityId;
 		let entity_summary_data = summarizing_data[entity_id];
@@ -307,10 +317,11 @@ export default{
 		let message_time_list = [];
 		for(let message_time in entity_summary_data){
 			if(message_time == '0') continue;
-			if(summary_length >= store.state.setting.maxToken) break;
+			if(summary_length >= store.state.setting.maxToken || summary_count > Object.keys(summarizing_data[store.state.setting.entityId]).length / 2) break;
 			content += entity_summary_data[message_time];
 			summary_length += entity_summary_data[message_time].length;
 			message_time_list.push(message_time);
+			summary_count ++;
 		};
 		let message_times = message_time_list.join(',');
 		//取超出部分进行总结
@@ -340,7 +351,7 @@ export default{
 	},
 	removeSummarizingData(message_time, 
 		summarizing_data = null,
-		need_save = true){
+		from_menu = true){//删除消息时才需要同步0键，总结完的删除不用更新0键
 		if(!summarizing_data){
 			summarizing_data = store.state.setting.summarizingData;
 		}
@@ -348,7 +359,7 @@ export default{
 		if(summarizing_data[entity_id] && summarizing_data[entity_id][message_time]){
 			delete summarizing_data[entity_id][message_time];
 			// 如果删除的是最新的，需要更新 '0'
-			if(summarizing_data[entity_id]['0'] == message_time){
+			if(summarizing_data[entity_id]['0'] == message_time && from_menu){
 				// 找出剩余的最大时间戳
 				let max_time = '0';
 				for(let key in summarizing_data[entity_id]){
@@ -359,7 +370,7 @@ export default{
 				summarizing_data[entity_id]['0'] = max_time;
 			}
 		}
-		if(need_save){
+		if(from_menu){
 			store.commit('setting/setSettingData', {
 				'summarizingData': summarizing_data
 			});

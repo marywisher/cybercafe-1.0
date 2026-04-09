@@ -327,6 +327,7 @@ export default {
 		data.images = await this.getDataByKey('cybercafe_images');
 		data.incubator = await sqlite.selectSQL('select * from cybercafe_incubator where character_status > 3');
 		data.bubble_pattern = await this.getDataByKey('cybercafe_bubble_pattern');
+		data.summary_message = await this.getDataByKey('cybercafe_summary_message');
 		
 		data.setting = store.state.setting;
 		
