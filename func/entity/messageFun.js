@@ -208,15 +208,18 @@ export default{
 		}
 		uni.hideLoading();
 	},
-	async summarizeFun(content, message_times){
+	async summarizeFun(content, message_times, is_new = false){
 		//总结剧情
 		try{
 			let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
 				'entity_id': store.state.setting.entityId
 			});
-			
+			let pre_description = '';
+			if(!is_new && crt_entity_data[0].extra_description && crt_entity_data[0].extra_description != 'null'){
+				pre_description = crt_entity_data[0].extra_description;
+			}
 			let summarize_content = await responseFun.toolRequest('summarize2', {
-				'des': crt_entity_data[0].extra_description,
+				'des': pre_description,
 				'content': content
 			}, 'chat');//summarize2和原方法区分，向后兼容
 			//console.log(typeof summarize_content);
@@ -229,13 +232,11 @@ export default{
 				summarize_content = summarize_content.summary;
 			}else if(typeof summarize_content != 'string'){
 				//console.log(summarize_content);
-				return;
+				return false;
 			}
 			console.log(summarize_content, store.state.dialogue.messageTime);
 			//更新entity表
-			let new_description = (crt_entity_data[0].extra_description || crt_entity_data[0].extra_description != 'null') 
-				? crt_entity_data[0].extra_description : '';
-			new_description = new_description ? (new_description + ' ' + summarize_content) : summarize_content;
+			let new_description = pre_description ? (pre_description + ' ' + summarize_content) : summarize_content;
 			baseQuery.updateDataByKey('cybercafe_entity', {
 				'extra_description': new_description
 			},{
@@ -248,11 +249,13 @@ export default{
 				'summary_content': summarize_content,
 				'entity_id': store.state.setting.entityId
 			});
+			return true;
 		}catch(error){
 			uni.showToast({
 				title: error,
 				icon: 'none'
 			})
+			return false;
 		}
 	},
 	async getSummary(){//初始化加载没总结的消息
@@ -302,11 +305,13 @@ export default{
 			'summarizingData': summarizing_data
 		});
 		//console.log(summarizing_data);
-		if(Object.keys(summarizing_data[store.state.setting.entityId]).length > 100){
-			this.judgeSummary();
-		}
+		
+		this.judgeSummary();
 	},
 	async judgeSummary(){
+		if(Object.keys(summarizing_data[store.state.setting.entityId]).length <= 100){
+			return;
+		}
 		//计算summarizingData对应值长度
 		let summary_length = 0;
 		let summary_count = 0;
@@ -315,8 +320,12 @@ export default{
 		let entity_summary_data = summarizing_data[entity_id];
 		let content = '';
 		let message_time_list = [];
+		let is_new = true;
 		for(let message_time in entity_summary_data){
-			if(message_time == '0') continue;
+			if(message_time == '0'){
+				is_new = entity_summary_data['0'] == '0';
+				continue;
+			} 
 			if(summary_length >= store.state.setting.maxToken || summary_count > Object.keys(summarizing_data[store.state.setting.entityId]).length / 2) break;
 			content += entity_summary_data[message_time];
 			summary_length += entity_summary_data[message_time].length;
@@ -325,15 +334,17 @@ export default{
 		};
 		let message_times = message_time_list.join(',');
 		//取超出部分进行总结
-		await this.summarizeFun(content, message_times);
+		let summary_result = await this.summarizeFun(content, message_times, is_new);
 
-		//从summarizingData移除对应部分
-		message_time_list.forEach(message_time => {
-			this.removeSummarizingData(message_time, summarizing_data, false);
-		})
-		store.commit('setting/setSettingData', {
-			'summarizingData': summarizing_data
-		});
+		if(summary_result){
+			//从summarizingData移除对应部分
+			message_time_list.forEach(message_time => {
+				this.removeSummarizingData(message_time, summarizing_data, false);
+			})
+			store.commit('setting/setSettingData', {
+				'summarizingData': summarizing_data
+			});
+		}
 	},
 	addToSummarizingData(content, message_time = store.state.dialogue.messageTime){
 		let summarizing_data = store.state.setting.summarizingData;
@@ -348,6 +359,8 @@ export default{
 		store.commit('setting/setSettingData', {
 			'summarizingData': summarizing_data
 		});
+
+		this.judgeSummary();
 	},
 	removeSummarizingData(message_time, 
 		summarizing_data = null,
