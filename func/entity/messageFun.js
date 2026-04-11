@@ -306,24 +306,23 @@ export default{
 		});
 		//console.log(summarizing_data);
 		
-		this.judgeSummary();
+		this.judgeSummary(last_summary_time == '');
 	},
-	async judgeSummary(){
-		if(Object.keys(summarizing_data[store.state.setting.entityId]).length <= 100){
+	async judgeSummary(is_new = false){
+		let summarizing_data = store.state.setting.summarizingData;
+		let entity_id = store.state.setting.entityId;
+		let entity_summary_data = summarizing_data[entity_id];
+		if(Object.keys(entity_summary_data).length < 101){
+			console.log('待总结长度不足，不予执行');
 			return;
 		}
 		//计算summarizingData对应值长度
 		let summary_length = 0;
 		let summary_count = 0;
-		let summarizing_data = store.state.setting.summarizingData;
-		let entity_id = store.state.setting.entityId;
-		let entity_summary_data = summarizing_data[entity_id];
 		let content = '';
 		let message_time_list = [];
-		let is_new = true;
 		for(let message_time in entity_summary_data){
 			if(message_time == '0'){
-				is_new = entity_summary_data['0'] == '0';
 				continue;
 			} 
 			if(summary_length >= store.state.setting.maxToken || summary_count > Object.keys(summarizing_data[store.state.setting.entityId]).length / 2) break;
@@ -334,6 +333,7 @@ export default{
 		};
 		let message_times = message_time_list.join(',');
 		//取超出部分进行总结
+		//console.log(content, message_times, is_new);
 		let summary_result = await this.summarizeFun(content, message_times, is_new);
 
 		if(summary_result){

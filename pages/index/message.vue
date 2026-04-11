@@ -117,6 +117,17 @@
 									'modalPageId': 'message',
 									'totalReward': _self.totalReward + res.result.reward
 								})
+							}else{
+								_self.setUserData({
+									'modalData': {
+										'title': "友情提醒",
+										'content': res.result.msg,
+										'confirmText': '',
+										'cancelText': "OK",
+									},
+									'modalShow': true,
+									'modalPageId': 'message'
+								})
 							}
 						}else{
 							uni.showToast({

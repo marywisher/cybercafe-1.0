@@ -13,7 +13,6 @@
 		</view>
 		<view class="after-tag display-flex entity-line display-line sp-between">
 			<view>内容概要</view>
-			<view class="iconfont icon-shuaxin hint" @tap="summarizeFun">点击此处，AI重新生成</view>
 		</view>
 		<view class="entity-line">
 			<textarea autoHeight v-model="extra_description" :cursor-spacing="150" :maxlength="-1"
@@ -70,7 +69,6 @@
 	import baseQuery from '@/func/dbManager/baseQuery';
 	import characterPart from './characterPart';
 	import dialogueQuery from '@/func/dbManager/dialogueQuery';
-	import responseFun from '@/func/entity/responseFun';
 	import {
 		mapMutations,
 		mapState,
@@ -204,66 +202,6 @@
 				//console.log(character_data);
 				this.character_on_stage.push(character_data);
 				this.$forceUpdate();
-			},
-			async summarizeFun(){
-				let message_data = await baseQuery.getDataByKey('cybercafe_message', {
-					'entity_id': this.entityId
-				});
-				let total_message_count = message_data.length;
-				let wait_to_summarize_message_count = 0;
-				for(let i = 0; i < message_data.length; i ++){
-					if(!message_data[0].message_summary || message_data[0].message_summary.length == 0){
-						wait_to_summarize_message_count ++;
-					}
-				}
-				let _self = this;
-				this.setUserData({
-					'modalData': {
-						title: "温馨提醒",
-						content: "即将覆盖内容。未总结内容越多，耗时越长，确定现在开始总结吗？（未总结"
-							+ wait_to_summarize_message_count + "条/总" + total_message_count + "条）",
-						confirmText: "开始总结",
-						cancelText: "我再想想",
-						success: (res) => {
-							if(res.confirm){
-								_self.summarizing(message_data);
-							}
-						},
-					},
-					'modalShow': true,
-					'modalPageId': 'entity'
-				})
-			},
-			async summarizing(data){
-				uni.showLoading({
-					title: '内容总结中，请耐心等待...'
-				})
-				this.extra_description = '';
-				for(let i in data){
-					if(data[i].message_summary.length == 0 || data[i].message_summary == 'null'){
-						let summarize_content = await responseFun.toolRequest('summarize', 
-							data[i].message_content, 'entity');
-						if(common.isJsonString(summarize_content)){
-							let json_summarize = JSON.parse(summarize_content);
-							if(json_summarize.hasOwnProperty('summary')){
-								summarize_content = json_summarize.summary;
-							}
-						}baseQuery.updateDataByKey('cybercafe_message', {
-							'message_summary': summarize_content,
-						},{
-							'message_id': data[i].message_id
-						});
-						this.extra_description += summarize_content;
-					}else{
-						this.extra_description += data[i].message_summary;
-					}
-				}
-				this.autoSave('extra_description', this.extra_description);
-				uni.hideLoading();
-				uni.showToast({
-					title: '总结完毕',
-					icon: 'success'
-				})
 			},
 			changeAvatar(){
 				this.$emit('changeSubjectImg');
