@@ -117,7 +117,7 @@
 									'modalPageId': 'message',
 									'totalReward': _self.totalReward + res.result.reward
 								})
-							}else{
+							}else if(res.result.msg && res.result.msg != 'done'){
 								_self.setUserData({
 									'modalData': {
 										'title': "友情提醒",

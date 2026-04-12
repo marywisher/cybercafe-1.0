@@ -208,30 +208,37 @@ export default{
 		}
 		uni.hideLoading();
 	},
-	async summarizeFun(content, message_times, is_new = false){
+	async summarizeFun(content, message_times, entity_id, is_new = false){
+		if(!entity_id > 0){
+			console.log('非有效实体消息，不予总结');
+			return false;
+		}
 		//总结剧情
 		try{
 			let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
-				'entity_id': store.state.setting.entityId
+				'entity_id': entity_id
 			});
 			let pre_description = '';
 			if(!is_new && crt_entity_data[0].extra_description && crt_entity_data[0].extra_description != 'null'){
 				pre_description = crt_entity_data[0].extra_description;
 			}
-			let summarize_content = await responseFun.toolRequest('summarize2', {
+			let summarize_result = await responseFun.toolRequest('summarize2', {
 				'des': pre_description,
 				'content': content
-			}, 'chat');//summarize2和原方法区分，向后兼容
-			//console.log(typeof summarize_content);
-			if(typeof summarize_content == 'string' && common.isJsonString(summarize_content)){
-				let json_summarize = JSON.parse(summarize_content);
-				if(json_summarize.hasOwnProperty('summary')){
-					summarize_content = json_summarize.summary;
+			}, 'entity');//summarize2和原方法区分，向后兼容
+			console.log(typeof summarize_result);
+			let summarize_content = '';
+			if(typeof summarize_result == 'string' && common.isJsonString(summarize_result)){
+				let summarize_json = JSON.parse(summarize_result);
+				if(summarize_json.hasOwnProperty('relationship_evolution')){
+					summarize_content = this.getSummaryDescription(summarize_json.relationship_evolution);
+				}else{
+					return false;
 				}
-			}else if(typeof summarize_content == 'object'){
-				summarize_content = summarize_content.summary;
-			}else if(typeof summarize_content != 'string'){
-				//console.log(summarize_content);
+			}else if(typeof summarize_result == 'object' && summarize_result.hasOwnProperty('relationship_evolution')){
+				summarize_content = this.getSummaryDescription(summarize_result.relationship_evolution);
+			}else{
+				//console.log(summarize_result);
 				return false;
 			}
 			console.log(summarize_content, store.state.dialogue.messageTime);
@@ -240,14 +247,14 @@ export default{
 			baseQuery.updateDataByKey('cybercafe_entity', {
 				'extra_description': new_description
 			},{
-				'entity_id': store.state.setting.entityId
+				'entity_id': entity_id
 			})
 
 			//保存入summary表
 			baseQuery.updateDataByKey('cybercafe_summary_message', {
 				'message_times': message_times,
-				'summary_content': summarize_content,
-				'entity_id': store.state.setting.entityId
+				'summary_content': JSON.stringify(summarize_result),
+				'entity_id': entity_id
 			});
 			return true;
 		}catch(error){
@@ -279,16 +286,6 @@ export default{
 			summarizing_data[store.state.setting.entityId] = {};
 		}
 		//console.log(summarizing_data[store.state.setting.entityId]);
-		if(summarizing_data[store.state.setting.entityId]){
-			if((last_summary_time.length > 0 && summarizing_data[store.state.setting.entityId].hasOwnProperty('0') 
-				&& summarizing_data[store.state.setting.entityId]['0'].length > 0 
-				&& BigInt(last_summary_time) < BigInt(summarizing_data[store.state.setting.entityId]['0']))
-			|| (last_summary_time.length == 0 && summarizing_data[store.state.setting.entityId].hasOwnProperty('0')
-				&& summarizing_data[store.state.setting.entityId]['0'].length > 0)){
-				last_summary_time = summarizing_data[store.state.setting.entityId]['0'];
-			}
-		}
-		//console.log(summarizing_data);
 		//由这个时间戳以后的消息加载入store
 		let message_list = [];
 		if(last_summary_time.length > 0){
@@ -306,11 +303,10 @@ export default{
 		});
 		//console.log(summarizing_data);
 		
-		this.judgeSummary(last_summary_time == '');
+		this.judgeSummary(store.state.setting.entityId, last_summary_time == '');
 	},
-	async judgeSummary(is_new = false){
+	async judgeSummary(entity_id, is_new = false){
 		let summarizing_data = store.state.setting.summarizingData;
-		let entity_id = store.state.setting.entityId;
 		let entity_summary_data = summarizing_data[entity_id];
 		if(Object.keys(entity_summary_data).length < 101){
 			console.log('待总结长度不足，不予执行');
@@ -334,8 +330,8 @@ export default{
 		let message_times = message_time_list.join(',');
 		//取超出部分进行总结
 		//console.log(content, message_times, is_new);
-		let summary_result = await this.summarizeFun(content, message_times, is_new);
-
+		let summary_result = await this.summarizeFun(content, message_times, entity_id, is_new);
+		console.log('summary_result:', summary_result);
 		if(summary_result){
 			//从summarizingData移除对应部分
 			message_time_list.forEach(message_time => {
@@ -388,5 +384,15 @@ export default{
 				'summarizingData': summarizing_data
 			});
 		}
+	},
+	getSummaryDescription(summary_result){
+		let result_content = '';
+		summary_result.forEach(function(stage_summary) {
+			if(stage_summary.hasOwnProperty('description')){
+				console.log(stage_summary.description);
+				result_content += stage_summary.description;
+			}
+		}, this);
+		return result_content;
 	}
 }
