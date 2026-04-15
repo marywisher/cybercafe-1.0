@@ -225,38 +225,18 @@ export default{
 			let summarize_result = await responseFun.toolRequest('summarize2', {
 				'des': pre_description,
 				'content': content
-			}, 'entity');//summarize2和原方法区分，向后兼容
-			console.log(typeof summarize_result);
-			let summarize_content = '';
-			if(typeof summarize_result == 'string' && common.isJsonString(summarize_result)){
-				let summarize_json = JSON.parse(summarize_result);
-				if(summarize_json.hasOwnProperty('relationship_evolution')){
-					summarize_content = this.getSummaryDescription(summarize_json.relationship_evolution);
-				}else{
-					return false;
-				}
-			}else if(typeof summarize_result == 'object' && summarize_result.hasOwnProperty('relationship_evolution')){
-				summarize_content = this.getSummaryDescription(summarize_result.relationship_evolution);
+			}, 'entity');//summarize2和原方法区分，向后兼容，异步执行
+
+			if(summarize_result.status == 'success'){
+				console.log('summarize_result:', summarize_result);
+				setTimeout(() => {
+					this.getResponseReturn(pre_description, message_times, entity_id, summarize_result.request_id);
+				}, 120000);//120秒后获取总结结果，更新entity表和summary表
+				
+				return true;
 			}else{
-				//console.log(summarize_result);
 				return false;
 			}
-			console.log(summarize_content, store.state.dialogue.messageTime);
-			//更新entity表
-			let new_description = pre_description ? (pre_description + ' ' + summarize_content) : summarize_content;
-			baseQuery.updateDataByKey('cybercafe_entity', {
-				'extra_description': new_description
-			},{
-				'entity_id': entity_id
-			})
-
-			//保存入summary表
-			baseQuery.updateDataByKey('cybercafe_summary_message', {
-				'message_times': message_times,
-				'summary_content': JSON.stringify(summarize_result),
-				'entity_id': entity_id
-			});
-			return true;
 		}catch(error){
 			uni.showToast({
 				title: error,
@@ -394,5 +374,49 @@ export default{
 			}
 		}, this);
 		return result_content;
+	},
+	async getResponseReturn(pre_description, message_times, entity_id, request_id){
+		if(!request_id){
+			console.log('无效的参数，不予获取总结结果');
+			return false;
+		}
+		let summarize_result = await responseFun.getRequestCallback(request_id, 'entity');
+		if(summarize_result.status != 'success'){
+			console.log('获取总结结果失败：' + summarize_result.msg);
+			return false;
+		}
+		console.log(typeof summarize_result.content);
+		let callback_data = summarize_result.content;
+		let summarize_content = '';
+		if(typeof callback_data == 'string' && common.isJsonString(callback_data)){
+			let summarize_json = JSON.parse(callback_data);
+			if(summarize_json.hasOwnProperty('relationship_evolution')){
+				summarize_content = this.getSummaryDescription(summarize_json.relationship_evolution);
+			}else{
+				return false;
+			}
+		}else if(typeof callback_data == 'object' && callback_data.hasOwnProperty('relationship_evolution')){
+			summarize_content = this.getSummaryDescription(callback_data.relationship_evolution);
+		}else{
+			//console.log(callback_data);
+			return false;
+		}
+		console.log(summarize_content, message_times);
+		//更新entity表
+		let new_description = pre_description ? (pre_description + ' ' + summarize_content) : summarize_content;
+		baseQuery.updateDataByKey('cybercafe_entity', {
+			'extra_description': new_description
+		},{
+			'entity_id': entity_id
+		})
+
+		//保存入summary表
+		baseQuery.insertDataByKey('cybercafe_summary_message', {
+			'message_times': message_times,
+			'summary_content': JSON.stringify(summarize_result.content),
+			'entity_id': entity_id
+		});
+
+		return true;
 	}
 }

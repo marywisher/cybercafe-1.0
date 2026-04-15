@@ -148,7 +148,7 @@
 			},
 			async confirmFun(){
 				let response_feedback = await responseFun.toolRequest('sensitive', this.edit_text.trim(), 'chat');
-				if(response_feedback == 200){//返回值就是200
+				if(response_feedback.status == 'success'){//返回值就是200
 					this.setDiaData({
 						'optionFirst': this.edit_text.trim(),
 					});
@@ -159,7 +159,7 @@
 					this.setUserData({
 						'modalData': {
 							title: "温馨提示",
-							content: response_feedback,
+							content: response_feedback.msg,
 							confirmText: '',
 							cancelText: "OK",
 						},
@@ -176,7 +176,7 @@
 	.edit-box{
 		width: 90%;
 		line-height: 46rpx;
-		backgroundColor: $uni-text-color-inverse;
+		background-color: $uni-text-color-inverse;
 	}
 	.dot-part{
 		overflow-x: scroll;
@@ -194,7 +194,7 @@
 			color: $uni-color-dark-main;
 		}
 		.edit-box{
-			backgroundColor: $uni-bg-dark-color-gray;
+			background-color: $uni-bg-dark-color-gray;
 		}
 	}
 </style>

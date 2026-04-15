@@ -214,22 +214,11 @@
 					//this[key + '_description'][this.prompt_key] = this.prompt_value;
 					let response_feedback = await responseFun.toolRequest('sensitive', 
 						this.prompt_value, 'promptSetting');
-					if(response_feedback == 200){
+					if(response_feedback.status == 'success'){
 						this.autoSave(this.prompt_key, this.prompt_value);
 						this.ta_show = false;
 						this.prompt_key = '';
 						this.prompt_value = '';
-					}else if(response_feedback == 302){
-						this.setUserData({
-							'modalData': {
-								title: "温馨提示",
-								content: "请修改填写内容再试",
-								confirmText: '',
-								cancelText: "OK",
-							},
-							'modalShow': true,
-							'modalPageId': 'promptSetting'
-						})
 					}else{
 						this.setUserData({
 							'modalData': {

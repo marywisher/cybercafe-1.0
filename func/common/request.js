@@ -11,7 +11,7 @@ export default {
 	      last_called: 0, // 存储上一次调用的时间戳
 	    };
 	},
-	async post(option, pageId = 'index', options = {}) {
+	async post(option, pageId = 'index', options = {}, ignoreFail = false) {
 		//console.log(configData.domain);
 		let res;
 		let url = configData.domain;
@@ -96,11 +96,12 @@ export default {
 				fail: err => {
 					console.log(err);
 					uni.hideLoading();
-					let msg_str = err ? JSON.stringify(err) : '未知错误，请联系管理员';
-					if(err.errMsg && err.errMsg.indexOf('request:fail abort statusCode:-1') > -1){
-						msg_str = '请求超时，请稍后再试';
-					}
-					store.commit('user/setUserData',
+					if(!ignoreFail){
+						let msg_str = err ? JSON.stringify(err) : '未知错误，请联系管理员';
+						if(err.errMsg && err.errMsg.indexOf('request:fail abort statusCode:-1') > -1){
+							msg_str = '请求超时，请稍后再试';
+						}
+						store.commit('user/setUserData',
 						{
 							'refreshFlag': 'fail',
 							'modalData':
@@ -112,6 +113,7 @@ export default {
 							'modalShow': true,
 							'modalPageId': pageId
 						});
+					}
 					return;
 				}
 			});

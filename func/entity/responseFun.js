@@ -146,24 +146,62 @@ export default{
 					'time': common.getCurrentTimeStampStr(),
 					'messages': data,
 					'crt_ai': store.state.dialogue.ai
-				}).then(res => {
+				}, true).then(res => {
 					console.log(res.result);
 					if(res.code == 200){
-						let return_content = res.result.choices[0].message.content;
-						resolve(return_content);
+						let request_id = '';
+						if(res.result.hasOwnProperty('request_id')){
+							request_id = res.result.request_id;
+						}
+						let return_content = '';
+						if(res.result.hasOwnProperty('choices') && res.result.choices.length > 0){
+							return_content = res.result.choices[0].message.content;
+						}
+						resolve({'status': 'success',
+							'content':return_content,
+							'request_id': request_id});
 					}else {
 						//console.error(res.msg);
 						uni.showToast({
 							title: res.msg,
 							icon: "none"
 						})
-						reject(res.msg);
+						reject({
+							'status': 'error',
+							'msg': res.msg
+						});
 					}
 				});
 			}catch(err){
 				console.log(err);
-				reject('检测工具问题，请修改后再试' + err);
+				reject({'status': 'error', 'msg': '检测工具问题，请修改后再试' + err});
 			}
 		});
 	},
+	async getRequestCallback(request_id, page_id){
+		return new Promise((resolve, reject) => {
+			try{
+				if(request_id.length == 0) reject('request id不能为空');
+				request.post('aiController/getRequestReturn', page_id, {
+					'request_id': request_id
+				}).then(res => {
+					console.log(res.result);
+					if(res.code == 200){
+						let return_content = res.result;
+						resolve({'status': 'success', 'content': return_content});
+					}else {
+						//console.error(res.msg);
+						uni.showToast({
+							title: res.msg,
+							icon: "none"
+						})
+						reject({'status': 'error', 'msg': res.msg});
+					}
+				});
+			}catch(err){
+				console.log(err);
+				reject({'status': 'error', 'msg': '未知问题，请联系管理员：' + err});
+			}
+		});
+	}
 }

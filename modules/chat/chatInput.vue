@@ -95,7 +95,7 @@
 				})
 				//敏感审核
 				let response_feedback = await responseFun.toolRequest('sensitive', this.chat_input.trim(), 'chat');
-				if(response_feedback == 200){
+				if(response_feedback.status == 'success'){
 					this.setDiaData({
 						'optionFirst': this.chat_input.trim(),
 						'crtCharacterId': 0,
@@ -113,7 +113,7 @@
 					this.setUserData({
 						'modalData': {
 							title: "温馨提示",
-							content: response_feedback,
+							content: response_feedback.msg,
 							confirmText: '',
 							cancelText: "OK",
 						},
