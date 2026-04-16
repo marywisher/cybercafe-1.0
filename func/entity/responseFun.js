@@ -140,56 +140,64 @@ export default{
 		return new Promise((resolve, reject) => {
 			try{
 				if(data.length == 0) reject('发送内容不能为空');
+				let tmp_timestamp = common.getCurrentTimeStampStr(true);
+				let request_id = store.state.user.userKey + '-' + tmp_timestamp;
 				request.post('aiController/tool', page_id, {
 					'key': store.state.user.userKey,
 					'task': task,
-					'time': common.getCurrentTimeStampStr(),
+					'time': tmp_timestamp,
 					'messages': data,
 					'crt_ai': store.state.dialogue.ai
 				}, true).then(res => {
 					console.log(res.result);
-					if(res.code == 200){
-						let request_id = '';
-						if(res.result.hasOwnProperty('request_id')){
-							request_id = res.result.request_id;
+					if(task != 'summarize2'){
+						if(res.code == 200){
+							let return_content = '';
+							if(res.result.hasOwnProperty('choices') && res.result.choices.length > 0){
+								return_content = res.result.choices[0].message.content;
+							}
+							resolve({'status': 'success',
+								'content':return_content,
+								'request_id': request_id});
+						}else {
+							//console.error(res.msg);
+							uni.showToast({
+								title: res.msg,
+								icon: "none"
+							})
+							reject({
+								'status': 'error',
+								'request_id': request_id,
+								'msg': res.msg
+							});
 						}
-						let return_content = '';
-						if(res.result.hasOwnProperty('choices') && res.result.choices.length > 0){
-							return_content = res.result.choices[0].message.content;
-						}
+					}
+				}).finally(()=>{
+					if(task == 'summarize2'){
 						resolve({'status': 'success',
-							'content':return_content,
 							'request_id': request_id});
-					}else {
-						//console.error(res.msg);
-						uni.showToast({
-							title: res.msg,
-							icon: "none"
-						})
-						reject({
-							'status': 'error',
-							'msg': res.msg
-						});
 					}
 				});
 			}catch(err){
 				console.log(err);
-				reject({'status': 'error', 'msg': '检测工具问题，请修改后再试' + err});
+				reject({'status': 'error', 
+					'request_id': request_id,
+					'msg': '检测工具问题，请修改后再试' + err});
 			}
 		});
 	},
-	async getRequestCallback(request_id, page_id){
+	async getRequestCallback(request_id, page_id, ignoreFail = false){
 		return new Promise((resolve, reject) => {
 			try{
 				if(request_id.length == 0) reject('request id不能为空');
 				request.post('aiController/getRequestReturn', page_id, {
 					'request_id': request_id
 				}).then(res => {
-					console.log(res.result);
+					console.log(res);
 					if(res.code == 200){
 						let return_content = res.result;
 						resolve({'status': 'success', 'content': return_content});
-					}else {
+					}else if(!ignoreFail) {
 						//console.error(res.msg);
 						uni.showToast({
 							title: res.msg,
