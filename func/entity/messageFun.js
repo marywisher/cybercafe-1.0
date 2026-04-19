@@ -208,7 +208,7 @@ export default{
 		}
 		uni.hideLoading();
 	},
-	async summarizeFun(content, message_times, entity_id, is_new = false){
+	async summarizeFun(content, message_time_list, entity_id, summarizing_data, is_new = false){
 		if(!entity_id > 0){
 			console.log('非有效实体消息，不予总结');
 			return false;
@@ -229,20 +229,17 @@ export default{
 
 			if(summarize_result.status == 'success'){
 				console.log('summarize_result:', summarize_result);
-				setTimeout(() => {
-					this.getResponseReturn(pre_description, message_times, entity_id, summarize_result.request_id);
+				console.log('message_time_list:', message_time_list);
+				let _self = this;
+				setTimeout(() =>{
+					this.getResponseReturn(pre_description, message_time_list, entity_id, summarizing_data, summarize_result.request_id);
 				}, 120000);//120秒后获取总结结果，更新entity表和summary表
-				
-				return true;
-			}else{
-				return false;
 			}
 		}catch(error){
 			uni.showToast({
 				title: error,
 				icon: 'none'
 			})
-			return false;
 		}
 	},
 	async getSummary(){//初始化加载没总结的消息
@@ -307,20 +304,9 @@ export default{
 			message_time_list.push(message_time);
 			summary_count ++;
 		};
-		let message_times = message_time_list.join(',');
 		//取超出部分进行总结
-		//console.log(content, message_times, is_new);
-		let summary_result = await this.summarizeFun(content, message_times, entity_id, is_new);
-		console.log('summary_result:', summary_result);
-		if(summary_result){
-			//从summarizingData移除对应部分
-			message_time_list.forEach(message_time => {
-				this.removeSummarizingData(message_time, summarizing_data, false);
-			})
-			store.commit('setting/setSettingData', {
-				'summarizingData': summarizing_data
-			});
-		}
+		//console.log(content, message_time_list, is_new);
+		this.summarizeFun(content, message_time_list, entity_id, summarizing_data, is_new);
 	},
 	addToSummarizingData(content, message_time = store.state.dialogue.messageTime){
 		let summarizing_data = store.state.setting.summarizingData;
@@ -340,11 +326,14 @@ export default{
 	},
 	removeSummarizingData(message_time, 
 		summarizing_data = null,
+		entity_id = null,
 		from_menu = true){//删除消息时才需要同步0键，总结完的删除不用更新0键
 		if(!summarizing_data){
 			summarizing_data = store.state.setting.summarizingData;
 		}
-		let entity_id = store.state.setting.entityId;
+		if(!entity_id){
+			entity_id = store.state.setting.entityId;
+		}
 		if(summarizing_data[entity_id] && summarizing_data[entity_id][message_time]){
 			delete summarizing_data[entity_id][message_time];
 			// 如果删除的是最新的，需要更新 '0'
@@ -370,12 +359,13 @@ export default{
 		summary_result.forEach(function(stage_summary) {
 			if(stage_summary.hasOwnProperty('description')){
 				console.log(stage_summary.description);
-				result_content += stage_summary.description;
+				result_content += ' ' + stage_summary.description;
 			}
 		}, this);
 		return result_content;
 	},
-	async getResponseReturn(pre_description, message_times, entity_id, request_id){
+	async getResponseReturn(pre_description, message_time_list, entity_id, summarizing_data, request_id){
+		console.log('getResponseReturn, request_id:', request_id);
 		if(!request_id){
 			console.log('无效的参数，不予获取总结结果');
 			return false;
@@ -401,6 +391,7 @@ export default{
 			//console.log(callback_data);
 			return false;
 		}
+		let message_times = message_time_list.join(',');
 		console.log(summarize_content, message_times);
 		//更新entity表
 		let new_description = pre_description ? (pre_description + ' ' + summarize_content) : summarize_content;
@@ -417,6 +408,14 @@ export default{
 			'entity_id': entity_id
 		});
 
-		return true;
+		//从summarizingData移除对应部分
+		message_time_list.forEach(message_time => {
+			this.removeSummarizingData(message_time, summarizing_data, entity_id, false);
+		})
+		console.log('update summarizingData:', Object.keys(summarizing_data));
+		store.commit('setting/setSettingData', {
+			'summarizingData': summarizing_data
+		});
+		console.log('已移除待总结数据，等待获取总结结果');
 	}
 }

@@ -296,7 +296,7 @@
 					} 
 					let response_feedback = await responseFun.toolRequest('sensitive',
 						value, 'incubator');
-					if(response_feedback == 200){
+					if(response_feedback.status == 'success'){
 						let feedback = await baseQuery.updateDataByKey('cybercafe_incubator', updateArr, whereArr);
 						if(feedback == 'inserted' || feedback == 'updated'){
 							//保存
@@ -309,7 +309,7 @@
 						this.setUserData({
 							'modalData': {
 								title: "温馨提示",
-								content: response_feedback,
+								content: response_feedback.msg,
 								confirmText: '',
 								cancelText: "OK",
 							},
