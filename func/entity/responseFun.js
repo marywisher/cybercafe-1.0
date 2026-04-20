@@ -136,11 +136,10 @@ export default{
 		});
 		request.chatRequest();
 	},
-	async toolRequest(task, data, page_id){
+	async toolRequest(task, data, page_id, tmp_timestamp = ''){
 		return new Promise((resolve, reject) => {
 			try{
 				if(data.length == 0) reject('发送内容不能为空');
-				let tmp_timestamp = common.getCurrentTimeStampStr(true);
 				let request_id = store.state.user.userKey + '-' + tmp_timestamp;
 				request.post('aiController/tool', page_id, {
 					'key': store.state.user.userKey,
@@ -157,8 +156,7 @@ export default{
 								return_content = res.result.choices[0].message.content;
 							}
 							resolve({'status': 'success',
-								'content':return_content,
-								'request_id': request_id});
+								'content':return_content});
 						}else {
 							//console.error(res.msg);
 							uni.showToast({
@@ -167,21 +165,18 @@ export default{
 							})
 							reject({
 								'status': 'error',
-								'request_id': request_id,
 								'msg': res.msg
 							});
 						}
 					}
 				}).finally(()=>{
 					if(task == 'summarize2'){
-						resolve({'status': 'success',
-							'request_id': request_id});
+						resolve({'status': 'success'});
 					}
 				});
 			}catch(err){
 				console.log(err);
 				reject({'status': 'error', 
-					'request_id': request_id,
 					'msg': '检测工具问题，请修改后再试' + err});
 			}
 		});
@@ -189,7 +184,7 @@ export default{
 	async getRequestCallback(request_id, page_id, ignoreFail = false){
 		return new Promise((resolve, reject) => {
 			try{
-				if(request_id.length == 0) reject('request id不能为空');
+				if(request_id == undefined || request_id.length == 0) reject('request id不能为空');
 				request.post('aiController/getRequestReturn', page_id, {
 					'request_id': request_id
 				}).then(res => {

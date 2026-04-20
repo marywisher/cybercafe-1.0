@@ -32,6 +32,7 @@ export default {
 		promptSelect: 0, //预设
 		replyMode: 'click', // 自动auto 手动点击click 回复方式
 		summarizingData: {}, // 待总结内容 {entity_id: {'0': messageTime, messageTime: content}}
+		summaryRequest: {}, //总结用请求的id，有值则取线上结果，无值则重新申请总结 {entity_id: requestId}
 		temperature: 0.95,
 		tips: ['升级食堂不用先卸载', '如果需要卸载食堂要记得先上传数据', '角色载入本地后数据都是在本地的'],
 		token: '',

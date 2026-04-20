@@ -2,6 +2,12 @@ import request from "@/func/common/request";
 import sqlite from "@/func/common/sqlite";
 import store from "@/store";
 
+// 转义单引号，防止SQL语法错误
+function escapeSqlQuote(str) {
+	if(str == null) return '';
+	return str.toString().replace(/'/g, "''");
+}
+
 export default {
 	deleteDataByKey(tableName, whereArr = []){
 		return new Promise((resolve, reject) => {
@@ -13,7 +19,7 @@ export default {
 				if(i > 0){
 					sql_str += ` and `;
 				}
-				where_str += key + ` = '${whereArr[key]}' `;
+				where_str += key + ` = '${escapeSqlQuote(whereArr[key])}' `;
 				i ++;
 			}
 			if(where_str == ``) {
@@ -42,12 +48,12 @@ export default {
 				if(i > 0){
 					where_str += " and ";
 				}
-				where_str += key + " = '" + whereArr[key] + "' ";
+				where_str += key + " = '" + escapeSqlQuote(whereArr[key]) + "' ";
 				i ++;
 			}
 			if(where_str != " ") {
 				sql_str += " where " + where_str;
-			}			
+			}
 			//console.log(sql_str);
 			sqlite.selectSQL(sql_str).then(return_data => {
 				resolve(return_data);
@@ -69,9 +75,9 @@ export default {
 				if(i > 0){
 					sqlKey += `, `;
 					sqlValue += `, `;
-				} 
+				}
 				sqlKey += key;
-				sqlValue += `'${insertArr[key]}'`;//.toString().replace(new RegExp('\'', 'g'), "\\'")
+				sqlValue += `'${escapeSqlQuote(insertArr[key])}'`;
 				i ++;
 			}
 			//console.log(sqlKey, sqlValue);
@@ -111,7 +117,7 @@ export default {
 			let updateStr = ``;
 			for(let fieldName in updateArr){
 				if(i > 0) updateStr += `, `;
-				updateStr += fieldName + ` = '${updateArr[fieldName]}' `;
+				updateStr += fieldName + ` = '${escapeSqlQuote(updateArr[fieldName])}' `;
 				i ++;
 			}
 			//console.log(updateStr);
@@ -124,7 +130,7 @@ export default {
 				if(i > 0){
 					where_str += ` and `;
 				}
-				where_str += key + ` = '${whereArr[key]}' `;
+				where_str += key + ` = '${escapeSqlQuote(whereArr[key])}' `;
 				i ++;
 			}
 			//console.log(where_str);
@@ -154,14 +160,14 @@ export default {
 							if(i > 0){
 								sqlKey += `, `;
 								sqlValue += `, `;
-							} 
+							}
 							sqlKey += key;
-							sqlValue += `'${updateArr[key]}'`;//.toString().replace(new RegExp('\'', 'g'), "\\'")
+							sqlValue += `'${escapeSqlQuote(updateArr[key])}'`;
 							i ++;
 						}
 						for(let key in whereArr){
 							sqlKey += `, ` + key;
-							sqlValue += `, '${whereArr[key]}'`;//.toString().replace(new RegExp('\'', 'g'), "\\'")
+							sqlValue += `, '${escapeSqlQuote(whereArr[key])}'`;
 						}
 						//console.log(sqlKey, sqlValue);
 						insert_str += sqlKey + ` ) values (` + sqlValue + `) `;
@@ -230,7 +236,7 @@ export default {
 			},
 			'modalShow': true,
 			'modalPageId': 'globalSetting'
-		});	
+		});
 	},
 	downloadConfirmFun(){
 		uni.showLoading({
@@ -278,7 +284,7 @@ export default {
 					},
 					'modalShow': true,
 					'modalPageId': 'globalSetting'
-				});	
+				});
 			}else{
 				uni.showToast({
 					title: response.msg,

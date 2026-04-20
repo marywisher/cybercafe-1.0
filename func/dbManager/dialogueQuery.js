@@ -180,12 +180,15 @@ export default{
 			});
 		});
 	},
-	getSummaryMessageByEntityId(){
+	getSummaryMessageByEntityId(is_not_empty = true){
 		return new Promise((resolve, reject) => {
 			let query_str = "select * from cybercafe_summary_message where entity_id = '" 
 				+ store.state.setting.entityId + "' order by summary_id;";
 			
 			sqlite.selectSQL(query_str).then(summaryList => {
+				if(is_not_empty){
+					summaryList = summaryList.filter(item => item.summary_content && item.summary_content != '');
+				}
 				resolve(summaryList);
 			}).catch(e => {
 				reject(e);

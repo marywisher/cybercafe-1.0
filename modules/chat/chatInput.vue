@@ -105,7 +105,7 @@
 						'options': [],
 						'editMode': 1
 					});
-					await messageFun.saveMessage(0, this.optionFirst, this.messageTime + ':option.writing');
+					await messageFun.saveMessage(0, this.optionFirst, this.messageTime + ':option.writing', this.entityId);
 					this.chat_input = '';
 					uni.hideLoading();
 				}else{

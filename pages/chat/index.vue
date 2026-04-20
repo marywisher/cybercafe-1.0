@@ -75,7 +75,7 @@
 		computed:{
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'userKey', 
 			'userName']),
-			...mapState('setting', ['darkMode', 'entityId']),
+			...mapState('setting', ['darkMode', 'entityId', 'summaryRequest']),
 			...mapState('dialogue', ['historylist'])
 		},
 		methods:{
@@ -99,7 +99,16 @@
 					this.$refs.chatBottomPart.init();
 				})
 
-				await messageFun.getSummary();
+				if(this.summaryRequest && Object.keys(this.summaryRequest).length > 0){
+					console.log('有requestId', this.summaryRequest);
+					for(let entity_id in this.summaryRequest){
+						messageFun.getResponseReturn(entity_id);
+					}
+				}else{
+					console.log('无requestId');
+					await messageFun.getSummary();
+				}
+
 			},
 			afterUpdateList(){//非锁定状态时，自动下滑到底部
 				//console.log(this.in_pull_down_mode)
