@@ -108,6 +108,16 @@
 					await messageFun.saveMessage(0, this.optionFirst, this.messageTime + ':option.writing', this.entityId);
 					this.chat_input = '';
 					uni.hideLoading();
+
+					if(this.editMode == 1 && this.replyMode == 'auto'){
+						this.setDiaData({
+							'editMode': 2
+						})
+					}else{
+						this.setDiaData({
+							'editMode': 0
+						})
+					}
 				}else{
 					uni.hideLoading();
 					this.setUserData({
