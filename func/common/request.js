@@ -145,7 +145,7 @@ export default {
 								cancelText: 'OK'
 							},
 						'modalShow': true,
-						'modalPageId': pageId
+						'modalPageId': 'chat'
 					});
 				handle.afterResponseFun({
 					value: {

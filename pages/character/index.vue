@@ -50,7 +50,9 @@
 				    //console.log(newValue);
 				    if(newValue && this.modalPageId == 'character'){
 				    	this.$nextTick(() => {
-				    		this.$refs.cModal.show(this.modalData);
+				    		if(this.$refs.cModal){
+				    			this.$refs.cModal.show(this.modalData);
+				    		}
 						});
 				    	this.setUserData({
 				    		'modalShow': false,
@@ -75,7 +77,7 @@
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['setSettingData']),
 			showMoreImg(){
-				console.log(this.online_id);
+				//console.log(this.online_id);
 				this.$refs.cImgPart.openBox(this.online_id.toString());
 			},
 			async afterSelectImg(e){
@@ -121,7 +123,7 @@
 						icon:'none'
 					})
 				}
-			},
+			}
 		},
 		onLoad(option) {
 			if(option.hasOwnProperty('id')){

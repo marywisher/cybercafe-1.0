@@ -35,7 +35,7 @@
 				    //console.log(newValue);
 				    if(newValue && this.modalPageId == 'aiSetting'){
 				    	this.$nextTick(() => {
-				    		this.$refs.cModal.show(this.modalData);
+				    		if(this.$refs.cModal){ this.$refs.cModal.show(this.modalData); }
 						});
 				    	this.setUserData({
 				    		'modalShow': false,

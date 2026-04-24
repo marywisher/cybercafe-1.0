@@ -61,14 +61,21 @@ export default{
 				+ " left join cybercafe_message m on e.entity_id = m.entity_id "
 				+ " group by m.entity_id order by entity_id DESC;";
 			sqlite.selectSQL(sql_str).then(entity_data => {
-				//console.log(entity_data);
 				let entity_list = entity_data;
+				// 如果没有数据，直接返回空数组
+				if (entity_data.length === 0) {
+					resolve(entity_list);
+					return;
+				}
+				
+				// 记录待完成的查询数
+				let pendingQueries = entity_data.length;
+				
 				for(let i in entity_data){
 					let sql_str2 = "select cc.character_id, character_img from cybercafe_character cc "
 						+ " left join cybercafe_entity_detail cd on cc.character_id = cd.character_id "
 						+ " where cd.entity_id = '" + entity_data[i].entity_id + "' order by cd.entity_detail_id";
 					sqlite.selectSQL(sql_str2).then(img_data => {
-						//console.log(img_data);
 						let tmp_img_arr = {};
 						for(let j in img_data){
 							if(img_data[j].character_img == configData.voiceOver || 
@@ -76,10 +83,16 @@ export default{
 							tmp_img_arr[img_data[j].character_id] = img_data[j].character_img;
 						}
 						entity_list[i].character_img = tmp_img_arr;
-						resolve(entity_list);
 					}).catch(e => {
 						reject(e);
-					})
+					}).finally(() => {
+						// 每次查询完成（无论成功失败）都减一
+						pendingQueries--;
+						// 所有查询完成后再 resolve
+						if (pendingQueries === 0) {
+							resolve(entity_list);
+						}
+					});
 				}
 			}).catch(e => {
 				reject(e);
