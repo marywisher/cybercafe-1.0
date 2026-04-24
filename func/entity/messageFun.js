@@ -445,25 +445,31 @@ export default{
 			})
 			console.log('update entity result:', update_result);
 			//保存入summary表
-			let summary_update_result = await baseQuery.updateDataByKey('cybercafe_summary_message', {
-				'summary_content': JSON.stringify(summarize_result.content),
-				'entity_id': entity_id
-			},{
-				'request_id': request_id
-			});
-			console.log('summary update result:', summary_update_result);
 			let request_data = await baseQuery.getDataByKey('cybercafe_summary_message', {
 				'request_id': request_id
 			});
 			console.log('summary table request data:', request_data);
-			if(request_data.length > 0){
+			if(request_data.length > 0 && request_data[0].message_times && request_data[0].message_times.length > 0){
+				//只更新，不插入
+				let summary_update_result = await baseQuery.updateDataByKey('cybercafe_summary_message', {
+					'summary_content': callback_data
+				},{
+					'request_id': request_id
+				});
+				console.log('summary update result:', summary_update_result);
 				let message_times = request_data[0].message_times.split(',');
 				//从summarizingData移除对应部分
 				console.log('待移除的message_times:', message_times);
 				message_times.forEach(message_time => {
+					console.log('移除message_time:', message_time);
 					this.removeSummarizingData(message_time, summarizing_data, entity_id, false);
 				})
 				console.log('update summarizingData:', Object.keys(summarizing_data));
+			}else if(request_data.length > 0){
+				console.log('未找到对应的message_times，无法更新summary表');
+				await baseQuery.deleteDataByKey('cybercafe_summary_message', {
+					'request_id': request_id
+				});
 			}
 		}
 		//只有一次更新机会，无论成功与否都删除summaryRequest对应项，避免陷入请求死循环
