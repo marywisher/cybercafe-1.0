@@ -3,7 +3,8 @@
 		<image class="logo" src="/static/logo.png"></image>
 		<view><text class="gradient-text">{{slogan}}</text></view>
 		<view class="tip hint">{{tip_str}}</view>
-		<cybercafe-button v-if="btn_status > 0" class="retry-btn" btnName="欢迎光临" @tapBtn="enter"></cybercafe-button>
+		<cybercafe-button v-if="btn_status > 0" class="btn-primary retry-btn" btnName="欢迎光临" @tapBtn="enter"></cybercafe-button>
+		<cybercafe-button v-if="btn_status > 0" class="offline-btn" btnName="离线浏览" @tapBtn="history"></cybercafe-button>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
@@ -60,12 +61,12 @@
 					return;
 				} 
 				
-				sqlite.initTable();
-				await handleFun.initSetting();
-				
+				console.log(this.tips);
 				//每次随机一个tip
 				this.tip_str = this.tips[Math.floor(Math.random() * this.tips.length)];
 				
+				await sqlite.initTable();
+				await handleFun.initSetting();
 				console.log('init');
 				setTimeout(() => {
 					if(this.btn_status == 2){
@@ -82,6 +83,16 @@
 					this.btn_status = 0;
 					handleFun.beforeInit('index');
 				}
+			},
+			history(){
+				this.btn_status = 1;
+				uni.showToast({
+					title: '功能稍后开放',
+					icon: 'none'
+				});
+				/*uni.navigateTo({
+					url: '/pages/index/dataList'
+				})*/
 			}
 		},
 		onLoad() {
@@ -117,5 +128,9 @@
 	.tip{
 		display: block;
 		margin: $uni-spacing-lg auto;
+	}
+	.offline-btn{
+		width: 50vw;
+		margin: $uni-width-none auto;
 	}
 </style>

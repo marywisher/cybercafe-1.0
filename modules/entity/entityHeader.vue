@@ -2,6 +2,8 @@
 	<cybercafe-header :bgOpacity="bgOpacity">
 		<view class="iconfont icon-xiayibu iconback menu-icon-left" @tap="back"></view>
 		<view class="header-right display-flex display-line">
+			<view class="iconfont icon-a-saozhou1" v-if="entityId > 0" @tap="clearSummarizingData"></view>
+			<label class="hint" v-if="entityId > 0" @tap="clearSummarizingData">清空总结缓存</label>
 			<view class="iconfont icon-shanchu required" v-if="entityId > 0" @tap="delEntity"></view>
 			<label class="hint" v-if="entityId > 0" @tap="delEntity">解散容器</label>
 			<view class="iconfont icon-chatou" v-if="enterable" @tap="enterEntity"></view>
@@ -41,10 +43,10 @@
 			}
 		},
 		computed: {
-			...mapState('setting', ['entityId']),
+			...mapState('setting', ['entityId', 'summarizingData']),
 		},
 		methods: {
-			...mapMutations('setting', ['getSettingData']),
+			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			init(){
 				//this.getDetailCount();
 			},
@@ -63,6 +65,18 @@
 				//console.log(detail_data);
 				if(detail_data.length > 0) this.show_enter = true;
 			} */
+			clearSummarizingData(){
+				if(this.summarizingData.hasOwnProperty(this.entityId)){
+					this.summarizingData[this.entityId] = {};
+					this.setSettingData({
+						'summarizingData': this.summarizingData
+					});
+					uni.showToast({
+						title: '总结缓存已清空',
+						icon: 'success'
+					});
+				}
+			}
 		}
 	}
 </script>

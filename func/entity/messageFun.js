@@ -239,8 +239,19 @@ export default{
 			if(summarize_result.status == 'success'){
 				console.log('summarize_result:', summarize_result);
 				setTimeout(() =>{
-					this.getResponseReturn(entity_id);
+					this.summaryCallBackFun(entity_id);
 				}, 120000);//120秒后获取总结结果，更新entity表和summary表
+			}else{
+				baseQuery.deleteDataByKey('cybercafe_summary_message', {
+					'request_id': request_id
+				});
+				if(summaryRequest.hasOwnProperty(entity_id)){
+					delete summaryRequest[entity_id];
+					store.commit('setting/setSettingData', {
+						'summaryRequest': summaryRequest
+					});
+				}
+				console.log('总结请求失败，已删除待总结数据');
 			}
 		}catch(error){
 			uni.showToast({
@@ -345,16 +356,13 @@ export default{
 		this.judgeSummary();
 	},
 	removeSummarizingData(message_time, 
-		summarizing_data = null,
 		entity_id = null,
 		from_menu = true){//删除消息时才需要同步0键，总结完的删除不用更新0键
-		if(!summarizing_data){
-			summarizing_data = store.state.setting.summarizingData;
-		}
+		let summarizing_data = store.state.setting.summarizingData;
 		if(!entity_id){
 			entity_id = store.state.setting.entityId;
 		}
-		if(summarizing_data[entity_id] && summarizing_data[entity_id][message_time]){
+		if(summarizing_data.hasOwnProperty(entity_id) && summarizing_data[entity_id].hasOwnProperty(message_time)){
 			delete summarizing_data[entity_id][message_time];
 			// 如果删除的是最新的，需要更新 '0'
 			if(summarizing_data[entity_id]['0'] == message_time && from_menu){
@@ -368,11 +376,9 @@ export default{
 				summarizing_data[entity_id]['0'] = max_time;
 			}
 		}
-		if(from_menu){
-			store.commit('setting/setSettingData', {
-				'summarizingData': summarizing_data
-			});
-		}
+		store.commit('setting/setSettingData', {
+			'summarizingData': summarizing_data
+		});
 	},
 	getSummaryDescription(summary_result){
 		let result_content = '';
@@ -396,10 +402,6 @@ export default{
 			return false;
 		}else if(entity_id != parseInt(entity_id)){//entity_id必须为整数
 			console.log('非法容器ID');
-			delete summaryRequest[entity_id];
-			store.commit('setting/setSettingData', {
-				'summaryRequest': summaryRequest
-			});
 			return false;
 		}
 		console.log('getResponseReturn, entity_id:', entity_id);
@@ -425,7 +427,7 @@ export default{
 			}else if(typeof callback_data == 'object' && callback_data.hasOwnProperty('relationship_evolution')){
 				summarize_content = this.getSummaryDescription(callback_data.relationship_evolution);
 			}else{
-				//console.log(callback_data);
+				console.log(callback_data);
 				return false;
 			}
 			//更新entity表
@@ -437,6 +439,29 @@ export default{
 				pre_description = crt_entity_data[0].extra_description;
 			}
 			console.log('pre_description:', pre_description);
+			//保存入summary表
+			let request_data = await baseQuery.getDataByKey('cybercafe_summary_message', {
+				'request_id': request_id
+			});
+			console.log('summary table request data:', request_data);
+			
+			if(pre_description.indexOf(summarize_content) == -1){//避免重复总结内容堆积
+				if(request_data.length > 0){
+					let message_times = request_data[0].message_times.split(',');
+					//从summarizingData移除对应部分
+					console.log('待移除的message_times:', message_times);
+					message_times.forEach(message_time => {
+						uni.showToast({
+							title: '移除message_time:', message_time,
+							icon: 'none'
+						});
+						console.log('移除message_time:', message_time);
+						this.removeSummarizingData(message_time, entity_id, false);
+					})
+					console.log('update summarizingData:', Object.keys(summarizing_data));
+				}
+				return false;
+			}
 			let new_description = pre_description ? (pre_description + ' ' + summarize_content) : summarize_content;
 			let update_result = await baseQuery.updateDataByKey('cybercafe_entity', {
 				'extra_description': new_description
@@ -444,15 +469,10 @@ export default{
 				'entity_id': entity_id
 			})
 			console.log('update entity result:', update_result);
-			//保存入summary表
-			let request_data = await baseQuery.getDataByKey('cybercafe_summary_message', {
-				'request_id': request_id
-			});
-			console.log('summary table request data:', request_data);
-			if(request_data.length > 0 && request_data[0].message_times && request_data[0].message_times.length > 0){
+			if(request_data.length > 0){
 				//只更新，不插入
 				let summary_update_result = await baseQuery.updateDataByKey('cybercafe_summary_message', {
-					'summary_content': callback_data
+					'summary_content': typeof callback_data == 'string' ? callback_data : JSON.stringify(callback_data)
 				},{
 					'request_id': request_id
 				});
@@ -461,23 +481,42 @@ export default{
 				//从summarizingData移除对应部分
 				console.log('待移除的message_times:', message_times);
 				message_times.forEach(message_time => {
+					uni.showToast({
+						title: '移除message_time:', message_time,
+						icon: 'none'
+					});
 					console.log('移除message_time:', message_time);
-					this.removeSummarizingData(message_time, summarizing_data, entity_id, false);
+					this.removeSummarizingData(message_time, entity_id, false);
 				})
 				console.log('update summarizingData:', Object.keys(summarizing_data));
 			}else if(request_data.length > 0){
 				console.log('未找到对应的message_times，无法更新summary表');
-				await baseQuery.deleteDataByKey('cybercafe_summary_message', {
-					'request_id': request_id
-				});
+				return false;
 			}
 		}
 		//只有一次更新机会，无论成功与否都删除summaryRequest对应项，避免陷入请求死循环
 		delete summaryRequest[entity_id];
 		store.commit('setting/setSettingData', {
-			'summarizingData': summarizing_data,
 			'summaryRequest': summaryRequest
 		});
 		console.log('已移除待总结数据，等待获取总结结果');
+		return true;
+	},
+	async summaryCallBackFun(entity_id){
+		let summaryRequest = store.state.summaryRequest
+		let return_flag = await this.getResponseReturn(entity_id);
+		if(!return_flag){
+			console.log(return_flag)
+			await baseQuery.deleteDataByKey('cybercafe_summary_message', {
+				'request_id': summaryRequest[entity_id]
+			});
+			if(summaryRequest.hasOwnProperty(entity_id)){
+				delete summaryRequest[entity_id];
+				store.commit('setting/setSettingData', {
+					'summaryRequest': summaryRequest
+				});
+			}
+			console.log(summaryRequest);
+		}
 	}
 }

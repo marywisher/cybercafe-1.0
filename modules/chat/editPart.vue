@@ -147,12 +147,12 @@
 				this.$emit('editChange', false);
 			},
 			async confirmFun(){
+				this.swiper_current = -1;
 				let response_feedback = await responseFun.toolRequest('sensitive', this.edit_text.trim(), 'chat');
 				if(response_feedback.status == 'success'){//返回值就是200
 					this.setDiaData({
 						'optionFirst': this.edit_text.trim(),
 					});
-					this.swiper_current = -1;
 					this.$emit('swiperChange', -1);
 					this.$emit('editChange', false);
 				}else{

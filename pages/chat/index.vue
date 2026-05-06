@@ -28,7 +28,7 @@
 	import messageFun from '@/func/entity/messageFun';
 	import newUserPart from '@/modules/chat/newUserPart';
 	import chatHeader from '@/modules/chat/chatHeader';
-	import chatBottom from '@/modules/chat/chatBottom.vue';
+	import chatBottom from '@/modules/chat/chatBottom';
 	import {
 		mapMutations,
 		mapState,
@@ -102,7 +102,7 @@
 				if(this.summaryRequest && Object.keys(this.summaryRequest).length > 0){
 					console.log('有requestId', this.summaryRequest);
 					for(let entity_id in this.summaryRequest){
-						messageFun.getResponseReturn(entity_id);
+						await messageFun.summaryCallBackFun(entity_id);
 					}
 				}else{
 					console.log('无requestId');
