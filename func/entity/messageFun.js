@@ -216,25 +216,25 @@ export default{
 		}
 		//总结剧情
 		try{
-			let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
-				'entity_id': entity_id
-			});
 			let pre_description = '';
-			if(!is_new && crt_entity_data[0].extra_description && crt_entity_data[0].extra_description != 'null'){
-				pre_description = crt_entity_data[0].extra_description;
-			}
-			let tmp_timestamp = common.getCurrentTimeStampStr(true);
-			let request_id = store.state.user.userKey + '-' + tmp_timestamp;
+			if(!is_new){
+				let crt_entity_data = await baseQuery.getDataByKey('cybercafe_entity', {
+					'entity_id': entity_id
+				});
+				if(crt_entity_data && crt_entity_data[0].extra_description && crt_entity_data[0].extra_description != 'null'){
+					pre_description = crt_entity_data[0].extra_description;
+				}
+			} 
 			let summaryRequest = store.state.setting.summaryRequest;
-			summaryRequest[entity_id] = request_id;
-			store.commit('setting/setSettingData', {
-				'summaryRequest': summaryRequest
-			});
-			console.log('summaryRequest:', store.state.setting.summaryRequest);
+			if(!summaryRequest.hasOwnProperty(entity_id)){
+				console.log('request id error');
+				return;
+			}
+			let request_id = summaryRequest[entity_id];
 			let summarize_result = await responseFun.toolRequest('summarize2', {
 				'des': pre_description,
 				'content': content
-			}, 'entity', tmp_timestamp);//summarize2和原方法区分，向后兼容，异步执行
+			}, 'entity', request_id);//summarize2和原方法区分，向后兼容，异步执行
 
 			if(summarize_result.status == 'success'){
 				console.log('summarize_result:', summarize_result);
@@ -245,12 +245,11 @@ export default{
 				baseQuery.deleteDataByKey('cybercafe_summary_message', {
 					'request_id': request_id
 				});
-				if(summaryRequest.hasOwnProperty(entity_id)){
-					delete summaryRequest[entity_id];
-					store.commit('setting/setSettingData', {
-						'summaryRequest': summaryRequest
-					});
-				}
+			
+				delete summaryRequest[entity_id];
+				store.commit('setting/setSettingData', {
+					'summaryRequest': summaryRequest
+				});
 				console.log('总结请求失败，已删除待总结数据');
 			}
 		}catch(error){
@@ -330,9 +329,17 @@ export default{
 			summary_count ++;
 		};
 		//取超出部分进行总结
+		let tmp_timestamp = common.getCurrentTimeStampStr(true);
+		let request_id = store.state.user.userKey + '-' + tmp_timestamp;
+		let summaryRequest = store.state.setting.summaryRequest;
+		summaryRequest[entity_id] = request_id;
+		store.commit('setting/setSettingData', {
+			'summaryRequest': summaryRequest
+		});
+		console.log('summaryRequest:', store.state.setting.summaryRequest);
 		await baseQuery.insertDataByKey('cybercafe_summary_message', {
 			'message_times': message_time_list.join(','),
-			'request_id': store.state.setting.summaryRequest[entity_id],
+			'request_id': request_id,
 			'summary_content': '',
 			'entity_id': entity_id
 		});
@@ -446,29 +453,14 @@ export default{
 			console.log('summary table request data:', request_data);
 			
 			if(pre_description.indexOf(summarize_content) == -1){//避免重复总结内容堆积
-				if(request_data.length > 0){
-					let message_times = request_data[0].message_times.split(',');
-					//从summarizingData移除对应部分
-					console.log('待移除的message_times:', message_times);
-					message_times.forEach(message_time => {
-						uni.showToast({
-							title: '移除message_time:', message_time,
-							icon: 'none'
-						});
-						console.log('移除message_time:', message_time);
-						this.removeSummarizingData(message_time, entity_id, false);
-					})
-					console.log('update summarizingData:', Object.keys(summarizing_data));
-				}
-				return false;
+				let new_description = pre_description ? (pre_description + ' ' + summarize_content) : summarize_content;
+				let update_result = await baseQuery.updateDataByKey('cybercafe_entity', {
+					'extra_description': new_description
+				},{
+					'entity_id': entity_id
+				})
+				console.log('update entity result:', update_result);
 			}
-			let new_description = pre_description ? (pre_description + ' ' + summarize_content) : summarize_content;
-			let update_result = await baseQuery.updateDataByKey('cybercafe_entity', {
-				'extra_description': new_description
-			},{
-				'entity_id': entity_id
-			})
-			console.log('update entity result:', update_result);
 			if(request_data.length > 0){
 				//只更新，不插入
 				let summary_update_result = await baseQuery.updateDataByKey('cybercafe_summary_message', {
@@ -503,10 +495,12 @@ export default{
 		return true;
 	},
 	async summaryCallBackFun(entity_id){
-		let summaryRequest = store.state.summaryRequest
+		let summaryRequest = store.state.setting.summaryRequest;
 		let return_flag = await this.getResponseReturn(entity_id);
 		if(!return_flag){
-			console.log(return_flag)
+			console.log(return_flag);
+			console.log(summaryRequest);
+			console.log(entity_id);
 			await baseQuery.deleteDataByKey('cybercafe_summary_message', {
 				'request_id': summaryRequest[entity_id]
 			});
