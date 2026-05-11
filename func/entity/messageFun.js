@@ -473,10 +473,6 @@ export default{
 				//从summarizingData移除对应部分
 				console.log('待移除的message_times:', message_times);
 				message_times.forEach(message_time => {
-					uni.showToast({
-						title: '移除message_time:', message_time,
-						icon: 'none'
-					});
 					console.log('移除message_time:', message_time);
 					this.removeSummarizingData(message_time, entity_id, false);
 				})

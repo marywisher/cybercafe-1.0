@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="chat-bg" :style="dynamicBg(bgOpacity)" ></view>
+		<view class="chat-bg" :style="dynamicBg()" ></view>
 	</view>
 </template>
 
@@ -19,7 +19,7 @@
 			...mapState('dialogue', ['entityImage']),
 			...mapState('setting', ['bgOpacity', 'darkMode']),
 			dynamicBg() {
-				return function(bgOpacity){
+				return function(){
 					if(this.entityImage == configData.defaultImg){
 						return '';
 					}else{
@@ -31,7 +31,6 @@
 							return `background-image: linear-gradient(to bottom, rgba(31, 31, 31, 0.5), rgba(31, 31, 31, 0.9) 80%, rgba(31, 31, 31, 1) 95%, rgba(31, 31, 31, 1)), url('${this.entityImage}');`;
 						}
 					}
-					return `background-image: url('${this.entityImage}');`;
 				} 
 			}
 		},
