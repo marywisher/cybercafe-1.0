@@ -42,6 +42,12 @@
 				<span>解散本容器</span>
 			</view> -->
 			<!-- 正则 破甲 -->
+			<view class="display-flex pop-menu-line" @tap="gotoHistory">
+				<view class="display-flex display-line">
+					<view class="iconfont icon-youji menu-icon-left"></view>
+					<view class="text-center menu-text">聊天记录</view>
+				</view>
+			</view>
 		</cybercafe-menu>
 		
 		<aiSetting ref="aiSettingView"></aiSetting>
@@ -126,6 +132,9 @@
 				uni.navigateTo({
 					url: param
 				})
+			},
+			gotoHistory(){
+				this.routerFun('/pages/entity/history');
 			}
 		}
 	}

@@ -112,6 +112,14 @@
 			}
 		},
 		{
+			"path": "pages/entity/history",
+			"style": {
+				//"navigationBarTitleText": "聊天记录"
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
 			"path": "pages/index/info",
 			"style": {
 				"navigationBarTitleText": "说明"
