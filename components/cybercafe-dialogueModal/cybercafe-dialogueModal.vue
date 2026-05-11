@@ -4,8 +4,8 @@
 			<input v-model="value_str" :maxlength="-1" @input="check"/>
 			<view>
 				<cybercafe-button btnClass="btn-primary" :btnDisable="unsavable"
-					@tapBtn="confirmFun" btnName="修改"
-					btnStyle="height: 60rpx; border-radius: 0 12rpx 12rpx 0; font-size: 32rpx; line-height: 60rpx;"></cybercafe-button>
+					@tapBtn="confirmFun" :btnName="btnName"
+					btnStyle="height: 48rpx; border-radius: 0 12rpx 12rpx 0; font-size: 28rpx; line-height: 48rpx;"></cybercafe-button>
 			</view>
 		</view>
 	</cybercafe-view>
@@ -22,6 +22,10 @@
 			content: {
 				type: String,
 				default: ''
+			},
+			btnName: {
+				type: String,
+				default: '修改'
 			}
 		},
 		data(){

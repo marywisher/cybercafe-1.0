@@ -221,9 +221,12 @@ export default{
 			});
 		});
 	},
-	getMessageHistoryByEntityId(break_point = 0){// 仅用于查看聊天记录
+	getMessageHistoryByEntityId(keyword = '', break_point = 0){// 仅用于查看聊天记录
 		return new Promise((resolve, reject) => {
 			let query_str = "select * from cybercafe_message where entity_id = '" + store.state.setting.entityId + "'";
+			if (keyword) {
+				query_str += " and message_content like '%" + keyword + "%'";
+			}
 			query_str += " order by message_id limit " + break_point + ", 50;";
 			
 			sqlite.selectSQL(query_str).then(messageList => {

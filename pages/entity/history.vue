@@ -3,7 +3,7 @@
         <chatBg></chatBg>
 		<water-mark v-if="userKey" class="watermark" :text1="userKey" 
 			:text2="userName" :darkMode="dark_mode"></water-mark>
-		<historyHeader :bgOpacity="bg_opacity"></historyHeader>
+		<historyHeader :bgOpacity="bg_opacity" @searchConfirm="handleSearchConfirm"></historyHeader>
         <view class="chat-body content">
 			<!-- 内容区 -->
 			<view v-for="(item, index) in history_list" :key="index" class="display-flex chat-line">
@@ -36,7 +36,8 @@
 				dark_mode: 'light',
 				history_list: [],
 				entity_css: '',
-				bg_opacity: 0
+				bg_opacity: 0,
+				keyword: ''
 			}
 		},
         components:{
@@ -68,7 +69,7 @@
 				//console.log(this.dark_mode);
 				//console.log(this.userKey);
 				this.replaceParam();
-				this.history_list = await dialogueQuery.getMessageHistoryByEntityId(this.break_point);
+				this.history_list = await dialogueQuery.getMessageHistoryByEntityId(this.keyword, this.break_point);
 				for(let i = 0; i < this.history_list.length; i ++){
 					//console.log(this.history_list[i]);
 					this.history_list[i].html = common.textToHtml(this.history_list[i].message_content, 
@@ -80,7 +81,7 @@
 			},
 			loadMore(){
 				// 加载更多历史消息
-				dialogueQuery.getMessageHistoryByEntityId(this.break_point).then(newMessages => {
+				dialogueQuery.getMessageHistoryByEntityId(this.keyword, this.break_point).then(newMessages => {
 					if (newMessages.length > 0) {
 						for(let i = 0; i < newMessages.length; i ++){
 							newMessages[i].html = common.textToHtml(newMessages[i].message_content, 
@@ -105,6 +106,11 @@
 					.replace(new RegExp('{{bubbleOpacity}}', 'g'), this.bubbleOpacity);
 				// console.log(this.entity_css);
 				this.$forceUpdate();
+			},
+			handleSearchConfirm(keyword){
+				this.break_point = 0;
+				this.keyword = keyword;
+				this.init();
 			}
 		},
 		onLoad() {
