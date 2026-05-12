@@ -25,7 +25,8 @@ export default {
 					powerLevel: res.result.power_level,
 					newMsgCount: res.result.new_msg,
 					hasChecked: res.result.has_checkin,
-					checkinCount: res.result.checkin_count
+					checkinCount: res.result.checkin_count,
+					emailTrusted: res.result.user_email//邮箱是否可信 0或1
 				});
 				if(res.result.latest_version > store.state.user.latestVersion){
 					store.commit('user/setUserData', {
@@ -88,6 +89,10 @@ export default {
 						'modalPageId': page_id,
 						'showMessageModal': false
 					});
+				}else if(page_id == 'entityHistory'){
+					uni.navigateTo({
+						url: '/pages/entity/entityList?from=offline'
+					})
 				}else{
 					uni.reLaunch({
 						url: '/pages/chat/index'

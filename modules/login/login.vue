@@ -151,6 +151,7 @@
 								userKey: res.result.key,
 								userGroup: res.result.group,
 								latestVersion: res.result.latest_version,
+								emailTrusted: res.result.user_email,
 								powerLevel: res.result.power_level,
 							};
 							_self.setUserData(data);

@@ -114,9 +114,8 @@
 		{
 			"path": "pages/entity/history",
 			"style": {
-				//"navigationBarTitleText": "聊天记录"
-				"navigationStyle": "custom",
-				"enablePullDownRefresh": true
+				//"navigationBarTitleText": "历史记录"
+				"navigationStyle": "custom"
 			}
 		},
 		{

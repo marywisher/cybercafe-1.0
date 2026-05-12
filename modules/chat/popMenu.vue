@@ -45,7 +45,7 @@
 			<view class="display-flex pop-menu-line" @tap="gotoHistory">
 				<view class="display-flex display-line">
 					<view class="iconfont icon-youji menu-icon-left"></view>
-					<view class="text-center menu-text">聊天记录</view>
+					<view class="text-center menu-text">历史记录</view>
 				</view>
 			</view>
 		</cybercafe-menu>

@@ -9,6 +9,8 @@
 		name: 'water-mark',
 		data() {
 			return {
+				text_1: '',
+				text_2: '',
 			}
 		},
 		props: {
@@ -26,15 +28,20 @@
 		},
 		watch:{
 			darkMode(newValue){
-				if(!this.text2) this.text1;
-				this.addWatermark(this.text1, this.text2);
+				if(!this.text2) this.text_2 = this.text1;
+				this.addWatermark();
 			}
 		},
 		mounted(){
-			this.addWatermark(this.text1, this.text2);
+			this.$nextTick(() => {
+				this.addWatermark();
+			});
 		},
 		methods:{
-			addWatermark(text1, text2 = this.text1){
+			addWatermark(){
+				if(!this.text1) return;
+				this.text_1 = this.text1;
+				if(!this.text2) this.text_2 = this.text1;
 				const ctx = uni.createCanvasContext('mainCanvas');
 				
 				ctx.rotate(-20 * Math.PI / 180);
@@ -52,11 +59,11 @@
 				for(let j = 0; j < h_num; j ++){
 					if(j % 2 == 0){
 						for(let i = 0; i < w_num; i ++){
-							ctx.fillText(text1, 50 + 150 * (i - 0.36 * j), 80 + 150 * j);
+							ctx.fillText(this.text_1, 50 + 150 * (i - 0.36 * j), 80 + 150 * j);
 						}
 					}else{
 						for(let i = 0; i < w_num; i ++){
-							ctx.fillText(text2, 50 + 150 * (i - 0.36 * j), 80 + 150 * j);
+							ctx.fillText(this.text_2, 50 + 150 * (i - 0.36 * j), 80 + 150 * j);
 						}
 					}
 				}

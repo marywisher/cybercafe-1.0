@@ -12,6 +12,7 @@ export default {
 		tagLevel: 0,
 		hasChecked: false,
 		checkinCount: 0,//已签总次数
+		emailTrusted: false,//邮箱是否可信，影响找回密码等功能
 		
 		latestVersion: '',
 		totalReward: 0,

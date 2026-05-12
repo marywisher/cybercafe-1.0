@@ -1,7 +1,7 @@
 <template>
 	<cybercafe-header :bgOpacity="1">
 		<view class="iconfont icon-xiayibu iconback menu-icon-left" @tap="back"></view>
-		<view class="header-right display-flex display-line">
+		<view class="header-right display-flex display-line" v-if="networkType != 'none'">
 			<view class="iconfont icon-jiahao" @tap="gotoCharacterList"></view>
 			<label class="hint" @tap="gotoCharacterList">新建容器</label>
 		</view>
@@ -11,6 +11,12 @@
 <script>
 	export default{
 		name: 'entityListHeader',
+		props: {
+			networkType: {
+				type: String,
+				default: 'none'
+			}
+		},
 		methods: {
 			back(){
 				//uni.navigateBack();

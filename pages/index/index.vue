@@ -86,13 +86,7 @@
 			},
 			history(){
 				this.btn_status = 1;
-				uni.showToast({
-					title: '功能稍后开放',
-					icon: 'none'
-				});
-				/*uni.navigateTo({
-					url: '/pages/index/dataList'
-				})*/
+				handleFun.beforeInit('entityHistory');
 			}
 		},
 		onLoad() {

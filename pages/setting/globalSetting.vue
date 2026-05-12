@@ -66,8 +66,8 @@
 				</view>
 			</cybercafe-view>
 			<cybercafe-view>
-				<view class="display-flex sp-between display-line">
-					<view class="global-setting-label">需要导出聊天记录请联系管理员</view>
+				<view class="display-flex sp-between display-line" @tap="gotoEntityHistory">
+					<view class="global-setting-label">导出/查看历史记录</view>
 				</view>
 			</cybercafe-view>
 			<cybercafe-view v-if="userId == 1">
@@ -264,6 +264,11 @@
 			},
 			changeEmail(){
 				this.$refs.gsEmail.open();
+			},
+			gotoEntityHistory(){
+				uni.navigateTo({
+					url: '/pages/entity/history?from=offline'
+				})
 			}
 		},
 		onLoad() {
