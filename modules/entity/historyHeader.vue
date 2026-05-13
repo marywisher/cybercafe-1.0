@@ -4,8 +4,10 @@
 		<view class="header-right display-flex display-line">
 			<view class="iconfont icon-sousuo" @tap="showSearchModal"></view>
 			<label class="hint" @tap="showSearchModal">搜索</label>
-			<view v-if="network_type != 'none' && len > 0" class="iconfont icon-duanxin" @tap="sendHistory"></view>
-			<label class="hint" v-if="network_type != 'none' && len > 0" @tap="sendHistory">发送至邮箱</label>
+			<view v-if="network_type != 'none' && network_type != 'offline' && len > 0" 
+				class="iconfont icon-duanxin" @tap="sendHistory"></view>
+			<label class="hint" v-if="network_type != 'none' && network_type != 'offline' && len > 0" 
+				@tap="sendHistory">发送至邮箱</label>
 		</view>
 		<cybercafe-dialogueModal class="cdModal" ref="searchHistoryView" title="请输入搜索关键字" btnName="搜索" @confirm="searchHistory"/>
 	</cybercafe-header>

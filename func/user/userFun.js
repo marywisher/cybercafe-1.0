@@ -91,7 +91,7 @@ export default {
 					});
 				}else if(page_id == 'entityHistory'){
 					uni.navigateTo({
-						url: '/pages/entity/entityList?from=offline'
+						url: '/pages/entity/entityList?from=online'
 					})
 				}else{
 					uni.reLaunch({

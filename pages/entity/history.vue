@@ -41,7 +41,7 @@
 				entity_css: '',
 				bg_opacity: 0,
 				keyword: '',
-				network_type: 'none',
+				network_type: 'none', //手动离线offline（从首页离线进入），手动在线online（从首页在线进入），被动离线none（无网模式），在线wifi或其它
 				can_send: true, // 防止连击
 			}
 		},
@@ -89,10 +89,11 @@
 			...mapMutations('setting', ['getSettingData']),
 			async init(){
 				if(this.network_type == 'offline'){
+					//由离线模式进入
 					uni.showToast({
-						title: '当前处于离线状态，无法加载历史消息',
+						title: '当前处于离线浏览模式，不可发送历史记录至邮箱',
 						icon: 'none'
-					});
+					})
 				}else if(this.network_type == 'none'){
 					this.network_type = await request.checkNetwork('index');
 				}
@@ -207,8 +208,8 @@
 			}
 		},
 		onLoad(option) {
-			if(option && option.from == 'offline'){
-				this.network_type = 'offline';
+			if(option && option.from){
+				this.network_type = option.from;
 			}
 			console.log('network type:', this.network_type);
 			this.init();
