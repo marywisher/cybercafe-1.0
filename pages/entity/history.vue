@@ -41,7 +41,8 @@
 				entity_css: '',
 				bg_opacity: 0,
 				keyword: '',
-				network_type: 'none'
+				network_type: 'none',
+				can_send: true, // 防止连击
 			}
 		},
         components:{
@@ -151,6 +152,8 @@
 				this.init();
 			},
 			sendFun(){
+				if(!this.can_send) return;
+				this.can_send = false;
 				uni.showLoading({
 					title: '发送中...'
 				});
@@ -170,7 +173,6 @@
 							'history': content
 						}).then(res => {
 							console.log(res);
-							uni.hideLoading();
 							if(res.code == 200){
 								_self.setUserData({
 									'modalData':{
@@ -182,25 +184,13 @@
 									},
 									'modalShow': true, 
 									'modalPageId': 'entityHistory'});
-							}else{
-								_self.setUserData({
-									'modalData':{
-										title: '邮件发送失败',
-										content: '发送失败，请稍后再试',
-										confirmText: '',
-										cancelText: "OK",
-										success: (res) => {},
-									},
-									'modalShow': true, 
-									'modalPageId': 'entityHistory'});
 							}
 						}).catch(err => {
 							console.log(err.msg);
-							uni.hideLoading();
-							let msg = '发送失败，请截图反馈给系统管理员：' + err.msg;
+							let msg = '邮件发送失败，请截图反馈给系统管理员：' + err.msg;
 							_self.setUserData({
 									'modalData':{
-										title: '邮件发送失败',
+										title: '温馨提醒',
 										content: msg,
 										confirmText: '',
 										cancelText: "OK",
@@ -208,6 +198,9 @@
 									},
 									'modalShow': true, 
 									'modalPageId': 'entityHistory'});
+						}).finally(() => {
+							uni.hideLoading();
+							_self.can_send = true;
 						});
 					}
 				});

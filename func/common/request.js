@@ -78,6 +78,7 @@ export default {
 									'refreshFlag': 'fail',
 									'modalData':
 										{
+											'title': '温馨提醒',
 											'content': res.data.msg,
 											'confirmText': '',
 											'cancelText': 'OK',
@@ -108,6 +109,7 @@ export default {
 							'refreshFlag': 'fail',
 							'modalData':
 								{
+									'title': '温馨提醒',
 									'content': msg_str,
 									'confirmText': '',
 									'cancelText': 'OK',

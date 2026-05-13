@@ -5,7 +5,7 @@
 			<view>
 				<cybercafe-button btnClass="btn-primary" :btnDisable="unsavable"
 					@tapBtn="confirmFun" :btnName="btnName"
-					btnStyle="height: 60rpx; border-radius: 0 12rpx 12rpx 0; font-size: 28rpx; line-height: 60rpx;"></cybercafe-button>
+					btnStyle="height: 54rpx; border-radius: 0 12rpx 12rpx 0; font-size: 28rpx; line-height: 54rpx;"></cybercafe-button>
 			</view>
 		</view>
 	</cybercafe-view>

@@ -7,20 +7,27 @@ import baseQuery from "../dbManager/baseQuery";
 export default {
 	async beforeInit(page_id) {
 		await this.getDeviceInfo();
+		let network_type = await request.checkNetwork('index');
 		//store.commit('user/setUserData', { 'modalShow': false });
 		plus.navigator.setFullscreen(true);
 		store.commit('setting/getSettingData');
 		console.log(store.state.setting.userId, store.state.setting.token, store.state.setting.isLogin);
 		plus.nativeUI.setUIStyle(store.state.setting.darkMode);
 		
-		//store.commit('setting/setSettingData', { 'isLogin': false });
-		if(store.state.setting.userId == 0){
+		if(page_id == 'entityHistory' && network_type == 'none'){//离线
 			uni.navigateTo({
-				url: '../login/login'
+				url: '/pages/entity/entityList?from=offline'
 			})
 		}else{
-			request.getIp();
-			userFun.userInit(page_id);
+			//store.commit('setting/setSettingData', { 'isLogin': false });
+			if(store.state.setting.userId == 0){
+				uni.navigateTo({
+					url: '../login/login'
+				})
+			}else{
+				request.getIp();
+				userFun.userInit(page_id);
+			}
 		}
 	},
 	afterResponseFun(rel) {
