@@ -49,6 +49,7 @@
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
 			async init(){
+				//console.log(this.networkType);
 				this.network_type = this.networkType;
 				this.$refs.searchHistoryView.closeView();
 			},

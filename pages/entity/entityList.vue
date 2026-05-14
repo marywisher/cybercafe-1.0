@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<entityListHeader :networkType="network_type"></entityListHeader>
+		<entityListHeader ref="elHeader" :networkType="network_type"></entityListHeader>
 		<view class="list-part">
 			<cybercafe-view v-for="(item, index) in entity_list" :key="item.entity_id">
 				<view class="display-flex">
@@ -11,7 +11,7 @@
 						<view class="display-flex sp-between display-line">
 							<view class="display-flex display-line">
 								<view @tap="gotoEntity(item.entity_id, item.entity_title)">{{item.entity_title}} </view>
-								<span v-if="network_type != 'none'" class="iconfont icon-shezhi" @tap="gotoEntitySetting(item.entity_id)"></span>
+								<span v-if="network_type != 'none' && network_type != 'offline' && network_type != 'online'" class="iconfont icon-shezhi" @tap="gotoEntitySetting(item.entity_id)"></span>
 								<span class="iconfont icon-youji" @tap="gotoEntityHistory(item.entity_id, item.entity_title)"></span>
 							</view>
 							<view class="hint display-flex display-line" @tap="gotoEntity(item.entity_id, item.entity_title)">{{item.message_count}}条记录 
@@ -21,8 +21,8 @@
 						<view class="display-flex item-character-line display-line">
 							<image v-for="(citem, cindex) in item.character_img" mode="aspectFill"
 								class="item-character" :src="citem" :key="cindex" @tap="gotoCharacter(cindex)"></image>
-							<view v-if="network_type != 'none'" class="iconfont icon-jiahao" @tap="gotoEntitySetting(item.entity_id)"></view>
-							<view v-if="network_type != 'none'" class="iconfont icon-jianhao" @tap="gotoEntitySetting(item.entity_id)"></view>
+							<view v-if="network_type != 'none' && network_type != 'offline' && network_type != 'online'" class="iconfont icon-jiahao" @tap="gotoEntitySetting(item.entity_id)"></view>
+							<view v-if="network_type != 'none' && network_type != 'offline' && network_type != 'online'" class="iconfont icon-jianhao" @tap="gotoEntitySetting(item.entity_id)"></view>
 						</view>
 					</view>				
 				 </view>
@@ -81,11 +81,24 @@
 			...mapMutations('setting', ['setSettingData']),
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
-			async init(){
+			async init(option){
+				if(option && (option.from == 'offline' || option.from == 'online')){
+					this.network_type = option.from;
+					uni.showToast({
+						title: '离线模式仅能查看历史记录',
+						icon: 'none',
+						duration: 3000
+					})
+				}else{
+					this.network_type = await request.checkNetwork('index');
+				}
 				this.entity_list = await dialogueQuery.getAllEntityList();
+				this.$nextTick(() => {
+					this.$refs.elHeader.init();
+				});
 			},
 			async gotoEntity(entity_id, title){
-				if(this.network_type == 'none'){
+				if(this.network_type == 'none' || this.network_type == 'offline' || this.network_type == 'online'){
 					this.gotoEntityHistory(entity_id, title);
 				}else{
 					this.setSettingData({'entityId': entity_id});
@@ -93,13 +106,14 @@
 				}
 			},
 			gotoEntitySetting(entity_id){
+				if(this.network_type == 'none' || this.network_type == 'offline' || this.network_type == 'online') return;
 				this.setSettingData({'entityId': entity_id});
 				uni.navigateTo({
 					url: '/pages/entity/index'
 				})
 			},
 			gotoCharacter(character_id){
-				if(this.network_type == 'none') return;
+				if(this.network_type == 'none' || this.network_type == 'offline' || this.network_type == 'online') return;
 				uni.navigateTo({
 					url: '/pages/character/index?id=' + character_id
 				})
@@ -110,22 +124,13 @@
 					'title': title
 				})
 				uni.navigateTo({
-					url: '/pages/entity/history?from=' + (this.network_type == 'none' ? 'offline' : 'online')
+					url: '/pages/entity/history?from=' + this.network_type
 				})
 			}
 		},
 		onLoad(option) {
-			if(option && option.from == 'offline'){
-				this.network_type = 'none';
-				uni.showToast({
-					title: '离线模式仅能查看历史记录',
-					icon: 'none',
-					duration: 3000
-				})
-			}else{
-				this.network_type = request.checkNetwork('index');
-			}
-			this.init();
+			console.log(option.from);
+			this.init(option);
 		}
 	}
 </script>

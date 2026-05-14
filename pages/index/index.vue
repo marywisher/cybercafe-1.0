@@ -81,12 +81,12 @@
 					return;
 				} else if(this.btn_status > 0){
 					this.btn_status = 0;
-					handleFun.beforeInit('index');
+					handleFun.beforeInit('index', this.network_type);
 				}
 			},
 			history(){
 				this.btn_status = 1;
-				handleFun.beforeInit('entityHistory');
+				handleFun.beforeInit('entityHistory', this.network_type);
 			}
 		},
 		onLoad() {

@@ -148,7 +148,7 @@
 					uni.hideLoading();
 				});
 			},
-			submitRegister() {
+			async submitRegister() {
 				let _self = this;
 				//console.log(this.verify_code.match(/^\d{6}$/))
 				if(this.verify_code.match(/^\d{6}$/) != this.verify_code){
@@ -176,6 +176,7 @@
 				}
 				
 				uni.showLoading();
+				let network_type = await request.checkNetwork('login');
 				request.post("userController/newRegister", 'login', {
 					name: this.username,
 					verify: this.verify_code,
@@ -217,7 +218,7 @@
 						/* uni.switchTab({
 							url: '/pages/index/index'
 						}) */
-						handleFun.beforeInit('login');
+						handleFun.beforeInit('login', network_type);
 					} else {
 						uni.showToast({
 							title: res.msg,

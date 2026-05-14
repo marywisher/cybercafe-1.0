@@ -5,9 +5,8 @@ import responseFun from "../entity/responseFun";
 import baseQuery from "../dbManager/baseQuery";
 
 export default {
-	async beforeInit(page_id) {
+	async beforeInit(page_id, network_type) {
 		await this.getDeviceInfo();
-		let network_type = await request.checkNetwork('index');
 		//store.commit('user/setUserData', { 'modalShow': false });
 		plus.navigator.setFullscreen(true);
 		store.commit('setting/getSettingData');
