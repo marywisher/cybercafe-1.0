@@ -31,6 +31,7 @@ export default {
 		promptLength: 0,//基础提示词长度
 		promptSelect: 0, //预设
 		replyMode: 'click', // 自动auto 手动点击click 回复方式
+		summarizeMode: 'none', // 手动none 自动auto
 		summarizingData: {}, // 待总结内容 {entity_id: {'0': messageTime, messageTime: content}}
 		summaryRequest: {}, //总结用请求的id，有值则取线上结果，无值则重新申请总结 {entity_id: requestId}
 		temperature: 0.95,

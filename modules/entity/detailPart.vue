@@ -13,6 +13,11 @@
 		</view>
 		<view class="after-tag display-flex entity-line display-line sp-between">
 			<view>内容概要</view>
+			<view>
+				<switch :checked="summarizeMode == 'auto'" style="transform:scale(0.6)" color="#E94E46"
+					@change="changeSummarizeMode"/>
+				<label>{{summarizeMode == 'auto' ? '自动总结' : '手写'}}</label>
+			</view>
 		</view>
 		<view class="entity-line">
 			<textarea autoHeight v-model="extra_description" :cursor-spacing="150" :maxlength="-1"
@@ -93,7 +98,7 @@
 		},
 		computed: {
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
-			...mapState('setting', ['darkMode', 'entityId']),
+			...mapState('setting', ['darkMode', 'entityId', 'summarizeMode']),
 			...mapState('dialogue', ['selectedEntityId', 'title']),
 			placeholderStyle(){
 				return this.darkMode == 'light' ? 'color: #c0c0c0;' : 'color: #808080;';
@@ -101,7 +106,7 @@
 		},
 		methods: {
 			...mapMutations('user', ['getUserData', 'setUserData']),
-			...mapMutations('setting', ['getSettingData']),
+			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			async init(){
 				//console.log(this.entityId);
@@ -208,6 +213,9 @@
 			},
 			refreshSubjectImg(img){
 				this.subject_image = img;
+			},
+			changeSummarizeMode(){
+				this.setSettingData({'summarizeMode': (e.detail.value ? 'auto' : 'none')});
 			}
 		}
 	}

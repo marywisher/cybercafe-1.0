@@ -360,7 +360,9 @@ export default{
 			'summarizingData': summarizing_data
 		});
 
-		this.judgeSummary();
+		if(store.state.setting.summarizeMode == 'auto'){
+			this.judgeSummary();
+		}
 	},
 	removeSummarizingData(message_time, 
 		entity_id = null,
