@@ -16,7 +16,7 @@
 			<view>
 				<switch :checked="summarizeMode == 'auto'" style="transform:scale(0.6)" color="#E94E46"
 					@change="changeSummarizeMode"/>
-				<label>{{summarizeMode == 'auto' ? '自动总结' : '手写'}}</label>
+				<label>{{summarizeMode == 'auto' ? 'AI总结' : '手写'}}</label>
 			</view>
 		</view>
 		<view class="entity-line">
