@@ -11,7 +11,7 @@
 				:class="{'dragable-item': item.enable, 'dragging': item.flag }">
 					<view>{{item.title}}</view>
 					<view v-if="item.enable" class="iconfont icon-paixu" @touchstart="handleTouchstart($event, index)" 
-					@touchmove="handleTouchmove" @touchend="handleTouchend"></view>
+					@touchmove.stop.prevent="handleTouchmove($event)" @touchend="handleTouchend"></view>
 				</view>
 			</view>
 		</template>

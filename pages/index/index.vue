@@ -4,7 +4,7 @@
 		<view><text class="gradient-text">{{slogan}}</text></view>
 		<view class="tip hint">{{tip_str}}</view>
 		<cybercafe-button v-if="btn_status > 0" class="btn-primary retry-btn" btnName="欢迎光临" @tapBtn="enter"></cybercafe-button>
-		<cybercafe-button v-if="btn_status > 0" class="offline-btn" btnName="离线浏览" @tapBtn="history"></cybercafe-button>
+		<cybercafe-button v-if="btn_status > 0 && !is_new" class="offline-btn" btnName="离线浏览" @tapBtn="history"></cybercafe-button>
 		<cybercafe-modal class="modal-view" ref="cModal"></cybercafe-modal>
 	</view>
 </template>
@@ -25,7 +25,8 @@
 				loading_flag: false,
 				network_type: 'none',
 				btn_status: 2,//0不显示 1显示不自动跳转 2显示且自动跳转
-				tip_str: ''
+				tip_str: '',
+				is_new: true
 			}
 		},
 		watch:{
@@ -48,7 +49,7 @@
 		},
 		computed:{
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow']),
-			...mapState('setting', ['tips']),
+			...mapState('setting', ['isNew', 'tips']),
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
@@ -64,6 +65,7 @@
 				console.log(this.tips);
 				//每次随机一个tip
 				this.tip_str = this.tips[Math.floor(Math.random() * this.tips.length)];
+				this.is_new = this.isNew;
 				
 				await sqlite.initTable();
 				await handleFun.initSetting();

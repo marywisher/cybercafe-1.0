@@ -10,7 +10,7 @@
 			<listPart v-show="historylist.length > 0" ref="chatListPart" :lockMode="in_pull_down_mode"
 				:viewMode="input_mode" @afterUpdate="afterUpdateList" :scroll="scroll"
 				@editing='changeEditMode'></listPart>
-			<newUserPart v-show="historylist.length == 0" ref="chatNewUserPart"></newUserPart><!-- 新用户可见-->
+			<newUserPart v-show="is_new" ref="chatNewUserPart"></newUserPart><!-- 新用户可见-->
 			<view class="btm"></view>
 		</view>
 		<chatBottom :inputMode="input_mode" ref="chatBottomPart" v-show="historylist.length > 0 && !edit_mode"
@@ -44,7 +44,8 @@
 				dark_mode: 'light',
 				edit_mode: false,
 				input_mode: 'min',
-				client_y: 0
+				client_y: 0,
+				is_new: true
 			}
 		},
 		components: {
@@ -74,13 +75,14 @@
 		},
 		computed:{
 			...mapState('user', ['modalData', 'modalPageId', 'modalShow', 'userKey', 
-			'userName']),
-			...mapState('setting', ['darkMode', 'entityId', 'summarizeMode', 'summaryRequest']),
+				'userName']),
+			...mapState('setting', ['darkMode', 'entityId', 'isNew', 'summarizeMode', 
+				'summaryRequest']),
 			...mapState('dialogue', ['historylist'])
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
-			...mapMutations('setting', ['getSettingData']),
+			...mapMutations('setting', ['getSettingData', 'setSettingData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			async init(){
 				uni.showLoading({
@@ -88,8 +90,21 @@
 				})
 				this.getUserData();
 				this.dark_mode = this.darkMode;
+				this.is_new = this.isNew;
 				await entityFun.entityInit();
 				await messageFun.getMessage();
+
+				if(this.historylist.length == 0){
+					uni.reLaunch({
+						url: '/pages/character/characterList'
+					})
+					return;
+				}else{
+					this.setSettingData({
+						'isNew': false
+					})
+					this.is_new = false;
+				}
 				
 				this.$nextTick(() =>{
 					this.$refs.chatHeaderPart.init();

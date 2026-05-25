@@ -27,6 +27,7 @@
 					</view>				
 				 </view>
 			</cybercafe-view>
+			<view v-if="entity_list.length == 0" @tap="gotoCharacterList">暂无内容，请先做饭</view>
 		</view>
 	</view>
 </template>
@@ -125,6 +126,11 @@
 				})
 				uni.navigateTo({
 					url: '/pages/entity/history?from=' + this.network_type
+				})
+			},
+			gotoCharacterList(){
+				uni.reLaunch({
+					url: '/pages/character/characterList'
 				})
 			}
 		},

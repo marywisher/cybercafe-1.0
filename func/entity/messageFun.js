@@ -132,6 +132,11 @@ export default{
 			}
 			//console.log(history_list);
 		}
+		if(store.state.setting.isNew){
+			store.commit('setting/setSettingData', {
+				'isNew': false
+			});
+		}
 		if(entity_id == store.state.setting.entityId){
 			store.commit('dialogue/setDiaData', {
 				'historylist': history_list,

@@ -27,6 +27,7 @@ export default {
 		ip: '',
 		ippos: '未知',
 		isLogin: false,
+		isNew: true, // 开始聊天后改为false
 		maxToken: 4096,
 		promptLength: 0,//基础提示词长度
 		promptSelect: 0, //预设
