@@ -23,24 +23,36 @@ export default {
 				this.addToList(key, list);
 		}
 		//再读切片，以防个性化设置
-		let detail_data = await baseQuery.getDataByKey('cybercafe_entity_detail', {'entity_id': store.state.setting.entityId});
-			for(let i = 0; i < detail_data.length; i ++){
-				let character_id = detail_data[i].character_id;
-				//console.log(character_id);
-				let character_data = await baseQuery.getDataByKey('cybercafe_character', {'character_id': character_id});
-				if(character_data && character_data[0].character_description 
-					&& common.isJsonString(character_data[0].character_description)){
-					//console.log(character_data[0].character_description);
-					let character_json = JSON.parse(character_data[0].character_description);
-						for(let key in character_json.基础信息){
-							//console.log(key);
-							this.addToList(key, list);
+		try{
+			let detail_data = await baseQuery.getDataByKey('cybercafe_entity_detail', {'entity_id': store.state.setting.entityId});
+			if(detail_data.length > 0){
+				for(let i = 0; i < detail_data.length; i ++){
+					if(!detail_data[i].hasOwnProperty('character_id')) continue;
+					let character_id = detail_data[i].character_id;
+					//console.log(character_id);
+					let character_data = await baseQuery.getDataByKey('cybercafe_character', {'character_id': character_id});
+					if(character_data.length > 0 && character_data[0].hasOwnProperty("character_description") 
+						&& character_data[0].character_description 
+						&& common.isJsonString(character_data[0].character_description)){
+						//console.log(character_data[0].character_description);
+						let character_json = JSON.parse(character_data[0].character_description);
+						if(character_json.hasOwnProperty("基础信息")){
+							for(let key in character_json.基础信息){
+								//console.log(key);
+								this.addToList(key, list);
+							}
 						}
-						for(let key in character_json.扩展信息){
-							//console.log(key);
-							this.addToList(key, list);
-				}		
+						if(character_json.hasOwnProperty("扩展信息")){
+							for(let key in character_json.扩展信息){
+								//console.log(key);
+								this.addToList(key, list);
+							}	
+						}		
+					}
+				}
 			}
+		}catch(e){
+			
 		}
 		//最后查漏补缺，以防重要部分被遗漏
 		let origin_tree = [

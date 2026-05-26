@@ -8,7 +8,15 @@ export default{
 	async getMessage(){
 		let message_list = await dialogueQuery.getMessageByEntityId();
 		//console.log(message_list);
-		if(message_list.length == 0) return;
+		if(message_list.length == 0) {
+			uni.reLaunch({
+				url: '/pages/character/characterList'
+			})
+			return;
+		}
+		store.commit('setting/setSettingData', {
+			'isNew': false
+		});
 		let history_list = [];
 		message_list.reverse();
 		let message_id = message_list[0].message_id;

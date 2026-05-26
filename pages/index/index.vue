@@ -55,6 +55,10 @@
 			...mapMutations('user', ['getUserData', 'setUserData']),
 			...mapMutations('setting', ['getSettingData']),
 			async init(){
+				await sqlite.initTable();
+				await handleFun.initSetting();
+				console.log('init');
+				
 				//获取APP网络信息，不含H5
 				this.network_type = await request.checkNetwork('index');
 				if(this.network_type == 'none'){
@@ -62,14 +66,11 @@
 					return;
 				} 
 				
-				console.log(this.tips);
+				console.log(this.tips, this.isNew);
 				//每次随机一个tip
 				this.tip_str = this.tips[Math.floor(Math.random() * this.tips.length)];
 				this.is_new = this.isNew;
 				
-				await sqlite.initTable();
-				await handleFun.initSetting();
-				console.log('init');
 				setTimeout(() => {
 					if(this.btn_status == 2){
 						this.enter();

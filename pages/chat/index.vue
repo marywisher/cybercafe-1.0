@@ -82,7 +82,7 @@
 		},
 		methods:{
 			...mapMutations('user', ['getUserData', 'setUserData']),
-			...mapMutations('setting', ['getSettingData', 'setSettingData']),
+			...mapMutations('setting', ['getSettingData']),
 			...mapMutations('dialogue', ['getDiaData', 'setDiaData']),
 			async init(){
 				uni.showLoading({
@@ -94,18 +94,6 @@
 				await entityFun.entityInit();
 				await messageFun.getMessage();
 
-				if(this.historylist.length == 0){
-					uni.reLaunch({
-						url: '/pages/character/characterList'
-					})
-					return;
-				}else{
-					this.setSettingData({
-						'isNew': false
-					})
-					this.is_new = false;
-				}
-				
 				this.$nextTick(() =>{
 					this.$refs.chatHeaderPart.init();
 					//console.log(this.entityId);
