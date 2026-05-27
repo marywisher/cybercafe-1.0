@@ -5,6 +5,7 @@
 				placeholder="回复由AI生成，仅供娱乐"/>
 			<view class="iconfont icon-quanping" @tap="changeInputMode"></view>
 		</view>
+		<view v-show="input_mode == 'min'" class="iconfont icon-dengpao" @tap="aiMessage"></view>
 		<view v-show="input_mode == 'min'" class="iconfont icon-fasong" @tap="sendMessage"></view>
 		
 		<view v-show="input_mode == 'max'" ref="popup">
@@ -15,6 +16,7 @@
 			</view>
 			<view class="textarea-btn display-flex display-line sp-around">
 				<view class="iconfont icon-feiquanping" @tap="changeInputMode"></view>
+				<view class="iconfont icon-dengpao" @tap="aiMessage"></view>
 				<view class="iconfont icon-fasong" @tap="sendMessage"></view>
 			</view>
 		</view>
@@ -146,6 +148,17 @@
 					this.input_mode = 'min';
 				}
 				this.$emit('inputModeChange', this.input_mode);
+			},
+			aiMessage(){
+				let message_time = common.getCurrentTimeStampStr(true);
+				this.setDiaData({
+					'crtCharacterId': 0,
+					'prevMessageTime': this.messageTime,
+					'messageTime': message_time,
+					'optionFlag': true,
+					'options': []
+				});
+				responseFun.chat(true, true);
 			}
 		}
 	}
@@ -166,7 +179,7 @@
 		padding-right: calc(3 * $uni-spacing-lg);
 		border: $uni-border-base solid $uni-text-color-grey;
 	}
-	.icon-fasong{
+	.icon-fasong, .icon-dengpao{
 		color: $uni-color-main;
 		font-size: $uni-font-size-lg;
 		line-height: calc(2 * $uni-font-size-lg);
@@ -189,11 +202,11 @@
 		width: 30vw;
 		float: right;
 	}
-	.icon-feiquanping, .textarea-box .icon-fasong{
+	.icon-feiquanping, .textarea-box .icon-fasong, .icon-dengpao{
 		color: $uni-color-main;
 	}
 	@media (prefers-color-scheme: dark) {
-		.icon-fasong, .icon-quanping, .icon-feiquanping{
+		.icon-fasong, .icon-quanping, .icon-feiquanping, .icon-dengpao{
 			color: $uni-color-dark-main;
 		}
 	}

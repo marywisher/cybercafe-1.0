@@ -116,8 +116,8 @@ export default{
 		//console.log(store.state.dialogue.optionFlag);
 		messageFun.saveMessage(aiId, content[0], operation, entity_id);
 	},
-	async chat(flag = true){
-		await promptFun.preOperation(flag);
+	async chat(flag = true, is_me = false){
+		await promptFun.preOperation(flag, is_me);
 		//console.log(store.state.setting.promptLength);
 		if(store.state.setting.promptLength > store.state.setting.tokenSetting){
 			store.commit('user/setUserData', {

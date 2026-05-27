@@ -83,7 +83,7 @@ export default {
 			enable: true
 		})
 	},
-	async preOperation(include_option = true, extra_content = ''){
+	async preOperation(include_option = true, extra_content = '', is_me = false){
 		let list = await this.loadTreeOrder();
 		//console.log(list);
 		let character_name = 'test';
@@ -110,14 +110,22 @@ export default {
 		}
 		let content = '';
 		let character_json = {};
-		let character_data = await baseQuery.getDataByKey('cybercafe_character',
-			{'character_id': store.state.dialogue.crtCharacterId});
-		if(character_data && character_data[0].character_description
-			&& common.isJsonString(character_data[0].character_description)){
-			//console.log(character_data[0].character_description);
-			character_json = JSON.parse(character_data[0].character_description);
+		if(is_me){
+			let entity_data = await baseQuery.getDataByKey('cybercafe_entity',
+				{'entity_id': store.state.setting.entityId});
+			if(entity_data.length > 0){
+				content += ' ' + entity_data[0].subject_description ?? '';
+			}
 		}else{
-			content += ' ' + character_data[0].character_description;
+			let character_data = await baseQuery.getDataByKey('cybercafe_character',
+				{'character_id': store.state.dialogue.crtCharacterId});
+			if(character_data.length > 0 && character_data[0].character_description
+				&& common.isJsonString(character_data[0].character_description)){
+				//console.log(character_data[0].character_description);
+				character_json = JSON.parse(character_data[0].character_description);
+			}else if(character_data.length > 0){
+				content += ' ' + character_data[0].character_description;
+			}
 		}
 		for(let i in list){
 			//console.log(list[i].id, list[i].title)
