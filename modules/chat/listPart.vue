@@ -371,7 +371,7 @@
 				}
 				let	operation = this.messageTime + ':option.select:'
 					+ (this.options.length > 0 ? this.options[this.swiper_index].model : 'prologue') + (this.edit ? '-edit' : '');
-				messageFun.updateMessage(operation, crt_index);
+				messageFun.updateMessage(operation);
 			},
 			editChange(param){
 				this.hideMenu();

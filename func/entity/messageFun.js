@@ -161,7 +161,7 @@ export default{
 		
 		this.addToSummarizingData(content);
 	},
-	async updateMessage(operation, content_index) {//修改文本
+	async updateMessage(operation) {//修改文本
 		await baseQuery.updateDataByKey('cybercafe_message', {
 			'message_content': store.state.dialogue.optionFirst,
 			'operation_content': operation
@@ -178,7 +178,6 @@ export default{
 		history_list[history_list.length - 1].html = last_html;
 		store.commit('dialogue/setDiaData', {
 			'historylist': history_list,
-			'refreshList': content_index,
 		});
 		let tmp_content = store.state.setting.editContent;
 		tmp_content[store.state.setting.entityId] = '';

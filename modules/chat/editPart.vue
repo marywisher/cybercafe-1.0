@@ -63,6 +63,7 @@
 				    //console.log(newValue);
 					//console.log(this.cDisplayId);
 				    this.init();
+					this.swiper_current = newValue;
 				},
 				immediate: true, // 立即执行一次
 				deep: true // 深度监听（可选）
@@ -147,12 +148,13 @@
 				this.$emit('editChange', false);
 			},
 			async confirmFun(){
-				this.swiper_current = -1;
 				let response_feedback = await responseFun.toolRequest('sensitive', this.edit_text.trim(), 'chat');
 				if(response_feedback.status == 'success'){//返回值就是200
 					this.setDiaData({
 						'optionFirst': this.edit_text.trim(),
+						'refreshList': this.swiper_current,
 					});
+					this.swiper_current = -1;
 					this.$emit('swiperChange', -1);
 					this.$emit('editChange', false);
 				}else{
