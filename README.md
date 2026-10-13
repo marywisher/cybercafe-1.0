@@ -8,6 +8,7 @@
 | QQ群    | 42094098（已满）（目前内测的0.6版APK和PC模拟器在群文件夹里） |
 | Discord | [https://discord.gg/fvXvMzbY](https://discord.gg/fvXvMzbY) （0.6版，1.0版APK均打了分包提交在社区了） |
 | 贴吧    | [赛博食堂](https://tieba.baidu.com/f?kw=赛博食堂) (刚建) |
+| 爱发电  | [欢迎打赏](https://afdian.com/a/boredomkit) |
 
 
 | 支持平台 |
